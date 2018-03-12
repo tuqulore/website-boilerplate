@@ -8,5 +8,25 @@
   },
   "keywords": [],
   "author": "Kimiaki Kuno <knokmki612@gmail.com> (https://github.com/knokmki612)",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "browser-sync": "^2.23.6",
+    "eslint": "^4.18.2",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.9.0",
+    "fs-extra": "^5.0.0",
+    "gulp": "^3.9.1",
+    "gulp-imagemin": "^4.1.0",
+    "gulp-plumber": "^1.2.0",
+    "gulp-pug": "^3.3.0",
+    "gulp-sass": "^3.2.0",
+    "gulp-sass-glob": "^1.0.8",
+    "imagemin-mozjpeg": "^7.0.0",
+    "imagemin-pngquant": "^5.0.1",
+    "node-sass-package-importer": "^5.1.0",
+    "stylelint": "^9.1.1",
+    "stylelint-config-standard": "^18.2.0",
+    "stylelint-rscss": "^0.4.0"
+  },
+  "dependencies": {}
 }
