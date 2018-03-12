@@ -1,0 +1,12 @@
+{
+  "name": "web-design-skelton",
+  "version": "0.0.1",
+  "description": "",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Kimiaki Kuno <knokmki612@gmail.com> (https://github.com/knokmki612)",
+  "license": "MIT"
+}
