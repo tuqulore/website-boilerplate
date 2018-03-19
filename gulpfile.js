@@ -1,6 +1,7 @@
 const fs = require('fs-extra');
 const browserSync = require('browser-sync');
 const gulp = require('gulp');
+const util = require('gulp-util');
 const plumber = require('gulp-plumber');
 const pug = require('gulp-pug');
 const sass = require('gulp-sass');
@@ -60,7 +61,12 @@ gulp.task('pug-watch', ['templates'], browserSync.reload);
  * task for image
  */
 gulp.task('image', () => {
-  fs.removeSync(path.img.dest);
+  try {
+    fs.accessSync(path.img.dest, fs.constants.R_OK);
+    fs.removeSync(path.img.dest);
+  } catch (e) {
+    util.log('img folder not found');
+  }
   return gulp
     .src(path.img.src)
     .pipe(plumber())
