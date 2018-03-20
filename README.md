@@ -12,6 +12,7 @@
 | EditorConfig | インデントの統一など | [たくさん](http://editorconfig.org/#download) |
 | stylelint | scss([rscss](http://rscss.io))の書式チェック | [Atom, Sublime Text, VSCode, WebStorm など](https://github.com/stylelint/stylelint/blob/master/docs/user-guide/complementary-tools.md#editor-plugins) |
 | ESLint | jsの書式チェック | [たくさん](https://eslint.org/docs/user-guide/integrations#editors) |
+| pug-lint | pugの書式チェック | [Atom, Sublime Text, VSCode など](https://github.com/pugjs/pug-lint#editor-integration)
 
 ## 使い方
 
