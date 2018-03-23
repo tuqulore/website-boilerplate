@@ -36,22 +36,15 @@ path.img = {
 /**
  * Compile pug files into HTML
  */
-gulp.task('templates', () => {
-  const YOUR_LOCALS = {
-    message: 'This app is powered by gulp.pug recipe for BrowserSync',
-  };
-
-  return gulp
-    .src([path.pug.src, path.pug.ignore])
-    .pipe(cached('pug'))
-    .pipe(plumber())
-    .pipe(pug({
-      locals: YOUR_LOCALS,
-      pretty: true,
-      basedir: path.pug.basedir,
-    }))
-    .pipe(gulp.dest(path.pug.dest));
-});
+gulp.task('templates', () => gulp
+  .src([path.pug.src, path.pug.ignore])
+  .pipe(cached('pug'))
+  .pipe(plumber())
+  .pipe(pug({
+    pretty: true,
+    basedir: path.pug.basedir,
+  }))
+  .pipe(gulp.dest(path.pug.dest)));
 
 /**
  * Important!!
@@ -62,24 +55,22 @@ gulp.task('pug-watch', ['templates'], browserSync.reload);
 /**
  * task for image
  */
-gulp.task('image', () => {
-  return gulp
-    .src(path.img.src)
-    .pipe(changed(path.img.dest))
-    .pipe(plumber())
-    .pipe(imagemin([
-      imagemin.mozjpeg({ quality: 85, progressive: true }),
-      imagemin.pngquant({ quality: '70-85' }),
-      imagemin.optipng({ optimizationLevel: 5 }),
-      imagemin.svgo({
-        plugins: [
-          { removeViewBox: true },
-          { cleanupIDs: true },
-        ],
-      }),
-    ]))
-    .pipe(gulp.dest(path.img.dest));
-});
+gulp.task('image', () => gulp
+  .src(path.img.src)
+  .pipe(changed(path.img.dest))
+  .pipe(plumber())
+  .pipe(imagemin([
+    imagemin.mozjpeg({ quality: 85, progressive: true }),
+    imagemin.pngquant({ quality: '70-85' }),
+    imagemin.optipng({ optimizationLevel: 5 }),
+    imagemin.svgo({
+      plugins: [
+        { removeViewBox: true },
+        { cleanupIDs: true },
+      ],
+    }),
+  ]))
+  .pipe(gulp.dest(path.img.dest)));
 
 /**
  * Sass task for live injecting into all browsers
