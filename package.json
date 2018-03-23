@@ -24,7 +24,7 @@
     "gulp-sass": "^3.2.0",
     "gulp-sass-glob": "^1.0.8",
     "imagemin-mozjpeg": "^7.0.0",
-    "imagemin-pngquant": "^5.0.1",
+    "imagemin-zopfli": "^5.1.0",
     "node-sass-package-importer": "^5.1.0",
     "pug-lint": "^2.5.0",
     "stylelint": "^9.1.1",
