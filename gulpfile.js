@@ -1,7 +1,8 @@
 const fs = require('fs-extra');
 const browserSync = require('browser-sync');
 const gulp = require('gulp');
-const util = require('gulp-util');
+const cached = require('gulp-cached');
+const changed = require('gulp-changed');
 const plumber = require('gulp-plumber');
 const pug = require('gulp-pug');
 const sass = require('gulp-sass');
@@ -42,6 +43,7 @@ gulp.task('templates', () => {
 
   return gulp
     .src([path.pug.src, path.pug.ignore])
+    .pipe(cached('pug'))
     .pipe(plumber())
     .pipe(pug({
       locals: YOUR_LOCALS,
@@ -61,14 +63,9 @@ gulp.task('pug-watch', ['templates'], browserSync.reload);
  * task for image
  */
 gulp.task('image', () => {
-  try {
-    fs.accessSync(path.img.dest, fs.constants.R_OK);
-    fs.removeSync(path.img.dest);
-  } catch (e) {
-    util.log('img folder not found');
-  }
   return gulp
     .src(path.img.src)
+    .pipe(changed(path.img.dest))
     .pipe(plumber())
     .pipe(imagemin([
       imagemin.mozjpeg({ quality: 85, progressive: true }),
