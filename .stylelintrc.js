@@ -31,5 +31,12 @@ module.exports = {
     'selector-pseudo-element-colon-notation': 'single',
     'string-quotes': 'double',
     indentation: 2,
+    'rscss/class-format': [
+      true,
+      {
+        element: '^([a-z][a-z0-9]*)(-[a-z0-9]+)*$',
+      },
+    ],
+    'rscss/no-descendant-combinator': true,
   },
 };
