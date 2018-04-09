@@ -11,7 +11,8 @@ const packageImporter = require('node-sass-package-importer');
 const imagemin = require('gulp-imagemin');
 
 imagemin.mozjpeg = require('imagemin-mozjpeg');
-imagemin.zopfli = require('imagemin-zopfli');
+imagemin.pngquant = require('imagemin-pngquant');
+imagemin.pngcrush = require('imagemin-pngcrush');
 
 const path = {};
 path.pug = {
@@ -61,7 +62,8 @@ gulp.task('image', () => gulp
   .pipe(plumber())
   .pipe(imagemin([
     imagemin.mozjpeg({ quality: 85, progressive: true }),
-    imagemin.zopfli(),
+    imagemin.pngquant({ quality: '70-85' }),
+    imagemin.pngcrush,
     imagemin.svgo({
       plugins: [
         { removeViewBox: true },
