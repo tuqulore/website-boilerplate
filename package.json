@@ -29,7 +29,8 @@
     "pug-lint": "^2.5.0",
     "stylelint": "^9.1.1",
     "stylelint-config-standard": "^18.2.0",
-    "stylelint-rscss": "^0.4.0"
+    "stylelint-rscss": "^0.4.0",
+    "stylelint-scss": "^3.0.0"
   },
   "dependencies": {}
 }

@@ -3,7 +3,11 @@ module.exports = {
     'stylelint-config-standard',
     'stylelint-rscss/config',
   ],
+  plugins: [
+    'stylelint-scss',
+  ],
   rules: {
+    'at-rule-no-unknown': null,
     'color-hex-case': 'lower',
     'color-hex-length': 'short',
     'comment-empty-line-before': 'always',
@@ -18,7 +22,7 @@ module.exports = {
     'media-feature-parentheses-space-inside': 'never',
     'media-feature-range-operator-space-after': 'always',
     'media-feature-range-operator-space-before': 'always',
-    'no-descending-specificity': false,
+    'no-descending-specificity': null,
     'no-duplicate-selectors': true,
     'number-leading-zero': 'never',
     'rule-empty-line-before': 'always-multi-line',
@@ -38,5 +42,6 @@ module.exports = {
       },
     ],
     'rscss/no-descendant-combinator': true,
+    'scss/at-rule-no-unknown': true,
   },
 };
