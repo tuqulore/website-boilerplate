@@ -26,7 +26,7 @@ BrowserSyncを使いたい場合は以下の手順で実行してください
 ## Gulpタスク一覧
 
 | タスク名 | 説明 | 依存するタスク |
-| :- | :- | :-
+| :- | :- | :- |
 | gulp templates | pugをhtmlに変換する | - |
 | gulp sass | scssをcssに変換する | - |
 | gulp image | 画像の最適化をする | - |
