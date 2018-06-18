@@ -1,4 +1,3 @@
-const fs = require('fs-extra');
 const browserSync = require('browser-sync');
 const gulp = require('gulp');
 const cached = require('gulp-cached');
