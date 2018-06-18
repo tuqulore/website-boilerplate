@@ -5,6 +5,7 @@ module.exports = {
   ],
   plugins: [
     'stylelint-scss',
+    'stylelint-order',
   ],
   rules: {
     'at-rule-no-unknown': null,
@@ -43,5 +44,6 @@ module.exports = {
     ],
     'rscss/no-descendant-combinator': true,
     'scss/at-rule-no-unknown': true,
+    'order/properties-alphabetical-order': true,
   },
 };
