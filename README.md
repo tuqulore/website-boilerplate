@@ -3,16 +3,17 @@
 ## 想定している環境
 
 * Node.js 8.9.4以上
-* EditorConfig、stylelint、ESLintに対応したエディター
+* EditorConfig、stylelint、ESLint、Prettierに対応したエディター
 
 ## 導入したツールの役割
 
-| ツール名 | 役割 | 対応エディター |
-| :- | :- | :- |
-| EditorConfig | インデントの統一など | [たくさん](http://editorconfig.org/#download) |
-| stylelint | scss([rscss](http://rscss.io))の書式チェック | [Atom, Sublime Text, VSCode, WebStorm など](https://github.com/stylelint/stylelint/blob/master/docs/user-guide/complementary-tools.md#editor-plugins) |
-| ESLint | jsの書式チェック | [たくさん](https://eslint.org/docs/user-guide/integrations#editors) |
-| pug-lint | pugの書式チェック | [Atom, Sublime Text, VSCode など](https://github.com/pugjs/pug-lint#editor-integration)
+| ツール名 | 重要度 | 役割 | 対応エディター |
+| :- | :- | :-: | :- |
+| EditorConfig | 必須 | インデントの統一など | [たくさん](http://editorconfig.org/#download) |
+| stylelint | 必須 | scss([rscss](http://rscss.io))の書式チェック | [Atom, Sublime Text, VSCode, WebStorm など](https://github.com/stylelint/stylelint/blob/master/docs/user-guide/complementary-tools.md#editor-plugins) |
+| ESLint | 必須 | jsの書式チェック | [たくさん](https://eslint.org/docs/user-guide/integrations#editors) |
+| Prettier | 必須 | sccsやjsの自動整形 | [たくさん](https://prettier.io/docs/en/editors.html)
+| pug-lint | 任意 | pugの書式チェック | [Atom, Sublime Text, VSCode など](https://github.com/pugjs/pug-lint#editor-integration)
 
 ## 使い方
 
