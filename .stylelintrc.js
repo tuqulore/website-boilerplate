@@ -17,6 +17,7 @@ module.exports = {
     'declaration-colon-space-after': 'always',
     'declaration-colon-space-before': 'never',
     'font-family-name-quotes': 'always-unless-keyword',
+    'font-family-no-missing-generic-family-keyword': null,
     'function-url-quotes': 'always',
     'media-feature-colon-space-after': 'always',
     'media-feature-colon-space-before': 'never',
