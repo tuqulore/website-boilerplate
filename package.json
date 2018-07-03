@@ -1,28 +1,32 @@
 {
   "name": "web-design-skeleton",
   "version": "0.0.1",
+  "author": "Kimiaki Kuno <knokmki612@gmail.com> (https://github.com/knokmki612)",
   "description": "",
+  "keywords": [],
+  "license": "MIT",
   "main": "gulpfile.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tuqulore/web-design-skeleton.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "Kimiaki Kuno <knokmki612@gmail.com> (https://github.com/knokmki612)",
-  "license": "MIT",
   "devDependencies": {
-    "browser-sync": "^2.23.6",
+    "browser-sync": "^2.24.5",
     "eslint": "^4.18.2",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-import": "^2.9.0",
     "eslint-plugin-prettier": "^2.6.1",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.0",
     "gulp-cached": "^1.1.1",
     "gulp-changed": "^3.2.0",
     "gulp-imagemin": "^4.1.0",
     "gulp-plumber": "^1.2.0",
     "gulp-pug": "^3.3.0",
-    "gulp-sass": "^3.2.0",
+    "gulp-sass": "^4.0.1",
     "gulp-sass-glob": "^1.0.8",
     "imagemin-mozjpeg": "^7.0.0",
     "imagemin-pngcrush": "^5.1.0",
