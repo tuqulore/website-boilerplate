@@ -54,7 +54,7 @@ gulp.task("templates", () =>
  * Important!!
  * Separate task for the reaction to `.pug` files
  */
-gulp.task("pug-watch", ["templates"], browserSync.reload);
+gulp.task("pug-watch", gulp.series("templates", browserSync.reload));
 
 /**
  * task for image
@@ -94,15 +94,15 @@ gulp.task("sass", () =>
 /**
  * Task for just build & deploy files
  */
-gulp.task("build", ["image", "sass", "templates"]);
+gulp.task("build", gulp.series(gulp.parallel("image", "sass", "templates")));
 
 /**
  * Serve and watch the scss/pug files for changes
  */
-gulp.task("default", ["sass", "templates"], () => {
+gulp.task("default", gulp.series("sass", "templates", () => {
   browserSync({ server: path.pug.dest });
 
-  gulp.watch(path.sass.src, ["sass"]);
-  gulp.watch(path.pug.src, ["pug-watch"]);
+  gulp.watch(path.sass.src, gulp.task("sass"));
+  gulp.watch(path.pug.src, gulp.task("pug-watch"));
   gulp.watch(path.js.dest, browserSync.reload);
-});
+}));
