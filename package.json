@@ -14,7 +14,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
-    "browser-sync": "^2.24.5",
+    "browser-sync": "^2.24.6",
     "eslint": "^4.18.2",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-config-prettier": "^2.9.0",
@@ -30,7 +30,7 @@
     "gulp-sass-glob": "^1.0.8",
     "imagemin-mozjpeg": "^7.0.0",
     "imagemin-pngcrush": "^5.1.0",
-    "imagemin-pngquant": "^5.1.0",
+    "imagemin-pngquant": "^6.0.0",
     "node-sass-package-importer": "^5.1.0",
     "prettier": "^1.13.7",
     "pug-lint": "^2.5.0",
