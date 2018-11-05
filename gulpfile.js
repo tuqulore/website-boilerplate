@@ -33,6 +33,11 @@ path.img = {
   dest: "public/img"
 };
 
+const reload = done => {
+  browserSync.reload();
+  done();
+};
+
 /**
  * Compile pug files into HTML
  */
@@ -49,12 +54,6 @@ gulp.task("templates", () =>
     )
     .pipe(gulp.dest(path.pug.dest))
 );
-
-/**
- * Important!!
- * Separate task for the reaction to `.pug` files
- */
-gulp.task("pug-watch", gulp.series("templates", browserSync.reload));
 
 /**
  * task for image
@@ -99,10 +98,13 @@ gulp.task("build", gulp.series(gulp.parallel("image", "sass", "templates")));
 /**
  * Serve and watch the scss/pug files for changes
  */
-gulp.task("default", gulp.series("sass", "templates", () => {
-  browserSync({ server: path.pug.dest });
+gulp.task(
+  "default",
+  gulp.series("sass", "templates", () => {
+    browserSync({ server: path.pug.dest });
 
-  gulp.watch(path.sass.src, gulp.task("sass"));
-  gulp.watch(path.pug.src, gulp.task("pug-watch"));
-  gulp.watch(path.js.dest, browserSync.reload);
-}));
+    gulp.watch(path.sass.src, gulp.task("sass"));
+    gulp.watch(path.pug.src, gulp.series("templates", reload));
+    gulp.watch(path.js.dest, browserSync.reload);
+  })
+);
