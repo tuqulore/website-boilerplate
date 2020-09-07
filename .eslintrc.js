@@ -1,7 +1,18 @@
 module.exports = {
-  extends: ["airbnb-base", "plugin:prettier/recommended"],
+  extends: [
+    'airbnb-base',
+  ],
   env: {
-    browser: true,
-    jquery: true
-  }
+    commonjs: true,
+    es2020: true,
+    node: true,
+  },
+  parserOptions: {
+    ecmaVersion: 11,
+  },
+  rules: {
+    'import/no-extraneous-dependencies': ['error', {
+      devDependencies: ['**/*.config.js'],
+    }],
+  },
 };

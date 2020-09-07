@@ -1,0 +1,13 @@
+{
+    "extensions.showRecommendationsOnlyOnDemand": false,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.stylelint":  true,
+      "source.fixAll.eslint": true
+    },
+    "css.validate": false,
+    "less.validate": false,
+    "scss.validate": false,
+    "emmet.includeLanguages": {
+      "nunjucks": "html"
+    }
+}
