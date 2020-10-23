@@ -36,11 +36,12 @@
     "url": "git+https://github.com/tuqulore/website-boilerplate.git"
   },
   "scripts": {
-    "build": "export NODE_ENV=production; rm -r dist/*; yarn build:image; yarn build:script; yarn build:style; yarn build:template",
+    "build": "export NODE_ENV=production; rm -r dist/*; yarn build:image; yarn build:script; yarn build:style; yarn build:template; yarn build:video",
     "build:image": "imagemin src/image/** --out-dir=dist/image",
-    "build:script": "cp -r src/script dist",
+    "build:script": "test 0 -ne $(ls -U src/script | wc -l) && { mkdir dist/script; cp -r src/script/* dist/script; } || echo 'script not found'",
     "build:style": "sass --style expanded --no-source-map src/style/:.cache/style; postcss .cache/style/** --dir dist/style",
     "build:template": "nunjucks **/*.njk --path src/template --out dist",
+    "build:video": "test 0 -ne $(ls -U src/video | wc -l) && { mkdir dist/video; cp -r src/video/* dist/video; } || echo 'video not found'",
     "serve": "npm-watch & browser-sync dist --watch"
   },
   "watch": {
@@ -67,6 +68,11 @@
         "src/template"
       ],
       "extensions": "njk"
+    },
+    "build:video": {
+      "patterns": [
+        "src/video"
+      ]
     }
   }
 }
