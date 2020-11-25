@@ -7,8 +7,8 @@
     "url": "https://github.com/tuqulore/website-boilerplate/issues"
   },
   "devDependencies": {
-    "@tailwindcss/typography": "^0.2.0",
-    "autoprefixer": "^10.0.1",
+    "@tailwindcss/typography": "^0.3.1",
+    "autoprefixer": "^10.0.2",
     "browser-sync": "^2.26.12",
     "cssnano": "^4.1.10",
     "eslint": "^7.8.1",
@@ -17,14 +17,17 @@
     "imagemin-cli": "^6.0.0",
     "npm-watch": "^0.7.0",
     "nunjucks-cli": "^1.0.0",
-    "postcss": "^8.1.0",
+    "postcss": "^8.1.10",
     "postcss-cli": "^8.1.0",
     "sass": "^1.26.10",
     "stylelint": "^13.7.0",
     "stylelint-config-standard": "^20.0.0",
     "stylelint-order": "^4.1.0",
     "stylelint-scss": "^3.18.0",
-    "tailwindcss": "^1.8.4"
+    "tailwindcss": "^2.0.1"
+  },
+  "engines": {
+    "node": ">=12.13.0"
   },
   "homepage": "https://github.com/tuqulore/website-boilerplate#readme",
   "keywords": [
