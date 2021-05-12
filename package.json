@@ -17,7 +17,7 @@
     "imagemin-cli": "^6.0.0",
     "npm-watch": "^0.7.0",
     "nunjucks-cli": "^1.0.0",
-    "postcss": "^8.1.10",
+    "postcss": "^8.2.10",
     "postcss-cli": "^8.1.0",
     "sass": "^1.26.10",
     "stylelint": "^13.7.0",
