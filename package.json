@@ -1,37 +1,40 @@
 {
   "name": "website-boilerplate",
   "description": "a boilerplate of website provided with npm scripts",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "author": "tuqulore inc.",
   "bugs": {
     "url": "https://github.com/tuqulore/website-boilerplate/issues"
   },
   "devDependencies": {
-    "@tailwindcss/typography": "^0.3.1",
-    "autoprefixer": "^10.0.2",
-    "browser-sync": "^2.26.12",
-    "cssnano": "^4.1.10",
-    "eslint": "^7.8.1",
-    "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-plugin-import": "^2.22.0",
-    "imagemin-cli": "^6.0.0",
-    "npm-watch": "^0.7.0",
-    "nunjucks-cli": "^1.0.0",
-    "postcss": "^8.1.10",
-    "postcss-cli": "^8.1.0",
-    "sass": "^1.26.10",
-    "stylelint": "^13.7.0",
-    "stylelint-config-standard": "^20.0.0",
-    "stylelint-order": "^4.1.0",
-    "stylelint-scss": "^3.18.0",
-    "tailwindcss": "^2.0.1"
+    "@11ty/eleventy": "^0.12.1",
+    "@11ty/eleventy-img": "^0.9.0",
+    "@mightyplow/eleventy-plugin-cache-buster": "^1.1.3",
+    "@tailwindcss/forms": "^0.3.2",
+    "@tailwindcss/typography": "^0.4.1",
+    "autoprefixer": "^10.2.5",
+    "eslint": "^7.27.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-formatter-rdjson": "^1.0.5",
+    "globby": "^11.0.3",
+    "npm-run-all": "^4.1.5",
+    "postcss": "^8.3.0",
+    "postcss-cli": "^8.3.1",
+    "postcss-csso": "^5.0.1",
+    "postcss-import": "^14.0.2",
+    "postcss-nested": "^5.0.5",
+    "prettier": "^2.3.0",
+    "prettier-plugin-md-nocjsp": "^1.1.0",
+    "rimraf": "^3.0.2",
+    "tailwindcss": "^2.1.2"
   },
   "engines": {
-    "node": ">=12.13.0"
+    "node": ">=14"
   },
   "homepage": "https://github.com/tuqulore/website-boilerplate#readme",
   "keywords": [
-    "website"
+    "website",
+    "eleventy"
   ],
   "license": "MIT",
   "repository": {
@@ -39,43 +42,16 @@
     "url": "git+https://github.com/tuqulore/website-boilerplate.git"
   },
   "scripts": {
-    "build": "export NODE_ENV=production; rm -r dist/*; yarn build:image; yarn build:script; yarn build:style; yarn build:template; yarn build:video",
-    "build:image": "imagemin src/image/** --out-dir=dist/image",
-    "build:script": "test 0 -ne $(ls -U src/script | wc -l) && { mkdir dist/script; cp -r src/script/* dist/script; } || echo 'script not found'",
-    "build:style": "sass --style expanded --no-source-map src/style/:.cache/style; postcss .cache/style/** --dir dist/style",
-    "build:template": "nunjucks **/*.njk --path src/template --out dist",
-    "build:video": "test 0 -ne $(ls -U src/video | wc -l) && { mkdir dist/video; cp -r src/video/* dist/video; } || echo 'video not found'",
-    "serve": "npm-watch & browser-sync dist --watch"
-  },
-  "watch": {
-    "build:image": {
-      "patterns": [
-        "src/image"
-      ],
-      "extensions": "gif,jpg,jpeg,png,svg"
-    },
-    "build:script": {
-      "patterns": [
-        "src/script"
-      ],
-      "extensions": "js"
-    },
-    "build:style": {
-      "patterns": [
-        "src/style"
-      ],
-      "extensions": "scss"
-    },
-    "build:template": {
-      "patterns": [
-        "src/template"
-      ],
-      "extensions": "njk"
-    },
-    "build:video": {
-      "patterns": [
-        "src/video"
-      ]
-    }
+    "build": "NODE_ENV=production run-s clean build:style build:eleventy",
+    "build:eleventy": "eleventy",
+    "build:style": "postcss 'src/style/**/[^_]*' --dir dist/style",
+    "clean": "rimraf dist",
+    "dev": "run-p dev:*",
+    "dev:eleventy": "eleventy --serve",
+    "dev:style": "postcss 'src/style/**/[^_]*' --dir dist/style --watch",
+    "fix": "eslint --fix .",
+    "format": "prettier --write '**/*.{js,json,md,njk,scss,yaml}'",
+    "lint": "eslint .",
+    "lint:rdjson": "eslint --format rdjson ."
   }
 }
