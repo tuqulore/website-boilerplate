@@ -1,10 +1,10 @@
 module.exports = ({ env }) => ({
   map: false,
   plugins: {
+    "postcss-import": {},
     tailwindcss: {},
+    "postcss-nested": {},
     autoprefixer: {},
-    cssnano: env === 'production'
-      ? { preset: 'default' }
-      : false,
+    "postcss-csso": env === "production" ? {} : false,
   },
 });
