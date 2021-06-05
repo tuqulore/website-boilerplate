@@ -3197,10 +3197,10 @@ prelude-ls@^1.2.1:
   resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.2.1.tgz#debc6489d7a6e6b0e7611888cec880337d316396"
   integrity sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==
 
-prettier-plugin-md-nocjsp@1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/prettier-plugin-md-nocjsp/-/prettier-plugin-md-nocjsp-1.1.0.tgz#02b767e88a7fed475d575f7357529990c2dc9e3a"
-  integrity sha512-BkbNELDAol2rViOxYrxvoep6BqtL0t3QWHqwMQHkQlZK/lgxxXtiTbqMGhgIVW3wCq8pToHiUYN18SHp4/Kr/A==
+prettier-plugin-md-nocjsp@1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/prettier-plugin-md-nocjsp/-/prettier-plugin-md-nocjsp-1.1.1.tgz#c0f9b00eee636d34ad736d6bf01600a794146be4"
+  integrity sha512-KeymD5eu5FrlgGxwt+U27RipSG4SItn5ZqfPFutgmiVLO1clKHtPylRWSf6DnkfnjgUEytEtB4FPOdj1YK2bww==
 
 prettier@2.3.1:
   version "2.3.1"
