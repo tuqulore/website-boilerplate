@@ -50,7 +50,7 @@
     "dev:eleventy": "eleventy --serve",
     "dev:style": "postcss 'src/style/**/[^_]*' --dir dist/style --ext css --watch",
     "fix": "eslint --fix .",
-    "format": "prettier --write '**/*.{js,json,md,njk,css,yaml}'",
+    "format": "prettier --verbose --write '**/*.{js,json,md,njk,css,scss,pcss,yaml}'",
     "lint": "eslint .",
     "lint:rdjson": "eslint --format rdjson ."
   }
