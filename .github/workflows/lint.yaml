@@ -12,12 +12,8 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 14
+          cache: yarn
       - uses: reviewdog/action-setup@v1
-      - uses: actions/cache@v2
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: ${{ runner.os }}-yarn-
       - run: yarn install --check-files --frozen-lockfile --non-interactive
       - run: yarn --silent lint:rdjson | reviewdog -f=rdjson -reporter=github-pr-review
         env:
