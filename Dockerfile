@@ -1,4 +1,4 @@
-FROM node:16-slim as build
+FROM node:14-slim as build
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --non-interactive --frozen-lockfile
@@ -6,7 +6,7 @@ COPY postcss.config.js tailwind.config.js .eleventy.js ./
 COPY src/ ./src
 RUN yarn build
 
-FROM node:16-slim as install
+FROM node:14-slim as install
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --non-interactive --frozen-lockfile --production
