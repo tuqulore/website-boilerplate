@@ -33,11 +33,11 @@ jobs:
       - name: Deploy the Cloud Run Service
         run: |
           gcloud run deploy ${SERVICE} --image ${HOSTNAME}/${PROJECT}/${SERVICE} --allow-unauthenticated
-          PREVIEW_URL=$(gcloud run describe ${SERVICE} --format "value(status.url)")
+          PREVIEW_URL=$(gcloud run services describe ${SERVICE} --format "value(status.url)")
           gcloud run services update ${SERVICE} --set-env-vars BASE_URL=${PREVIEW_URL}
       - name: Notify
         run: |
-          PREVIEW_URL=$(gcloud run describe ${SERVICE} --format "value(status.url)")
+          PREVIEW_URL=$(gcloud run services describe ${SERVICE} --format "value(status.url)")
           curl -X POST \
             --url ${{ github.event.pull_request._links.statuses.href }} \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
