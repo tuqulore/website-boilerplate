@@ -19,3 +19,17 @@ $ yarn dev
 ```
 $ yarn build
 ```
+
+## GitHubワークフロー
+
+### Format
+
+PR時にコード整形します
+
+### Lint
+
+PR時にリントしreviewdogがレポートします
+
+### Preview
+
+PR時にCloud Runでプレビュー環境を作成します(お使いのproject_idを設定してください)
