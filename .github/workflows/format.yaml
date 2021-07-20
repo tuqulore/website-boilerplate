@@ -1,6 +1,7 @@
 name: Format
 on:
   pull_request:
+    types: [opened, reopened, synchronize]
 jobs:
   format:
     runs-on: ubuntu-20.04
