@@ -29,7 +29,7 @@
     "prettier": "2.3.2",
     "prettier-plugin-md-nocjsp": "1.1.1",
     "rimraf": "3.0.2",
-    "tailwindcss": "2.2.11"
+    "tailwindcss": "2.2.12"
   },
   "engines": {
     "node": ">=14"
