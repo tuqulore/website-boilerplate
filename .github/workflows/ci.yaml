@@ -1,4 +1,4 @@
-name: Format
+name: CI
 on:
   pull_request:
     types: [opened, reopened, synchronize]
@@ -14,6 +14,7 @@ jobs:
           node-version: 14
           cache: yarn
       - run: yarn install --check-files --frozen-lockfile --non-interactive
+      - run: yarn lint
       - id: format
         run: |
           yarn format
