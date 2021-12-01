@@ -602,7 +602,7 @@ bytes@3.1.0, bytes@^3.0.0:
   resolved "https://registry.yarnpkg.com/bytes/-/bytes-3.1.0.tgz#f6cf7933a360e0588fa9fde85651cdc7f805d1f6"
   integrity sha512-zauLjrfCG+xvoyaqLoV8bLVXXNGC4JqlxFCutSDWA6fJrTo2ZuvLYTqZ7aHBLZSMOopbzwv8f+wZcVzfVTI2Dg==
 
-cachekill@^3.0.2:
+cachekill@3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/cachekill/-/cachekill-3.0.2.tgz#0a6760dd020fbf6dd1451f7f3c9522f8e6b8f65a"
   integrity sha512-qtIyZ//hGd0BAb1C5BdUM5XxLemhgnjdTdzkngg2Bu7sEox7L9Hl01WW2UlGldR4XjmdqHMTn++E+z45p+QLqQ==
