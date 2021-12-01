@@ -1,7 +1,6 @@
 const globby = require("globby");
 const { basename, dirname } = require("path");
 const Image = require("@11ty/eleventy-img");
-const CacheBuster = require("@mightyplow/eleventy-plugin-cache-buster");
 
 const optimizeImages = async () => {
   const images = await globby(
@@ -18,9 +17,6 @@ const optimizeImages = async () => {
 };
 
 module.exports = (eleventyConfig) => {
-  if (process.env.NODE_ENV === "production") {
-    eleventyConfig.addPlugin(CacheBuster({ outputDirectory: "dist" }));
-  }
   eleventyConfig.addFilter("formatDate", (date) =>
     date.toLocaleDateString("ja-JP")
   );
