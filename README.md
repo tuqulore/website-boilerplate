@@ -22,13 +22,9 @@ $ yarn build
 
 ## GitHubワークフロー
 
-### Format
+### CI
 
-PR時にコード整形します
-
-### Lint
-
-PR時にリントしreviewdogがレポートします
+PR時にリントとコード整形します
 
 ### Preview
 
