@@ -3,7 +3,7 @@ const { basename, dirname } = require("path");
 const Image = require("@11ty/eleventy-img");
 const CacheBuster = require("@mightyplow/eleventy-plugin-cache-buster");
 
-(async () => {
+const optimizeImages = async () => {
   const images = await globby(
     ["src/**/*.{jpeg,jpg,png,webp,gif,tiff,avif,svg}"],
     { gitignore: true }
@@ -15,7 +15,7 @@ const CacheBuster = require("@mightyplow/eleventy-plugin-cache-buster");
       outputDir: dirname(image).replace(/^src/, "dist"),
     });
   }
-})();
+};
 
 module.exports = (eleventyConfig) => {
   if (process.env.NODE_ENV === "production") {
@@ -25,6 +25,7 @@ module.exports = (eleventyConfig) => {
     date.toLocaleDateString("ja-JP")
   );
   eleventyConfig.addPassthroughCopy("src/!(_*)/**/*.{ico,js,mp4,webm,pdf}");
+  eleventyConfig.on("beforeBuild", optimizeImages);
   // NOTE: live reload not working when use postcss-cli directly
   eleventyConfig.setBrowserSyncConfig({ files: ["dist/style"] });
   return {
