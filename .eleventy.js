@@ -24,7 +24,7 @@ module.exports = (eleventyConfig) => {
   eleventyConfig.addFilter("formatDate", (date) =>
     date.toLocaleDateString("ja-JP")
   );
-  eleventyConfig.addPassthroughCopy("src/**/*.{js,mp4,webm}");
+  eleventyConfig.addPassthroughCopy("src/!(_*)/**/*.{ico,js,mp4,webm,pdf}");
   // NOTE: live reload not working when use postcss-cli directly
   eleventyConfig.setBrowserSyncConfig({ files: ["dist/style"] });
   return {
