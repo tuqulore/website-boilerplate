@@ -45,7 +45,7 @@
   },
   "scripts": {
     "build": "NODE_ENV=production run-s clean build:style build:eleventy build:cachekill",
-    "build:cachekill": "cachekill -s 'dist/**/!(*.html)' -t 'dist/**/*.{js,css,html}'",
+    "build:cachekill": "cachekill -r -s 'dist/**/!(*.html)' -t 'dist/**/*.{js,css,html}'",
     "build:eleventy": "eleventy",
     "build:style": "postcss 'src/style/**/[^._]*' --dir dist/style --ext css",
     "clean": "rimraf dist",
