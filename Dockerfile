@@ -11,7 +11,7 @@ WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --non-interactive --frozen-lockfile --production
 
-FROM gcr.io/distroless/nodejs:14
+FROM gcr.io/distroless/nodejs:16
 WORKDIR /app
 ENV NODE_ENV=production
 COPY serve.js ./
