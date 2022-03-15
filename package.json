@@ -35,7 +35,10 @@
     "node": ">=14"
   },
   "homepage": "https://github.com/tuqulore/website-boilerplate#readme",
-  "keywords": ["eleventy", "website"],
+  "keywords": [
+    "eleventy",
+    "website"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
