@@ -1,18 +1,3 @@
-## [1.1.1](https://github.com/tuqulore/website-boilerplate/compare/v1.1.0...v1.1.1) (2022-03-15)
-
-
-### Deps
-
-* update dependency @11ty/eleventy ([d050bbd](https://github.com/tuqulore/website-boilerplate/commit/d050bbd5727304f78af086cc7ad35f463c91f478))
-* update dependency tailwindcss to v3 ([92fc8a1](https://github.com/tuqulore/website-boilerplate/commit/92fc8a19421d8edd7d58b37079a8ae0cf4b92c89))
-
-
-### Reverts
-
-* Revert "bot: format" ([5b52678](https://github.com/tuqulore/website-boilerplate/commit/5b52678de42c9dcfa18b9a4d667cc3d99971c7fe))
-
-
-
 # [1.1.0](https://github.com/tuqulore/website-boilerplate/compare/v1.0.0...v1.1.0) (2022-03-15)
 
 
