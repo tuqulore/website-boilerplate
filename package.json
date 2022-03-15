@@ -1,7 +1,7 @@
 {
   "name": "website-boilerplate",
   "description": "a boilerplate of website provided with npm scripts",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "tuqulore inc.",
   "bugs": {
     "url": "https://github.com/tuqulore/website-boilerplate/issues"
