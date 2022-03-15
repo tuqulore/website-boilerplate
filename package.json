@@ -32,7 +32,7 @@
     "tailwindcss": "2.2.19"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=16"
   },
   "homepage": "https://github.com/tuqulore/website-boilerplate#readme",
   "keywords": [
