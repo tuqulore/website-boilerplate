@@ -28,6 +28,7 @@
     "prettier": "2.5.1",
     "prettier-plugin-md-nocjsp": "1.2.0",
     "rimraf": "3.0.2",
+    "shipjs": "0.24.3",
     "tailwindcss": "2.2.19"
   },
   "engines": {
@@ -54,6 +55,7 @@
     "dev:style": "postcss 'src/style/**/[^._]*' --dir dist/style --ext css --watch",
     "fix": "eslint --fix .",
     "format": "prettier --verbose --write '**/*.{js,json,md,njk,css,scss,pcss,yaml}'",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "release": "shipjs prepare"
   }
 }
