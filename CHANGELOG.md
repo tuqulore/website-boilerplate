@@ -1,3 +1,12 @@
+## [1.1.1](https://github.com/tuqulore/website-boilerplate/compare/v1.1.0...v1.1.1) (2022-03-15)
+
+
+### Reverts
+
+* Revert "bot: format" ([5b52678](https://github.com/tuqulore/website-boilerplate/commit/5b52678de42c9dcfa18b9a4d667cc3d99971c7fe))
+
+
+
 # [1.1.0](https://github.com/tuqulore/website-boilerplate/compare/v1.0.0...v1.1.0) (2022-03-15)
 
 
