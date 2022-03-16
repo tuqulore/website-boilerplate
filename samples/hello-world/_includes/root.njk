@@ -1,0 +1,15 @@
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% include 'ogp.njk' %}
+    <link rel="stylesheet" href="/style/style.css" />
+    <title>{{ title }} | {{ site.name }}</title>
+  </head>
+  <body>
+    {% include "header.njk" %}
+    <div class="container my-16">{{ content | safe }}</div>
+
+    <script src="/script/global.js"></script>
+  </body>
+</html>
