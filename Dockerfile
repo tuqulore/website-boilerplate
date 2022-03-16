@@ -3,7 +3,7 @@ WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --non-interactive --frozen-lockfile
 COPY postcss.config.js tailwind.config.js .eleventy.js ./
-COPY src/ ./src
+COPY samples/hello-world/ ./samples/hello-world
 RUN yarn build
 
 FROM node:16-slim as install
