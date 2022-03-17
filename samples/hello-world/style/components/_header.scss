@@ -43,6 +43,7 @@ global-nav
 */
 
 .global-nav {
+  @apply flex-grow hidden md:block;
   & > ul {
     @apply flex gap-x-2 items-center;
     & > li {

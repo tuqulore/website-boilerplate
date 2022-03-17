@@ -7,9 +7,7 @@
     <title>{{ title }} | {{ site.name }}</title>
   </head>
   <body>
-    {% include "header.njk" %}
-    <div class="container my-16">{{ content | safe }}</div>
-
+    {% include "header.njk" %} {{ content | safe }} {% include "footer.njk" %}
     <script src="/script/global.js"></script>
   </body>
 </html>

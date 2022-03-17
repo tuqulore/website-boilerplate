@@ -1,0 +1,13 @@
+.global-footer {
+  @apply bg-gray-100 mt-16 py-16;
+  .footer-nav {
+    ul {
+      @apply flex flex-wrap gap-4 text-sm md:justify-center mb-16;
+      li {
+        a {
+          @apply whitespace-nowrap;
+        }
+      }
+    }
+  }
+}

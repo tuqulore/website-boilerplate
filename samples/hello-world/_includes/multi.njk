@@ -1,0 +1,30 @@
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% include 'ogp.njk' %}
+    <link rel="stylesheet" href="/style/style.css" />
+    <title>{{ title }} | {{ site.name }}</title>
+  </head>
+  <body>
+    {% include "header.njk" %}
+    <div class="container flex gap-x-4">
+      <div class="w-64 mt-4">
+        <nav class="side-menu">
+          <ul>
+            {% for menu in sample_title %}
+            <li>
+              <a href="/">{{menu}}</a>
+            </li>
+            {% endfor %}
+          </ul>
+        </nav>
+      </div>
+      <div class="flex-grow">{{ content | safe }}</div>
+      <div class="w-40 hidden lg:block mt-4">aside</div>
+    </div>
+
+    {% include "footer.njk" %}
+    <script src="/script/global.js"></script>
+  </body>
+</html>
