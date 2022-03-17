@@ -1,5 +1,5 @@
 const typography = require("@tailwindcss/typography");
-const forms = require("@tailwindcss/forms");
+const jumpuUi = require("@jumpu-ui/tailwindcss");
 
 module.exports = {
   content: ["src/**/*.js", "src/**/*.njk", "src/**/*.md"],
@@ -7,5 +7,5 @@ module.exports = {
   theme: {
     extend: {},
   },
-  plugins: [typography, forms],
+  plugins: [typography, ...jumpuUi],
 };
