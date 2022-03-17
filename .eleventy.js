@@ -1,12 +1,11 @@
-const globby = require("globby");
+const fg = require("fast-glob");
 const { basename, dirname } = require("path");
 const Image = require("@11ty/eleventy-img");
 
 const optimizeImages = async () => {
-  const images = await globby(
-    ["src/**/*.{jpeg,jpg,png,webp,gif,tiff,avif,svg}"],
-    { gitignore: true }
-  );
+  const images = await fg(["src/**/*.{jpeg,jpg,png,webp,gif,tiff,avif,svg}"], {
+    ignore: ["dist", "**/node_modules"],
+  });
   for (const image of images) {
     await Image(image, {
       filenameFormat: () => basename(image),
