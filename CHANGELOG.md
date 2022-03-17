@@ -1,3 +1,12 @@
+# [1.2.0](https://github.com/tuqulore/website-boilerplate/compare/v1.1.1...v1.2.0) (2022-03-17)
+
+
+### Features
+
+* add jumpu-ui & drop @tailwindcss/forms ([4d0b0fd](https://github.com/tuqulore/website-boilerplate/commit/4d0b0fdb15ee2db5fa1d147be644c7633e429c3a))
+
+
+
 ## [1.1.1](https://github.com/tuqulore/website-boilerplate/compare/v1.1.0...v1.1.1) (2022-03-15)
 
 
