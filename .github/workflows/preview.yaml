@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
-      - uses: google-github-actions/setup-gcloud@master
+      - uses: google-github-actions/setup-gcloud@v0
         with:
           service_account_key: ${{ secrets.GCP_SA_KEY }}
       - run: |
@@ -53,7 +53,7 @@ jobs:
     if: github.event.action == 'closed'
     runs-on: ubuntu-20.04
     steps:
-      - uses: google-github-actions/setup-gcloud@master
+      - uses: google-github-actions/setup-gcloud@v0
         with:
           service_account_key: ${{ secrets.GCP_SA_KEY }}
       - run: |
