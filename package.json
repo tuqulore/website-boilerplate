@@ -24,7 +24,6 @@
     "postcss-cli": "9.1.0",
     "postcss-csso": "6.0.0",
     "postcss-import": "14.1.0",
-    "postcss-nested": "5.0.6",
     "prettier": "2.6.0",
     "prettier-plugin-md-nocjsp": "1.2.0",
     "rimraf": "3.0.2",
