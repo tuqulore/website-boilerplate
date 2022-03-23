@@ -1,6 +1,7 @@
 const fg = require("fast-glob");
 const { basename, dirname } = require("path");
 const Image = require("@11ty/eleventy-img");
+const markdownIt = require("markdown-it");
 
 const optimizeImages = async () => {
   const images = await fg(["src/**/*.{jpeg,jpg,png,webp,gif,tiff,avif,svg}"], {
@@ -16,6 +17,10 @@ const optimizeImages = async () => {
 };
 
 module.exports = (eleventyConfig) => {
+  eleventyConfig.setLibrary(
+    "md",
+    markdownIt({ html: true, breaks: true, linkify: true })
+  );
   eleventyConfig.addFilter("formatDate", (date) =>
     date.toLocaleDateString("ja-JP")
   );
