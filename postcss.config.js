@@ -5,6 +5,6 @@ module.exports = ({ env }) => ({
     "tailwindcss/nesting": {},
     tailwindcss: {},
     autoprefixer: {},
-    "cssnano": env === "production" ? {} : false,
+    cssnano: env === "production" ? {} : false,
   },
 });
