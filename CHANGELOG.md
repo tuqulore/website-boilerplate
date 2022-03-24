@@ -1,3 +1,17 @@
+# [1.3.0](https://github.com/tuqulore/website-boilerplate/compare/v1.2.0...v1.3.0) (2022-03-24)
+
+
+### Bug Fixes
+
+* `CSS nesting has not been configured correctly` ([3ce9c11](https://github.com/tuqulore/website-boilerplate/commit/3ce9c11d3dd5d1d40dde65e9688b59e85d858fcd))
+
+
+### Features
+
+* use cssnano instead of csso ([97de282](https://github.com/tuqulore/website-boilerplate/commit/97de28221854be40718d2209ccb4d5f725c65ca1))
+
+
+
 # [1.2.0](https://github.com/tuqulore/website-boilerplate/compare/v1.1.1...v1.2.0) (2022-03-17)
 
 
