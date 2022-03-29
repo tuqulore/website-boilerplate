@@ -12,6 +12,9 @@ const optimizeImages = async () => {
     await Image(image, {
       filenameFormat: () => basename(image),
       formats: [null],
+      sharpOptions: {
+        animated: true,
+      },
       outputDir: dirname(image).replace(/^src/, "dist"),
     });
   }
