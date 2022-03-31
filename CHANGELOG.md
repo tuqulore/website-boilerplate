@@ -1,3 +1,18 @@
+# [1.4.0](https://github.com/tuqulore/website-boilerplate/compare/v1.3.0...v1.4.0) (2022-03-31)
+
+
+### Bug Fixes
+
+* warning by postcss when unset from ([c547e7d](https://github.com/tuqulore/website-boilerplate/commit/c547e7d2ae5281503526fde6b916109e8a906929))
+* アニメーションGIFが動かない ([0e05333](https://github.com/tuqulore/website-boilerplate/commit/0e053333228d87d68fe5c05ec2f05e6e80b72cdc))
+
+
+### Features
+
+* drop postcss-cli ([0a89363](https://github.com/tuqulore/website-boilerplate/commit/0a89363a742065ac08f72217f8af94f52830ad4b))
+
+
+
 # [1.3.0](https://github.com/tuqulore/website-boilerplate/compare/v1.2.0...v1.3.0) (2022-03-24)
 
 
