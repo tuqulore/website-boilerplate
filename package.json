@@ -14,7 +14,7 @@
     "@11ty/eleventy-img": "2.0.0",
     "@jumpu-ui/tailwindcss": "1.0.1-alpha.4",
     "@tailwindcss/typography": "0.5.2",
-    "autoprefixer": "10.4.4",
+    "autoprefixer": "10.4.5",
     "cachekill": "3.0.2",
     "cssnano": "5.1.7",
     "eslint": "8.14.0",
