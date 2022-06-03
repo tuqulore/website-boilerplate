@@ -16,7 +16,7 @@
     "@tailwindcss/typography": "0.5.2",
     "autoprefixer": "10.4.7",
     "cachekill": "3.0.2",
-    "cssnano": "5.1.10",
+    "cssnano": "5.1.11",
     "eslint": "8.16.0",
     "eslint-config-prettier": "8.5.0",
     "fast-glob": "3.2.11",
