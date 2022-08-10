@@ -165,10 +165,10 @@
   resolved "https://registry.yarnpkg.com/@iarna/toml/-/toml-2.2.5.tgz#b32366c89b43c6f8cefbdefac778b9c828e3ba8c"
   integrity sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==
 
-"@jumpu-ui/tailwindcss@1.0.1-alpha.4":
-  version "1.0.1-alpha.4"
-  resolved "https://registry.yarnpkg.com/@jumpu-ui/tailwindcss/-/tailwindcss-1.0.1-alpha.4.tgz#b3d0d2321baca120d68f59c496430651bff64d04"
-  integrity sha512-I99rloQ3x+DE6hs+KrqMKaPWOuFooD2rDsJr3VUffN8sNRDI0/n7+NTpB5OYyAdXQJQWk80hKPvjuHaHEAVrLA==
+"@jumpu-ui/tailwindcss@1.0.1-alpha.5":
+  version "1.0.1-alpha.5"
+  resolved "https://registry.yarnpkg.com/@jumpu-ui/tailwindcss/-/tailwindcss-1.0.1-alpha.5.tgz#939f1ef128216bdf9a6e35271cd0b0a47d8257f7"
+  integrity sha512-BZCoCpHgxYzViQ9xLc8W/50+3unNt1x+zSN/aYBMFTjkjM7nzjm5fgwmO5k9YpQOf0JkSV02/J4rRUDtFW0LAA==
   dependencies:
     mini-svg-data-uri "^1.4.4"
 
