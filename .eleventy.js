@@ -1,12 +1,13 @@
 const fg = require("fast-glob");
-const { basename, dirname } = require("path");
+const { basename, dirname } = require("node:path");
 const Image = require("@11ty/eleventy-img");
 const postcss = require("postcss");
 const postcssrc = require("postcss-load-config");
+const markdownIt = require("markdown-it");
 
 const optimizeImages = async () => {
   const images = await fg(["src/**/*.{jpeg,jpg,png,webp,gif,tiff,avif,svg}"], {
-    ignore: ["dist", "**/node_modules"],
+    ignore: ["dist", "**/node_modules", "src/public"],
   });
   for (const image of images) {
     await Image(image, {
@@ -21,9 +22,8 @@ const optimizeImages = async () => {
 };
 
 module.exports = (eleventyConfig) => {
-  eleventyConfig.addFilter("formatDate", (date) =>
-    date.toLocaleDateString("ja-JP")
-  );
+  eleventyConfig.addFilter("date", (date) => date.toLocaleDateString("ja-JP"));
+  eleventyConfig.addFilter("origin", (url) => new URL(url).origin);
   eleventyConfig.addNunjucksAsyncFilter("postcss", (css, callback) =>
     postcssrc().then(({ plugins, options }) => {
       postcss(plugins)
@@ -34,8 +34,13 @@ module.exports = (eleventyConfig) => {
         );
     })
   );
-  eleventyConfig.addWatchTarget("src/style/**/*.{css,scss,pcss}");
-  eleventyConfig.addPassthroughCopy("src/!(_*)/**/*.{ico,js,mp4,webm,pdf}");
+  eleventyConfig.setLibrary(
+    "md",
+    markdownIt({ html: true, breaks: true, linkify: true })
+  );
+  eleventyConfig.addWatchTarget("src/style/**/*.css");
+  eleventyConfig.addPassthroughCopy({ "src/public/**": "/" });
+  eleventyConfig.addPassthroughCopy("src/!(_*)/**/*.{mp4,webm,pdf}");
   eleventyConfig.on("beforeBuild", optimizeImages);
   return {
     dir: {

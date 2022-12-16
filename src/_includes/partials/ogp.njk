@@ -1,0 +1,13 @@
+<meta
+  property="og:description"
+  content="{{ description if description else site.description }}"
+/>
+<meta property="og:site_name" content="{{ site.name }}" />
+<meta property="og:title" content="{{ title }}" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{ (site.url | origin) + page.url }}" />
+<meta
+  property="og:image"
+  content="{{ (site.url | origin) + (ogp | url if ogp else '/ogp.png' | url) }}"
+/>
+<meta property="twitter:card" content="summary" />

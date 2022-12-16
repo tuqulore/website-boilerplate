@@ -1,10 +1,9 @@
 name: CI
 on:
-  pull_request:
-    types: [opened, reopened, synchronize]
+  pull_request_target:
 jobs:
   ci:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
@@ -18,8 +17,8 @@ jobs:
       - id: format
         run: |
           yarn format
-          echo "RESULT=$(git diff --shortstat)" >> $GITHUB_OUTPUT
-      - if: steps.format.outputs.RESULT != ''
+          echo "status=$(git status --porcelain)" >> $GITHUB_OUTPUT
+      - if: steps.format.outputs.status != ''
         run: |
-          git -c "user.name=${{ github.actor }}" -c "user.email=${{ github.actor }}@users.noreply.github.com" commit -a -m "bot: format"
+          git -c "user.name=github-actions[bot]" -c "user.email=github-actions[bot]@users.noreply.github.com" commit -a -m "bot: format"
           git push origin HEAD
