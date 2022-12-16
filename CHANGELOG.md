@@ -1,3 +1,17 @@
+# [1.5.0](https://github.com/tuqulore/website-boilerplate/compare/v1.4.1...v1.5.0) (2022-12-16)
+
+
+### Bug Fixes
+
+* **deps:** update dependency serve-handler to v6.1.5 ([#285](https://github.com/tuqulore/website-boilerplate/issues/285)) ([51734a9](https://github.com/tuqulore/website-boilerplate/commit/51734a9ec2006d488b53af3ec89ec9b6449b113a))
+
+
+### Features
+
+* always use url filter ([#250](https://github.com/tuqulore/website-boilerplate/issues/250)) ([f3892f6](https://github.com/tuqulore/website-boilerplate/commit/f3892f6d1c794ac8a2fdba3e4426513d3ffbfe99))
+
+
+
 ## [1.4.1](https://github.com/tuqulore/website-boilerplate/compare/v1.4.0...v1.4.1) (2022-06-28)
 
 
