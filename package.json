@@ -54,7 +54,7 @@
     "fix": "eslint --fix .",
     "format": "prettier --write '**/*.{js,json,md,njk,css,scss,pcss,yaml}'",
     "lint": "eslint .",
-    "versionup": "lerna version"
+    "versionup": "lerna version --no-git-tag-version"
   },
   "packageManager": "yarn@1.22.19"
 }

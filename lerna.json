@@ -4,9 +4,7 @@
   "command": {
     "version": {
       "conventionalCommits": false,
-      "message": "chore(release): %s",
-      "noChangelog": true,
-      "noGitTagVersion": true
+      "noChangelog": true
     }
   },
   "packages": [

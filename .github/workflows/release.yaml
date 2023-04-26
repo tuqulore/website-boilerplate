@@ -29,8 +29,12 @@ jobs:
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git branch --move release
-          git push origin release
+          git push -f origin release
           yarn versionup ${{ github.event.inputs.semver }} --yes
+          git commit --all --message "chore(release): v${cat lerna.json | jq -r .version}"
+          git push origin release
           gh pr create --fill
         env:
           GH_TOKEN: ${{ github.token }}
+      - if: ${{ failure() }}
+        run: git push origin :release
