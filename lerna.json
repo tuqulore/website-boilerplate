@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/@lerna-lite/cli/schemas/lerna-schema.json",
+  "version": "1.5.0",
+  "command": {
+    "version": {
+      "conventionalCommits": false,
+      "message": "chore(release): %s",
+      "noChangelog": true,
+      "noGitTagVersion": true
+    }
+  },
+  "packages": [
+    "."
+  ]
+}
