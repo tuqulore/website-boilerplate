@@ -54,5 +54,6 @@
     "format": "prettier --write '**/*.{js,json,md,njk,css,scss,pcss,yaml}'",
     "lint": "eslint .",
     "release": "shipjs prepare"
-  }
+  },
+  "packageManager": "yarn@1.22.19"
 }
