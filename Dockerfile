@@ -1,4 +1,4 @@
-FROM node:16-slim as build
+FROM node:18-slim as build
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --non-interactive --frozen-lockfile
@@ -6,12 +6,12 @@ COPY postcss.config.js tailwind.config.js .eleventy.js ./
 COPY src/ ./src
 RUN yarn build
 
-FROM node:16-slim as install
+FROM node:18-slim as install
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --non-interactive --frozen-lockfile --production
 
-FROM gcr.io/distroless/nodejs:16
+FROM gcr.io/distroless/nodejs:18
 WORKDIR /app
 ENV NODE_ENV=production
 COPY serve.js ./

@@ -31,7 +31,7 @@
     "tailwindcss": "3.3.2"
   },
   "engines": {
-    "node": ">=16 || < 17"
+    "node": "18"
   },
   "homepage": "https://github.com/tuqulore/website-boilerplate#readme",
   "keywords": [
