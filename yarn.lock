@@ -229,21 +229,7 @@
   dependencies:
     mini-svg-data-uri "^1.4.4"
 
-"@lerna-lite/cli@2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@lerna-lite/cli/-/cli-2.2.0.tgz#9f9c4c40f88a4edd1a9136fb825501ee5017c708"
-  integrity sha512-UJ8Z+KWy31b5sGbb5dQBPOhOo8dUTuw0gPSyLSvjB5aCh25igD7V6h1PjLNkJOlD6X277CequpBjBWzGvUpl1Q==
-  dependencies:
-    "@lerna-lite/core" "2.2.0"
-    "@lerna-lite/init" "2.2.0"
-    dedent "^0.7.0"
-    dotenv "^16.0.3"
-    import-local "^3.1.0"
-    load-json-file "^7.0.1"
-    npmlog "^7.0.1"
-    yargs "^17.7.2"
-
-"@lerna-lite/cli@^2.1.0":
+"@lerna-lite/cli@2.3.0", "@lerna-lite/cli@^2.1.0":
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/@lerna-lite/cli/-/cli-2.3.0.tgz#d114c4fd31792a9501035f2ccf6021d1991e4f2a"
   integrity sha512-TuZQrfRtEq39SlFz1dDUmiFLa/9gCPTuKvTZxjX2hBff91+mc+K9+3FzSgPqb2kMkJyYr43TlVsu+Jnl/i+M+A==
@@ -256,38 +242,6 @@
     load-json-file "^7.0.1"
     npmlog "^7.0.1"
     yargs "^17.7.2"
-
-"@lerna-lite/core@2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@lerna-lite/core/-/core-2.2.0.tgz#90adde5e93b95a75adf82c46ecb7ab2f9495e36b"
-  integrity sha512-BbBNfVd2eV2YdKpPWVAP/AwiGX6aeo4yJQJ+nIhLeITyn11kFRlwYQZ2LgWIVhiqwk8T7IwzlhRearH20WzLkA==
-  dependencies:
-    "@npmcli/run-script" "^6.0.1"
-    chalk "^5.2.0"
-    clone-deep "^4.0.1"
-    config-chain "^1.1.13"
-    cosmiconfig "^8.1.3"
-    dedent "^0.7.0"
-    execa "^7.1.1"
-    fs-extra "^11.1.1"
-    glob-parent "^6.0.2"
-    globby "^13.1.4"
-    inquirer "^9.2.0"
-    is-ci "^3.0.1"
-    json5 "^2.2.3"
-    load-json-file "^7.0.1"
-    minimatch "^9.0.0"
-    npm-package-arg "^10.1.0"
-    npmlog "^7.0.1"
-    p-map "^6.0.0"
-    p-queue "^7.3.4"
-    resolve-from "^5.0.0"
-    semver "^7.5.0"
-    slash "^5.0.1"
-    strong-log-transformer "^2.1.0"
-    write-file-atomic "^5.0.1"
-    write-json-file "^5.0.0"
-    write-pkg "^5.1.0"
 
 "@lerna-lite/core@2.3.0":
   version "2.3.0"
@@ -321,16 +275,6 @@
     write-json-file "^5.0.0"
     write-pkg "^5.1.0"
 
-"@lerna-lite/init@2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@lerna-lite/init/-/init-2.2.0.tgz#a36c59f6ca305cb27d2e0d0e2c82a32c59fee717"
-  integrity sha512-772quONll3jNfol7f0Uk2c+9lLY5yXb+CPCrMK35IEFFjeOv5iM+gj+MELum9s2syjYinYe9lLwdVzrJrBj0AQ==
-  dependencies:
-    "@lerna-lite/core" "2.2.0"
-    fs-extra "^11.1.1"
-    p-map "^6.0.0"
-    write-json-file "^5.0.0"
-
 "@lerna-lite/init@2.3.0":
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/@lerna-lite/init/-/init-2.3.0.tgz#d467f6358cd31aefb519c1ba789eff5b9e78bc59"
@@ -342,12 +286,12 @@
     write-json-file "^5.0.0"
 
 "@lerna-lite/version@^2.1.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@lerna-lite/version/-/version-2.2.0.tgz#3c55705e14bb63dd5c72d447f2a5245a2b8c4f48"
-  integrity sha512-T/hMpXusy0nHhoh0o0h2sZ0CLtYma/rIu/bdPJIfIv6d7rLlEqlL7PO2tvpA/UrQBI4c/Mnkt3D8HBCkgtl57A==
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@lerna-lite/version/-/version-2.3.0.tgz#a545ffa58ec8668df47e7525d8e3883ca05eb749"
+  integrity sha512-1BANF9NYc52O3ZQlYq5nhGuwnJXf4cVKDpf9YWjbN6sjnlMDjM2LJINM7ZIUbtENMBQxGXdljPPg5Bps49U2OQ==
   dependencies:
-    "@lerna-lite/cli" "2.2.0"
-    "@lerna-lite/core" "2.2.0"
+    "@lerna-lite/cli" "2.3.0"
+    "@lerna-lite/core" "2.3.0"
     "@octokit/plugin-enterprise-rest" "^6.0.1"
     "@octokit/rest" "^19.0.7"
     chalk "^5.2.0"
@@ -3017,7 +2961,7 @@ ini@^1.3.2, ini@^1.3.4, ini@~1.3.0:
   resolved "https://registry.yarnpkg.com/ini/-/ini-1.3.8.tgz#a29da425b48806f34767a4efce397269af28432c"
   integrity sha512-JV/yugV2uzW5iMRSiZAyDtQd+nxtUnjeLt0acNdw98kKLrvuRVyB80tsREOE7yvGVgalhZ6RNXCmEHkUKBKxew==
 
-inquirer@^9.2.0, inquirer@^9.2.1:
+inquirer@^9.2.1:
   version "9.2.1"
   resolved "https://registry.yarnpkg.com/inquirer/-/inquirer-9.2.1.tgz#26019a270e7c451d54883e60959059aedcc60fa1"
   integrity sha512-M7LcHl1GcKt8na7NKNvqkiB3btN73+Z5NjhbckpTi9Yr8Ul7sTHXe7cFEudH0WMPcvHfQ4pHjpVOnhaQ4IC4fw==
