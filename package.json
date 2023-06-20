@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "@11ty/eleventy": "1.0.2",
-    "@11ty/eleventy-img": "2.0.1",
+    "@11ty/eleventy-img": "3.1.0",
     "@jumpu-ui/tailwindcss": "1.0.1-alpha.5",
     "@lerna-lite/cli": "^2.1.0",
     "@lerna-lite/version": "^2.1.0",
