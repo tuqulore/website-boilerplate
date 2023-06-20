@@ -28,7 +28,7 @@
     "postcss-load-config": "4.0.1",
     "prettier": "2.8.8",
     "prettier-plugin-md-nocjsp": "1.5.1",
-    "rimraf": "3.0.2",
+    "rimraf": "5.0.1",
     "tailwindcss": "3.3.2"
   },
   "engines": {
