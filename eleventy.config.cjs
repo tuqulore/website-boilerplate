@@ -32,7 +32,7 @@ module.exports = (eleventyConfig) => {
         );
     })
   );
-  eleventyConfig.addWatchTarget("src/style/**/*.{css,scss,pcss}");
+  eleventyConfig.addWatchTarget("src/style/**/*.css");
   eleventyConfig.addPassthroughCopy({ "src/public/**": "/" });
   eleventyConfig.on("beforeBuild", optimizeImages);
   return {
