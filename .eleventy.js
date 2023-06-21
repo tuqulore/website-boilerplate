@@ -1,5 +1,5 @@
 const fg = require("fast-glob");
-const { basename, dirname } = require("path");
+const { basename, dirname } = require("node:path");
 const Image = require("@11ty/eleventy-img");
 const postcss = require("postcss");
 const postcssrc = require("postcss-load-config");
