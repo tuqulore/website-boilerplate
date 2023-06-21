@@ -6,7 +6,7 @@ const postcssrc = require("postcss-load-config");
 
 const optimizeImages = async () => {
   const images = await fg(["src/**/*.{jpeg,jpg,png,webp,gif,tiff,avif,svg}"], {
-    ignore: ["dist", "**/node_modules"],
+    ignore: ["dist", "**/node_modules", "src/public"],
   });
   for (const image of images) {
     await Image(image, {
