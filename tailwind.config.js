@@ -1,5 +1,5 @@
 const typography = require("@tailwindcss/typography");
-const jumpuUi = require("@jumpu-ui/tailwindcss");
+const jumpu = require("@jumpu-ui/tailwindcss");
 
 /** @type {import('tailwindcss/types').Config} */
 module.exports = {
@@ -7,5 +7,5 @@ module.exports = {
   theme: {
     extend: {},
   },
-  plugins: [typography, ...jumpuUi],
+  plugins: [typography, ...jumpu],
 };

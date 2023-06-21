@@ -39,6 +39,7 @@
     "website"
   ],
   "license": "MIT",
+  "packageManager": "yarn@1.22.19",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tuqulore/website-boilerplate.git"
@@ -47,12 +48,9 @@
     "build": "NODE_ENV=production run-s clean build:eleventy",
     "build:eleventy": "eleventy",
     "clean": "rimraf dist",
-    "dev": "run-p dev:*",
-    "dev:eleventy": "eleventy --serve",
-    "fix": "eslint --fix .",
+    "dev": "evelenty --serve",
     "format": "prettier --write '**/*.{js,json,md,njk,css,scss,pcss,yaml}'",
-    "lint": "eslint .",
+    "lint": "eslint --fix .",
     "versionup": "lerna version --no-git-tag-version"
-  },
-  "packageManager": "yarn@1.22.19"
+  }
 }
