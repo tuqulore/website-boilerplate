@@ -15,11 +15,10 @@ jobs:
           cache: yarn
       - run: yarn install --check-files --frozen-lockfile --non-interactive
       - run: yarn lint
-      - id: format
-        run: |
-          yarn format
-          echo "RESULT=$(git diff --shortstat)" >> $GITHUB_OUTPUT
-      - if: steps.format.outputs.RESULT != ''
+      - run: yarn format
+      - id: diff
+        run: echo "RESULT=$(git diff --shortstat)" >> $GITHUB_OUTPUT
+      - if: steps.diff.outputs.RESULT != ''
         run: |
           git -c "user.name=${{ github.actor }}" -c "user.email=${{ github.actor }}@users.noreply.github.com" commit -a -m "bot: format"
           git push origin HEAD
