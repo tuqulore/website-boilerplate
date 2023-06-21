@@ -6,3 +6,8 @@ parserOptions:
 extends:
   - eslint:recommended
   - prettier
+overrides:
+  - files: "src/public/**/*.js"
+    env:
+      node: false
+      browser: true
