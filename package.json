@@ -11,13 +11,16 @@
   },
   "devDependencies": {
     "@11ty/eleventy": "2.0.1",
+    "@11ty/eleventy-fetch": "^4.0.0",
     "@11ty/eleventy-img": "3.1.0",
     "@jumpu-ui/tailwindcss": "1.0.1-alpha.5",
     "@lerna-lite/cli": "^2.1.0",
     "@lerna-lite/version": "^2.1.0",
+    "@supercharge/promise-pool": "^2.4.0",
     "@tailwindcss/typography": "0.5.9",
     "autoprefixer": "10.4.14",
     "cssnano": "6.0.1",
+    "dotenv-cli": "^7.2.1",
     "eslint": "8.43.0",
     "eslint-config-prettier": "8.8.0",
     "fast-glob": "3.2.12",
@@ -27,6 +30,7 @@
     "postcss-load-config": "4.0.1",
     "prettier": "2.8.8",
     "prettier-plugin-md-nocjsp": "1.5.1",
+    "qs": "^6.11.2",
     "rimraf": "5.0.1",
     "tailwindcss": "3.3.2"
   },
@@ -46,9 +50,9 @@
   },
   "scripts": {
     "build": "NODE_ENV=production run-s clean build:eleventy",
-    "build:eleventy": "eleventy",
+    "build:eleventy": "dotenv -c production -- eleventy",
     "clean": "rimraf dist",
-    "dev": "eleventy --serve",
+    "dev": "dotenv -c development -- eleventy --serve",
     "format": "prettier --write '**/*.{js,json,md,njk,css,scss,pcss,yaml}'",
     "lint": "eslint --fix .",
     "versionup": "lerna version --no-git-tag-version"
