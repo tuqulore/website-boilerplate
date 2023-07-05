@@ -32,6 +32,9 @@ module.exports = (eleventyConfig) => {
         );
     })
   );
+  eleventyConfig.amendLibrary("md", (md) =>
+    md.set({ html: true, breaks: true, linkify: true })
+  );
   eleventyConfig.addWatchTarget("src/style/**/*.{css,scss,pcss}");
   eleventyConfig.addPassthroughCopy({ "src/public/**": "/" });
   eleventyConfig.on("beforeBuild", optimizeImages);
