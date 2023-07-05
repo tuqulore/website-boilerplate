@@ -2,8 +2,9 @@ FROM node:18-slim as build
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --non-interactive --frozen-lockfile
-COPY postcss.config.cjs tailwind.config.cjs eleventy.config.cjs ./
+COPY postcss.config.cjs tailwind.config.cjs eleventy.config.cjs .env* ./
 COPY src/ ./src
+COPY lib/ ./lib
 RUN yarn build
 
 FROM node:18-slim as install
