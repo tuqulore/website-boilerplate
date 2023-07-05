@@ -54,7 +54,7 @@
     "build:eleventy": "dotenv -c production -- eleventy",
     "clean": "rimraf dist",
     "dev": "dotenv -c development -- eleventy --serve",
-    "format": "prettier --write '**/*.{js,json,md,njk,css,scss,pcss,yaml}'",
+    "format": "prettier --write . '**/*.njk'",
     "lint": "eslint --fix .",
     "versionup": "lerna version --no-git-tag-version"
   }
