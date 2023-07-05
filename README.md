@@ -95,9 +95,13 @@ Eleventyテンプレートの参照先です。
 
 [レイアウトチェイニング](https://www.11ty.dev/docs/layout-chaining/)のための[レイアウトテンプレート](https://www.11ty.dev/docs/layouts/)を配置します。
 
+具体的には[フロントマター](https://www.11ty.dev/docs/data-frontmatter/)にてlayoutプロパティで指定するものを指します。
+
 ### src/\_includes/partials
 
 テンプレート内で呼び出すための[レイアウトテンプレート](https://www.11ty.dev/docs/layouts/)を配置します。
+
+具体的にはNunjucksの場合は[includeタグ](https://mozilla.github.io/nunjucks/templating.html#include)で指定するものを指します。
 
 ### src/public
 
