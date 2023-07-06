@@ -28,12 +28,12 @@ module.exports = (eleventyConfig) => {
         .process(css, options)
         .then(
           (result) => callback(null, result.css),
-          (error) => callback(error, null)
+          (error) => callback(error, null),
         );
-    })
+    }),
   );
   eleventyConfig.amendLibrary("md", (md) =>
-    md.set({ html: true, breaks: true, linkify: true })
+    md.set({ html: true, breaks: true, linkify: true }),
   );
   eleventyConfig.addWatchTarget("src/style/**/*.css");
   eleventyConfig.addPassthroughCopy({ "src/public/**": "/" });
