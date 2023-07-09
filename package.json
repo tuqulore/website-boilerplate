@@ -16,7 +16,7 @@
     "@jumpu-ui/tailwindcss": "1.0.1-alpha.5",
     "@lerna-lite/cli": "^2.1.0",
     "@lerna-lite/version": "^2.1.0",
-    "@supercharge/promise-pool": "^2.4.0",
+    "@supercharge/promise-pool": "^3.0.0",
     "@tailwindcss/typography": "0.5.9",
     "autoprefixer": "10.4.14",
     "cssnano": "6.0.1",
