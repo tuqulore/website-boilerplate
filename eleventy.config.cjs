@@ -22,6 +22,7 @@ const optimizeImages = async () => {
 
 module.exports = (eleventyConfig) => {
   eleventyConfig.addFilter("date", (date) => date.toLocaleDateString("ja-JP"));
+  eleventyConfig.addFilter("origin", (url) => new URL(url).origin);
   eleventyConfig.addNunjucksAsyncFilter("postcss", (css, callback) =>
     postcssrc().then(({ plugins, options }) => {
       postcss(plugins)

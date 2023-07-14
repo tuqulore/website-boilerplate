@@ -8,6 +8,10 @@
     <title>{{ title }} | {{ site.name }}</title>
   </head>
   <body>
-    {{ content | safe }}
+    {% include 'partials/header.njk' %}
+    <div class="max-w-6xl mx-auto px-4 min-h-[60vh] mb-4">
+      {{ content | safe }}
+    </div>
+    {% include 'partials/footer.njk' %}
   </body>
 </html>
