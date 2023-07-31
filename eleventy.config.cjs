@@ -37,7 +37,7 @@ module.exports = (eleventyConfig) => {
   );
   eleventyConfig.addWatchTarget("src/style/**/*.css");
   eleventyConfig.addPassthroughCopy({ "src/public/**": "/" });
-  eleventyConfig.on("beforeBuild", optimizeImages);
+  eleventyConfig.on("eleventy.before", optimizeImages);
   return {
     dir: {
       input: "src",
