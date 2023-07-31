@@ -1,0 +1,124 @@
+<is-land on:visible import="https://unpkg.com/alpinejs">
+  <nav class="hidden md:block">
+    <ul class="flex items-center">
+      {% for item in nav %} {% if item.children %}
+      <li class="relative" x-data="{ open: false }">
+        <button
+          id="nav-button-{{ item.name | slugify }}"
+          aria-haspopup="menu"
+          aria-controls="nav-menu-{{ item.name | slugify }}"
+          class="jumpu-text-button"
+          type="button"
+          @click="open = !open"
+        >
+          {{ item.name }}
+        </button>
+        <ul
+          id="nav-menu-{{ item.name | slugify }}"
+          role="menu"
+          aria-labelledby="nav-button-{{ item.name | slugify }}"
+          class="jumpu-card p-2 max-h-[50vh] overflow-y-auto absolute top-full left-1/2 -translate-x-1/2 translate-y-2"
+          x-cloak
+          x-show="open"
+          x-transition:enter="transition ease-out duration-75"
+          x-transition:enter-start="opacity-0 -translate-y-[2.5%] scale-95"
+          x-transition:leave="transition ease-in duration-75"
+          x-transition:leave-end="opacity-0 -translate-y-[2.5%] scale-95"
+          @click.away="open = false"
+        >
+          {% for child in item.children %}
+          <li role="menuitem">
+            <a
+              class="jumpu-text-button w-full whitespace-nowrap"
+              href="{{ child.path | url }}"
+              >{{ child.name }}</a
+            >
+          </li>
+          {% endfor %}
+        </ul>
+      </li>
+      {% else %}
+      <li>
+        <a class="jumpu-text-button" href="{{ item.path | url }}"
+          >{{ item.name }}</a
+        >
+      </li>
+      {% endif %} {% endfor %}
+    </ul>
+  </nav>
+  <div
+    class="flex items-center ml-auto md:hidden"
+    x-data="{ open: false }"
+    x-init="$watch('open', open => open ? $el.ownerDocument.body.classList.add('overflow-hidden', '[&>:not(#nav-menu-mobile)]:invisible') : $el.ownerDocument.body.classList.remove('overflow-hidden', '[&>:not(#nav-menu-mobile)]:invisible'))"
+  >
+    <button
+      id="nav-button-mobile"
+      aria-controls="nav-menu-mobile"
+      aria-describedby="nav-tooltip-mobile"
+      class="jumpu-icon-button text-2xl w-12 h-12 group"
+      type="button"
+      @click="open = true; modal = true"
+    >
+      <span class="icon-[material-symbols--menu]"></span>
+      <span
+        id="nav-tooltip-mobile"
+        role="tooltip"
+        class="![transform:translate(-50%,_225%)_scale(0)] group-hover:![transform:translate(-50%,_225%)_scale(1)]"
+        >Menu</span
+      >
+    </button>
+    <template x-teleport="body">
+      <nav
+        id="nav-menu-mobile"
+        class="fixed top-0 left-0 w-screen h-screen bg-white overflow-y-auto"
+        x-cloak
+        x-show="open"
+        x-transition:enter="transition ease-out duration-150"
+        x-transition:enter-start="translate-x-full"
+        x-transition:leave="transition ease-in duration-100"
+        x-transition:leave-end="translate-x-full"
+      >
+        <button
+          class="fixed top-2 right-4 jumpu-icon-button text-2xl w-12 h-12 group"
+          aria-describedby="nav-tooltip-close"
+          type="button"
+          @click="open = false; modal = false"
+        >
+          <span class="icon-[material-symbols--close]"></span>
+          <span
+            id="nav-tooltip-close"
+            role="tooltip"
+            class="![transform:translate(-50%,_225%)_scale(0)] group-hover:![transform:translate(-50%,_225%)_scale(1)]"
+            >Close</span
+          >
+        </button>
+        <ul class="flex flex-col py-16 px-4">
+          {% for item in nav %}
+          <li>
+            {% if item.children %}
+            <section class="mb-6">
+              <h2 class="text-lg mb-2 ml-4">{{ item.name }}</h2>
+              <ul>
+                {% for child in item.children %}
+                <li>
+                  <a
+                    class="jumpu-text-button block"
+                    href="{{ child.path | url }}"
+                    >{{ child.name }}</a
+                  >
+                </li>
+                {% endfor %}
+              </ul>
+            </section>
+            {% endif %} {% if item.path %}
+            <a class="jumpu-text-button block" href="{{ item.path | url }}"
+              >{{ item.name }}</a
+            >
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </nav>
+    </template>
+  </div>
+</is-land>
