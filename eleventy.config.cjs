@@ -38,6 +38,10 @@ module.exports = (eleventyConfig) => {
   );
   eleventyConfig.addWatchTarget("src/style/**/*.css");
   eleventyConfig.addPassthroughCopy({ "src/public/**": "/" });
+  eleventyConfig.addPassthroughCopy({
+    [require.resolve("@11ty/is-land/is-land.js")]: "/",
+    [require.resolve("@11ty/is-land/is-land-autoinit.js")]: "/",
+  });
   eleventyConfig.on("eleventy.before", optimizeImages);
   return {
     dir: {
