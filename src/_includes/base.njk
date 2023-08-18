@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% include 'partials/ogp.njk' %}
+    <link rel="stylesheet" href="{{ '/style.css' | url }}" />
+    <title>{{ title }} | {{ site.name }}</title>
+    <script type="module" defer src="{{ '/is-land.js' | url }}"></script>
+    <script
+      type="module"
+      defer
+      src="{{ '/is-land-autoinit.js' | url }}"
+    ></script>
+  </head>
+  <body>
+    {% include 'partials/header.njk' %}
+    <div class="max-w-6xl mx-auto px-4 min-h-[60vh] mb-4">
+      {{ content | safe }}
+    </div>
+    {% include 'partials/footer.njk' %}
+  </body>
+</html>

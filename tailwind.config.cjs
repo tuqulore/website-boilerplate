@@ -1,11 +1,12 @@
 const typography = require("@tailwindcss/typography");
+const { addDynamicIconSelectors } = require("@iconify/tailwind");
 const jumpu = require("@jumpu-ui/tailwindcss");
 
 /** @type {import('tailwindcss/types').Config} */
 module.exports = {
-  content: ["src/**/*.js", "src/**/*.njk", "src/**/*.md"],
+  content: ["src/**/*.{js,njk,md}"],
   theme: {
     extend: {},
   },
-  plugins: [typography, ...jumpu],
+  plugins: [typography, addDynamicIconSelectors(), ...jumpu],
 };
