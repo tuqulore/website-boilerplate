@@ -20,7 +20,7 @@
     "@lerna-lite/cli": "^2.1.0",
     "@lerna-lite/version": "^2.1.0",
     "@supercharge/promise-pool": "^3.0.0",
-    "@tailwindcss/typography": "0.5.9",
+    "@tailwindcss/typography": "0.5.10",
     "autoprefixer": "10.4.15",
     "cssnano": "6.0.1",
     "dotenv-cli": "^7.2.1",
