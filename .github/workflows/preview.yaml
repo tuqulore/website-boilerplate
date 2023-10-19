@@ -17,7 +17,7 @@ jobs:
     if: github.event.action == 'synchronize' || github.event.action == 'opened' || github.event.action == 'reopened'
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: google-github-actions/setup-gcloud@v1
         with:
           service_account_key: ${{ secrets.GCP_SA_KEY }}
