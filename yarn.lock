@@ -220,9 +220,9 @@
   integrity sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==
 
 "@iconify/json@^2.2.90":
-  version "2.2.158"
-  resolved "https://registry.yarnpkg.com/@iconify/json/-/json-2.2.158.tgz#2be9088196174fabba90d320afd026c4dff7ebe6"
-  integrity sha512-6foGYcG97nmYpJ7N0MAbtfH7SKf7RvoOCYYSBi8gs+8qopXzplIP2F4lQiLrjpbPQihAoTercmGYWi4ABxLX1A==
+  version "2.2.159"
+  resolved "https://registry.yarnpkg.com/@iconify/json/-/json-2.2.159.tgz#ffb999eb42985e5efee0a40e6026ed43fb1f0af2"
+  integrity sha512-Hoc9gxrq3kqdWkdV7ZCpIgOrCgWtOvjyEASmYGpB7PpnCyd3SRCVU0VSX3mEs66qqPRNJz5qwCFK2tmC9zaSLQ==
   dependencies:
     "@iconify/types" "*"
     pathe "^1.1.0"
