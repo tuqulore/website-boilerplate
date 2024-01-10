@@ -1,4 +1,4 @@
-FROM node:18-slim as build
+FROM node:20-slim as build
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --non-interactive --frozen-lockfile
@@ -7,7 +7,7 @@ COPY src/ ./src
 COPY lib/ ./lib
 RUN yarn build
 
-FROM node:18-slim as install
+FROM node:20-slim as install
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --non-interactive --frozen-lockfile --production
