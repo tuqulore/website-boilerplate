@@ -62,7 +62,7 @@ yarn dev # 開発サーバーの起動
 
 一貫性のある見た目を実装するためのユーティリティフレンドリーなUIコンポーネントライブラリです。
 
-## [Alpine.js](https://alpinejs.dev/)
+### [Alpine.js](https://alpinejs.dev/)
 
 動的な振る舞いの実装するためのライブラリです。
 
