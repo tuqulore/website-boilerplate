@@ -62,6 +62,14 @@ yarn dev # 開発サーバーの起動
 
 一貫性のある見た目を実装するためのユーティリティフレンドリーなUIコンポーネントライブラリです。
 
+## [Alpine.js](https://alpinejs.dev/)
+
+動的な振る舞いの実装するためのライブラリです。
+
+### [Iconify SVG Framework](https://docs.iconify.design/icon-components/svg-framework/)
+
+SVGアイコンを参照するためのライブラリです。
+
 ## ディレクトリ構成
 
 ```
