@@ -28,7 +28,7 @@
     "eslint-config-prettier": "9.1.0",
     "fast-glob": "3.3.2",
     "npm-run-all2": "6.1.2",
-    "postcss": "8.4.34",
+    "postcss": "8.4.35",
     "postcss-import": "16.0.0",
     "postcss-import-ext-glob": "^2.1.1",
     "postcss-load-config": "5.0.2",
