@@ -22,7 +22,7 @@
     "@supercharge/promise-pool": "^3.0.0",
     "@tailwindcss/typography": "0.5.10",
     "autoprefixer": "10.4.19",
-    "cssnano": "6.1.1",
+    "cssnano": "6.1.2",
     "dotenv-cli": "^7.2.1",
     "eslint": "8.57.0",
     "eslint-config-prettier": "9.1.0",
