@@ -4,7 +4,7 @@ const jumpu = require("@jumpu-ui/tailwindcss");
 
 /** @type {import('tailwindcss/types').Config} */
 module.exports = {
-  content: ["src/**/*.{js,njk,md}"],
+  content: ["src/**/*.{js,jsx,md}"],
   theme: {
     extend: {},
   },

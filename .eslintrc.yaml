@@ -5,9 +5,21 @@ parserOptions:
   ecmaVersion: 2021
 extends:
   - eslint:recommended
+  - plugin:react/recommended
   - prettier
+rules:
+  react/jsx-uses-react: "off"
+  react/prop-types: "off"
+  react/react-in-jsx-scope: "off"
+  react/no-unknown-property: "off"
 overrides:
   - files: "src/public/**/*.js"
     env:
       node: false
       browser: true
+  - files: "src/**/*.jsx"
+    parserOptions:
+      sourceType: module
+settings:
+  react:
+    version: "16.0"

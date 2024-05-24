@@ -54,6 +54,10 @@ yarn dev # 開発サーバーの起動
 
 静的サイト生成するためのライブラリです。
 
+### [Preact](https://preactjs.com/)
+
+JSXテンプレートからHTMLを生成するためのライブラリです。
+
 ### [TailwindCSS](https://tailwindcss.com/)
 
 見た目を実装するためのユーティリティファーストなCSSフレームワークです。
@@ -79,9 +83,8 @@ SVGアイコンを参照するためのライブラリです。
 └── src
     ├── _data
     ├── _includes
-    │   └── partials
-    ├── public
-    └── style
+    │   └── components
+    └── public
 ```
 
 ### dist
@@ -106,19 +109,13 @@ Eleventyテンプレートの参照先です。
 
 具体的には[フロントマター](https://www.11ty.dev/docs/data-frontmatter/)にてlayoutプロパティで指定するものを指します。
 
-### src/\_includes/partials
+### src/\_includes/components
 
-テンプレート内で呼び出すための[レイアウトテンプレート](https://www.11ty.dev/docs/layouts/)を配置します。
-
-具体的にはNunjucksの場合は[includeタグ](https://mozilla.github.io/nunjucks/templating.html#include)で指定するものを指します。
+テンプレート内で呼び出すためのJSXコンポーネントを配置します。
 
 ### src/public
 
 静的アセットを配置します。distディレクトリ直下に出力されます。
-
-### src/style
-
-スタイルシートを配置します。
 
 ## Docker
 

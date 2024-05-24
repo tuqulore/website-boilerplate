@@ -2,8 +2,6 @@
 
 @import "tailwindcss/components";
 
-@import-glob "components/**/*.css";
-
 @import "tailwindcss/utilities";
 
 /* see https://alpinejs.dev/directives/cloak */

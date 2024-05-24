@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: Post
 title: Hello World
 ---
 

@@ -2,8 +2,7 @@ module.exports = ({ env }) => ({
   map: false,
   from: undefined,
   plugins: {
-    "postcss-import-ext-glob": {},
-    "postcss-import": { root: "src/style" },
+    "postcss-import": { root: "src" },
     "tailwindcss/nesting": {},
     tailwindcss: {},
     autoprefixer: {},
