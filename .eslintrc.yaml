@@ -6,6 +6,7 @@ parserOptions:
 extends:
   - eslint:recommended
   - plugin:react/recommended
+  - plugin:mdx/recommended
   - prettier
 rules:
   react/jsx-uses-react: "off"
@@ -17,9 +18,9 @@ overrides:
     env:
       node: false
       browser: true
-  - files: "src/**/*.jsx"
-    parserOptions:
-      sourceType: module
+  - files: "src/**/*.mdx"
+    globals:
+      props: readonly
 settings:
   react:
     version: "16.0"

@@ -1,0 +1,26 @@
+import Ogp from "./components/ogp.mdx";
+import Header from "./components/header.mdx";
+import Footer from "./components/footer.mdx";
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <Ogp {...props} />
+    <link rel="stylesheet" href="/main.css" />
+    <title>
+      {props.title && `${props.title} | `}
+      {props.site.name}
+    </title>
+    <script type="module" defer src="/is-land.js"></script>
+    <script type="module" defer src="/is-land-autoinit.js"></script>
+  </head>
+  <body>
+    <Header {...props} />
+    <div
+      class="max-w-6xl mx-auto px-4 min-h-[60vh] mb-4"
+      dangerouslySetInnerHTML={{ __html: props.content }}
+    ></div>
+    <Footer {...props} />
+  </body>
+</html>

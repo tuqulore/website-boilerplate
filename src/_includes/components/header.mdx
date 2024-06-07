@@ -1,30 +1,10 @@
 import slugify from "slugify";
 
-/**
- * @typedef {object} Item
- * @prop {string} name
- * @prop {string} path
- */
-
-/**
- * @typedef {object} GroupItem
- * @prop {string} name
- * @prop {Item[]} children
- */
-
-/**
- * @typedef {object} Props
- * @prop {Array<Item|GroupItem>} nav
- */
-
-/**
- * @param {Props} data
- */
-function Desktop(data) {
+export function Desktop(props) {
   return (
     <nav class="hidden md:block">
       <ul class="flex items-center">
-        {data.nav.map((item) =>
+        {props.nav.map((item) =>
           "children" in item ? (
             <li key={item.name} class="relative" x-data="{ open: false }">
               <button
@@ -75,10 +55,7 @@ function Desktop(data) {
   );
 }
 
-/**
- * @param {Props} data
- */
-function Mobile(data) {
+export function Mobile(props) {
   return (
     <div
       class="flex items-center ml-auto md:hidden"
@@ -129,7 +106,7 @@ function Mobile(data) {
             </span>
           </button>
           <ul class="flex flex-col py-16 px-4">
-            {data.nav.map((item) => (
+            {props.nav.map((item) => (
               <li key={item.name}>
                 {item.children && (
                   <section class="mb-6">
@@ -159,21 +136,14 @@ function Mobile(data) {
   );
 }
 
-/**
- * @param {Props} data
- */
-export default function Header(data) {
-  return (
-    <header class="sticky top-0 bg-white mb-8 shadow">
-      <div class="max-w-6xl mx-auto px-4 flex items-center justify-between md:justify-start gap-4 h-16">
-        <a class="flex-shrink-0" href="/">
-          {data.site.name}
-        </a>
-        <is-land on:visible import="https://unpkg.com/alpinejs">
-          <Desktop {...data} />
-          <Mobile {...data} />
-        </is-land>
-      </div>
-    </header>
-  );
-}
+<header class="sticky top-0 bg-white mb-8 shadow">
+  <div class="max-w-6xl mx-auto px-4 flex items-center justify-between md:justify-start gap-4 h-16">
+    <a class="flex-shrink-0" href="/">
+      {props.site.name}
+    </a>
+    <is-land on:visible import="https://unpkg.com/alpinejs">
+      <Desktop {...props} />
+      <Mobile {...props} />
+    </is-land>
+  </div>
+</header>

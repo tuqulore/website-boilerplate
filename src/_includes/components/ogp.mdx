@@ -1,0 +1,16 @@
+<meta
+  property="og:description"
+  content={props.description ?? props.site.description}
+/>
+<meta property="og:site_name" content={props.site.name} />
+<meta property="og:title" content={props.title} />
+<meta property="og:type" content="website" />
+<meta
+  property="og:url"
+  content={new URL(props.site.url).origin.concat(props.page.url)}
+/>
+<meta
+  property="og:image"
+  content={new URL(props.site.url).origin.concat(props.ogp ?? "ogp.png")}
+/>
+<meta property="twitter:card" content="summary" />

@@ -2,7 +2,7 @@ const fg = require("fast-glob");
 const { basename, dirname } = require("node:path");
 const Image = require("@11ty/eleventy-img");
 const css = require("./lib/css.cjs");
-const jsx = require("./lib/jsx.cjs");
+const mdx = require("./lib/mdx.cjs");
 
 const optimizeImages = async () => {
   const images = await fg(["src/**/*.{jpeg,jpg,png,webp,gif,tiff,avif,svg}"], {
@@ -23,8 +23,8 @@ const optimizeImages = async () => {
 module.exports = (eleventyConfig) => {
   eleventyConfig.addTemplateFormats("css");
   eleventyConfig.addExtension("css", css);
-  eleventyConfig.addTemplateFormats("jsx");
-  eleventyConfig.addExtension("jsx", jsx);
+  eleventyConfig.addTemplateFormats("mdx");
+  eleventyConfig.addExtension("mdx", mdx);
   eleventyConfig.addTransform("doctype", function (content) {
     if (this.page.outputFileExtension === "html")
       return `<!doctype html>\n${content}`;

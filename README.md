@@ -56,7 +56,7 @@ yarn dev # 開発サーバーの起動
 
 ### [Preact](https://preactjs.com/)
 
-JSXテンプレートからHTMLを生成するためのライブラリです。
+MDXテンプレートからHTMLを生成するためのライブラリです。
 
 ### [TailwindCSS](https://tailwindcss.com/)
 
@@ -81,10 +81,10 @@ SVGアイコンを参照するためのライブラリです。
 ├── dist
 ├── lib
 └── src
-    ├── _data
-    ├── _includes
-    │   └── components
-    └── public
+    ├── _data
+    ├── _includes
+    │   └── components
+    └── public
 ```
 
 ### dist
@@ -111,7 +111,7 @@ Eleventyテンプレートの参照先です。
 
 ### src/\_includes/components
 
-テンプレート内で呼び出すためのJSXコンポーネントを配置します。
+テンプレート内で呼び出すためのMDXコンポーネントを配置します。
 
 ### src/public
 
