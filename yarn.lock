@@ -259,7 +259,7 @@
     wrap-ansi "^6.2.0"
     yoctocolors-cjs "^2.1.2"
 
-"@inquirer/expand@^2.1.22", "@inquirer/expand@^2.3.0":
+"@inquirer/expand@^2.3.0":
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/@inquirer/expand/-/expand-2.3.0.tgz#afc44aee303315a85563e9d0275e658f0ee0e701"
   integrity sha512-qnJsUcOGCSG1e5DTOErmv2BPQqrtT6uzqn1vI/aYGiPKq+FgslGZmtdnXbhuI7IlT7OByDoEEqdnhUnVR2hhLw==
@@ -273,7 +273,7 @@
   resolved "https://registry.yarnpkg.com/@inquirer/figures/-/figures-1.0.5.tgz#57f9a996d64d3e3345d2a3ca04d36912e94f8790"
   integrity sha512-79hP/VWdZ2UVc9bFGJnoQ/lQMpL74mGgzSYX1xUqCVk7/v73vJCMw1VuyWN1jGkZ9B3z7THAbySqGbCNefcjfA==
 
-"@inquirer/input@^2.2.9", "@inquirer/input@^2.3.0":
+"@inquirer/input@^2.3.0":
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/@inquirer/input/-/input-2.3.0.tgz#9b99022f53780fecc842908f3f319b52a5a16865"
   integrity sha512-XfnpCStx2xgh1LIRqPXrTNEEByqQWoxsWYzNRSEUxJ5c6EQlhMogJ3vHKu8aXuTacebtaZzMAHwEL0kAflKOBw==
@@ -281,7 +281,7 @@
     "@inquirer/core" "^9.1.0"
     "@inquirer/type" "^1.5.3"
 
-"@inquirer/select@^2.4.7", "@inquirer/select@^2.5.0":
+"@inquirer/select@^2.5.0":
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/@inquirer/select/-/select-2.5.0.tgz#345c6908ecfaeef3d84ddd2f9feb2f487c558efb"
   integrity sha512-YmDobTItPP3WcEI86GvPo+T2sRHkxxOq/kXmsBjHS5BVXUgvgZ5AfJjkvQvZr03T81NnI3KrrRuMzeuYUQRFOA==
@@ -355,21 +355,7 @@
   dependencies:
     mini-svg-data-uri "^1.4.4"
 
-"@lerna-lite/cli@3.9.0":
-  version "3.9.0"
-  resolved "https://registry.yarnpkg.com/@lerna-lite/cli/-/cli-3.9.0.tgz#a13807652b9e95c3d9176f1a453b13641eb3031c"
-  integrity sha512-sw7vVf9YDDjlLJVjcHyWkUSXF7cnwYNSFHaVjagmXyEoeeK5RtDBTEgCDkO17GP5mff1lRHoahrt/SCDV7KBxg==
-  dependencies:
-    "@lerna-lite/core" "3.9.0"
-    "@lerna-lite/init" "3.9.0"
-    "@lerna-lite/npmlog" "3.8.0"
-    dedent "^1.5.3"
-    dotenv "^16.4.5"
-    import-local "^3.2.0"
-    load-json-file "^7.0.1"
-    yargs "^17.7.2"
-
-"@lerna-lite/cli@^3.0.0":
+"@lerna-lite/cli@3.9.1", "@lerna-lite/cli@^3.0.0":
   version "3.9.1"
   resolved "https://registry.yarnpkg.com/@lerna-lite/cli/-/cli-3.9.1.tgz#b3ebdaac1128e90c379a7b9600f2452b8cf31df6"
   integrity sha512-WAqBZZbXJsRZRRLUwIUCI21croYF9AiOQI86nXV75u0booqZJhUQyp7bnj54Eb23+Y0PEjN1qxMiIhiAPRPYOQ==
@@ -382,40 +368,6 @@
     import-local "^3.2.0"
     load-json-file "^7.0.1"
     yargs "^17.7.2"
-
-"@lerna-lite/core@3.9.0":
-  version "3.9.0"
-  resolved "https://registry.yarnpkg.com/@lerna-lite/core/-/core-3.9.0.tgz#f014cefc2ae7d3bb4e37d97efd0aa89fc78c4dc9"
-  integrity sha512-gpQ8TYB5HE1R31zmaNsSuutm8QBPIw7Fyxd0/xbY3VZ76tEt0PtpU0BIcoPlFx1ZvRAWWUCr/Obq8rvpyF622Q==
-  dependencies:
-    "@inquirer/expand" "^2.1.22"
-    "@inquirer/input" "^2.2.9"
-    "@inquirer/select" "^2.4.7"
-    "@lerna-lite/npmlog" "^3.8.0"
-    "@npmcli/run-script" "^8.1.0"
-    chalk "^5.3.0"
-    clone-deep "^4.0.1"
-    config-chain "^1.1.13"
-    cosmiconfig "^9.0.0"
-    dedent "^1.5.3"
-    execa "^8.0.1"
-    fs-extra "^11.2.0"
-    glob-parent "^6.0.2"
-    globby "^14.0.2"
-    is-ci "^3.0.1"
-    json5 "^2.2.3"
-    load-json-file "^7.0.1"
-    minimatch "^9.0.5"
-    npm-package-arg "^11.0.3"
-    p-map "^7.0.2"
-    p-queue "^8.0.1"
-    resolve-from "^5.0.0"
-    semver "^7.6.3"
-    slash "^5.1.0"
-    strong-log-transformer "^2.1.0"
-    write-file-atomic "^5.0.1"
-    write-json-file "^6.0.0"
-    write-package "^7.1.0"
 
 "@lerna-lite/core@3.9.1":
   version "3.9.1"
@@ -451,16 +403,6 @@
     write-json-file "^6.0.0"
     write-package "^7.1.0"
 
-"@lerna-lite/init@3.9.0":
-  version "3.9.0"
-  resolved "https://registry.yarnpkg.com/@lerna-lite/init/-/init-3.9.0.tgz#df8b30bc47ee663953c94ca0d60948f93741925a"
-  integrity sha512-OwKpywZAllU/gLdH+abESjp5+mvuoCyNaokhyaF/aeu6qVkEK0NONgU+5fnJwQrbMWYNLiujKtP0HQzmIW8YyA==
-  dependencies:
-    "@lerna-lite/core" "3.9.0"
-    fs-extra "^11.2.0"
-    p-map "^7.0.2"
-    write-json-file "^6.0.0"
-
 "@lerna-lite/init@3.9.1":
   version "3.9.1"
   resolved "https://registry.yarnpkg.com/@lerna-lite/init/-/init-3.9.1.tgz#d32fcd6684d4d45e830b9a87ebf51051000555b1"
@@ -487,12 +429,12 @@
     wide-align "^1.1.5"
 
 "@lerna-lite/version@^3.0.0":
-  version "3.9.0"
-  resolved "https://registry.yarnpkg.com/@lerna-lite/version/-/version-3.9.0.tgz#c929c93f5fe3db0956a2f6d36137206f9d1e5d1f"
-  integrity sha512-tVtZL4c7+9lTOxIVWlztJGjGxQvJxG7gojApHcoCJ2MAq0mtIPAOIts2JJWjPxKXOzqKq1S5N3Ke+e74/zx/4g==
+  version "3.9.1"
+  resolved "https://registry.yarnpkg.com/@lerna-lite/version/-/version-3.9.1.tgz#ec6044e74855ea0df889207d7651bad7ef6cd9c5"
+  integrity sha512-gljKw4HvmL+YSOYqMEXV2BhcrVrh+k5fO3ecVo8NxC0t43DTCLgKWvY6BAp9XJuxD/achTaw2nr1QbIsfpsylQ==
   dependencies:
-    "@lerna-lite/cli" "3.9.0"
-    "@lerna-lite/core" "3.9.0"
+    "@lerna-lite/cli" "3.9.1"
+    "@lerna-lite/core" "3.9.1"
     "@lerna-lite/npmlog" "^3.8.0"
     "@octokit/plugin-enterprise-rest" "^6.0.1"
     "@octokit/rest" "^21.0.2"
