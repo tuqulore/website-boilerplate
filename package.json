@@ -7,7 +7,7 @@
     "url": "https://github.com/tuqulore/website-boilerplate/issues"
   },
   "dependencies": {
-    "serve-handler": "6.1.5"
+    "serve-handler": "6.1.6"
   },
   "devDependencies": {
     "@11ty/eleventy": "2.0.1",
