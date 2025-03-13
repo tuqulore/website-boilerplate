@@ -17,7 +17,7 @@
     "@eslint/js": "^9.22.0",
     "@iconify/json": "^2.2.90",
     "@iconify/tailwind4": "^1.0.6",
-    "@jumpu-ui/tailwindcss": "2.0.0-alpha.0",
+    "@jumpu-ui/tailwindcss": "2.0.0-alpha.1",
     "@lerna-lite/cli": "^3.0.0",
     "@lerna-lite/version": "^3.0.0",
     "@supercharge/promise-pool": "^3.0.0",
@@ -47,7 +47,7 @@
     "website"
   ],
   "license": "MIT",
-  "packageManager": "pnpm@10.6.2",
+  "packageManager": "pnpm@10.6.3",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tuqulore/website-boilerplate.git"
