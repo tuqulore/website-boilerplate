@@ -1,9 +1,14 @@
 import fg from "fast-glob";
 import path from "node:path";
 import url from "node:url";
+import module from "node:module";
 import Image from "@11ty/eleventy-img";
 import postcss from "postcss";
 import postcssrc from "postcss-load-config";
+import preact from "./lib/preact.mjs";
+
+module.register("./lib/mdx-loader.mjs", url.pathToFileURL("./"));
+module.register("./lib/jsx-loader.mjs", url.pathToFileURL("./"));
 
 const optimizeImages = async () => {
   const images = await fg(["src/**/*.{jpeg,jpg,png,webp,gif,tiff,avif,svg}"], {
@@ -22,6 +27,8 @@ const optimizeImages = async () => {
 };
 
 export default (eleventyConfig) => {
+  eleventyConfig.addTemplateFormats(["jsx", "mdx"]);
+  eleventyConfig.addExtension(["mdx"], preact);
   eleventyConfig.addFilter("date", (date) => date.toLocaleDateString("ja-JP"));
   eleventyConfig.addFilter("origin", (url) => new URL(url).origin);
   eleventyConfig.addBundle("css", {
