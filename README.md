@@ -7,9 +7,13 @@
 
 ## クイックスタート
 
+> [!INFO]
+>
+> 事前に [pnpm をインストール]してください。
+
 ```shell
-yarn install # npmパッケージのインストール
-yarn dev # 開発サーバーの起動
+pnpm install # npmパッケージのインストール
+pnpm dev # 開発サーバーの起動
 ```
 
 ## npmスクリプト
