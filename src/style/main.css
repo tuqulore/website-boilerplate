@@ -1,10 +1,8 @@
-@import "tailwindcss/base";
-
-@import "tailwindcss/components";
-
-@import-glob "components/**/*.css";
-
-@import "tailwindcss/utilities";
+@import "tailwindcss";
+@import "@jumpu-ui/tailwindcss/src/style.css";
+@import-glob "components/**/*.css" layer(components);
+@plugin "@tailwindcss/typography";
+@plugin "@iconify/tailwind4";
 
 /* see https://alpinejs.dev/directives/cloak */
 [x-cloak] {

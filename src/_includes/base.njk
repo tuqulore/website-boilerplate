@@ -4,7 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     {% include 'partials/ogp.njk' %}
-    <link rel="stylesheet" href="{{ '/style.css' | url }}" />
+    <link rel="stylesheet" href="{% getBundleFileUrl 'css' %}" />
+    {% css %} @import "/style/main.css" {% endcss %}
     <title>{{ title }} | {{ site.name }}</title>
     <script type="module" defer src="{{ '/is-land.js' | url }}"></script>
     <script
