@@ -1,8 +1,9 @@
-const fg = require("fast-glob");
-const { basename, dirname } = require("node:path");
-const Image = require("@11ty/eleventy-img");
-const postcss = require("postcss");
-const postcssrc = require("postcss-load-config");
+import fg from "fast-glob";
+import path from "node:path";
+import url from "node:url";
+import Image from "@11ty/eleventy-img";
+import postcss from "postcss";
+import postcssrc from "postcss-load-config";
 
 const optimizeImages = async () => {
   const images = await fg(["src/**/*.{jpeg,jpg,png,webp,gif,tiff,avif,svg}"], {
@@ -10,37 +11,42 @@ const optimizeImages = async () => {
   });
   for (const image of images) {
     await Image(image, {
-      filenameFormat: () => basename(image),
+      filenameFormat: () => path.basename(image),
       formats: [null],
       sharpOptions: {
         animated: true,
       },
-      outputDir: dirname(image).replace(/^src/, "dist"),
+      outputDir: path.dirname(image).replace(/^src/, "dist"),
     });
   }
 };
 
-module.exports = (eleventyConfig) => {
+export default (eleventyConfig) => {
   eleventyConfig.addFilter("date", (date) => date.toLocaleDateString("ja-JP"));
   eleventyConfig.addFilter("origin", (url) => new URL(url).origin);
-  eleventyConfig.addNunjucksAsyncFilter("postcss", (css, callback) =>
-    postcssrc().then(({ plugins, options }) => {
-      postcss(plugins)
-        .process(css, options)
-        .then(
-          (result) => callback(null, result.css),
-          (error) => callback(error, null),
-        );
-    }),
-  );
+  eleventyConfig.addBundle("css", {
+    transforms: [
+      async function (css) {
+        const { page } = this;
+        const { plugins, options } = await postcssrc();
+        const result = await postcss(plugins).process(css, {
+          ...options,
+          from: page.inputPath,
+        });
+        return result.css;
+      },
+    ],
+  });
   eleventyConfig.amendLibrary("md", (md) =>
     md.set({ html: true, breaks: true, linkify: true }),
   );
   eleventyConfig.addWatchTarget("src/style/**/*.css");
   eleventyConfig.addPassthroughCopy({ "src/public/**": "/" });
   eleventyConfig.addPassthroughCopy({
-    [require.resolve("@11ty/is-land/is-land.js")]: "/",
-    [require.resolve("@11ty/is-land/is-land-autoinit.js")]: "/",
+    [url.fileURLToPath(import.meta.resolve("@11ty/is-land/is-land.js"))]: "/",
+    [url.fileURLToPath(
+      import.meta.resolve("@11ty/is-land/is-land-autoinit.js"),
+    )]: "/",
   });
   eleventyConfig.on("eleventy.before", optimizeImages);
   return {
