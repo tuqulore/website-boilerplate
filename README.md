@@ -7,9 +7,9 @@
 
 ## クイックスタート
 
-> [!INFO]
+> [!NOTE]
 >
-> 事前に [pnpm をインストール]してください。
+> 事前に [pnpm をインストール](https://pnpm.io/ja/installation)してください。
 
 ```shell
 pnpm install # npmパッケージのインストール
