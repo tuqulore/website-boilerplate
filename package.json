@@ -14,6 +14,7 @@
     "@11ty/eleventy-fetch": "^5.0.0",
     "@11ty/eleventy-img": "6.0.1",
     "@11ty/is-land": "^4.0.0",
+    "@eslint/js": "^9.22.0",
     "@iconify/json": "^2.2.90",
     "@iconify/tailwind": "^1.0.0",
     "@jumpu-ui/tailwindcss": "1.0.1",
@@ -27,6 +28,7 @@
     "eslint": "9.22.0",
     "eslint-config-prettier": "10.1.1",
     "fast-glob": "3.3.3",
+    "globals": "^16.0.0",
     "npm-run-all2": "7.0.2",
     "postcss": "8.5.3",
     "postcss-import": "16.1.0",
@@ -59,5 +61,6 @@
     "format": "prettier --write . '**/*.njk'",
     "lint": "eslint --fix .",
     "versionup": "lerna version --no-git-tag-version"
-  }
+  },
+  "type": "module"
 }
