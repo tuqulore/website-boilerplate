@@ -9,13 +9,16 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           ref: ${{ github.head_ref }}
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 10.6.2
       - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4
         with:
-          node-version: "22"
-          cache: yarn
-      - run: yarn install --check-files --frozen-lockfile --non-interactive
-      - run: yarn lint
-      - run: yarn format
+          node-version-file: "package.json"
+          cache: "pnpm"
+      - run: pnpm install
+      - run: pnpm lint
+      - run: pnpm format
       - id: diff
         run: echo "RESULT=$(git diff --shortstat)" >> $GITHUB_OUTPUT
       - if: steps.diff.outputs.RESULT != ''

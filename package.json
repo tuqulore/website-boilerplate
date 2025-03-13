@@ -47,7 +47,7 @@
     "website"
   ],
   "license": "MIT",
-  "packageManager": "yarn@1.22.22",
+  "packageManager": "pnpm@10.6.2",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tuqulore/website-boilerplate.git"
