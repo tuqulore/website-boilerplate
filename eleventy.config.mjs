@@ -48,7 +48,7 @@ export default (eleventyConfig) => {
       import.meta.resolve("@11ty/is-land/is-land-autoinit.js"),
     )]: "/",
   });
-  eleventyConfig.on("eleventyConfig.before", optimizeImages);
+  eleventyConfig.on("eleventy.before", optimizeImages);
   return {
     dir: {
       input: "src",
