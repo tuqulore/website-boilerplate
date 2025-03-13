@@ -34,8 +34,8 @@ importers:
         specifier: ^1.0.6
         version: 1.0.6(tailwindcss@4.0.14)
       '@jumpu-ui/tailwindcss':
-        specifier: 2.0.0-alpha.0
-        version: 2.0.0-alpha.0(tailwindcss@4.0.14)
+        specifier: 2.0.0-alpha.1
+        version: 2.0.0-alpha.1(tailwindcss@4.0.14)
       '@lerna-lite/cli':
         specifier: ^3.0.0
         version: 3.12.3(@lerna-lite/version@3.12.3)
@@ -401,8 +401,8 @@ packages:
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
     engines: {node: '>=12'}
 
-  '@jumpu-ui/tailwindcss@2.0.0-alpha.0':
-    resolution: {integrity: sha512-uktBHM3e4dxtnQfizt/kdHbxTrsqUAUVzHbHVrYcVI1KaOwJRh7kPifBuL0tpqaCCIGtBEyS6v2rKy3tYndHFQ==}
+  '@jumpu-ui/tailwindcss@2.0.0-alpha.1':
+    resolution: {integrity: sha512-OCmuFY7gUz5eKITvSYv2aUn0bOW4pisKOQtPE990Ln1JR4iE3DsT7R18MFoDht8XPNxr8KfLTeNTP4AnpVTzzQ==}
     peerDependencies:
       tailwindcss: ^4
 
@@ -3225,7 +3225,7 @@ snapshots:
       wrap-ansi: 8.1.0
       wrap-ansi-cjs: wrap-ansi@7.0.0
 
-  '@jumpu-ui/tailwindcss@2.0.0-alpha.0(tailwindcss@4.0.14)':
+  '@jumpu-ui/tailwindcss@2.0.0-alpha.1(tailwindcss@4.0.14)':
     dependencies:
       tailwindcss: 4.0.14
 
