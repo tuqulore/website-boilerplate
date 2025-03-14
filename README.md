@@ -84,8 +84,7 @@ SVGアイコンを参照するためのライブラリです。
     ├── _data
     ├── _includes
     │   └── partials
-    ├── public
-    └── style
+    └── public
 ```
 
 ### dist
@@ -119,10 +118,6 @@ Eleventyテンプレートの参照先です。
 ### src/public
 
 静的アセットを配置します。distディレクトリ直下に出力されます。
-
-### src/style
-
-スタイルシートを配置します。
 
 ## Docker
 
