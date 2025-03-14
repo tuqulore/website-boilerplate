@@ -16,7 +16,7 @@ export default defineConfig([
     languageOptions: { sourceType: "commonjs" },
   },
   {
-    files: ["**/*.{mjs,js,jsx,mdx}"],
+    files: ["**/*.{mjs,js,jsx}"],
     languageOptions: { sourceType: "module" },
   },
   {

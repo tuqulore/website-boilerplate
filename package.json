@@ -41,6 +41,7 @@
     "prettier": "3.5.3",
     "qs": "^6.11.2",
     "shx": "^0.3.4",
+    "slugify": "^1.6.6",
     "tailwindcss": "4.0.14"
   },
   "engines": {
@@ -62,7 +63,7 @@
     "build:eleventy": "dotenv -c production -- eleventy",
     "clean": "shx rm -rf dist",
     "dev": "dotenv -c development -- eleventy --serve",
-    "format": "prettier --write . '**/*.njk'",
+    "format": "prettier --write .",
     "lint": "eslint --fix .",
     "versionup": "lerna version --no-git-tag-version"
   },
