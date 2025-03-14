@@ -1,6 +1,5 @@
 @import "tailwindcss";
-@import "@jumpu-ui/tailwindcss/src/style.css";
-@import-glob "components/**/*.css" layer(components);
+@import "@jumpu-ui/tailwindcss";
 @plugin "@tailwindcss/typography";
 @plugin "@iconify/tailwind4";
 
