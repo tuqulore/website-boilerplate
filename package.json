@@ -19,7 +19,7 @@
     "@eslint/js": "^9.22.0",
     "@iconify/json": "^2.2.90",
     "@iconify/tailwind4": "^1.0.6",
-    "@jumpu-ui/tailwindcss": "2.0.0-alpha.0",
+    "@jumpu-ui/tailwindcss": "2.0.0-alpha.1",
     "@lerna-lite/cli": "^3.0.0",
     "@lerna-lite/version": "^3.0.0",
     "@mdx-js/node-loader": "^3.1.0",
@@ -35,7 +35,6 @@
     "globals": "^16.0.0",
     "npm-run-all2": "7.0.2",
     "postcss": "8.5.3",
-    "postcss-import": "16.1.0",
     "postcss-load-config": "6.0.1",
     "preact": "^10.26.4",
     "preact-render-to-string": "^6.5.13",
@@ -53,7 +52,7 @@
     "website"
   ],
   "license": "MIT",
-  "packageManager": "pnpm@10.6.2",
+  "packageManager": "pnpm@10.6.3",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tuqulore/website-boilerplate.git"

@@ -34,7 +34,7 @@ pnpm dev # 開発サーバーの起動
 | SERVER_URL | APIサーバーのURL。任意                  |
 | SITE_URL   | 本リポジトリで構築するサイトのURL。必須 |
 
-### カスケーディング (`yarn dev`)
+### カスケーディング (`pnpm dev`)
 
 1. .env
 2. .env.development
@@ -43,7 +43,7 @@ pnpm dev # 開発サーバーの起動
 
 の順番で参照します。後に参照される値が優先されます。リポジトリに含めない環境変数は.env.localあるいは.env.development.localに記述してください。
 
-### カスケーディング (`yarn build`)
+### カスケーディング (`pnpm build`)
 
 1. .env
 2. .env.production
@@ -84,8 +84,7 @@ SVGアイコンを参照するためのライブラリです。
     ├── _data
     ├── _includes
     │   └── partials
-    ├── public
-    └── style
+    └── public
 ```
 
 ### dist
@@ -119,10 +118,6 @@ Eleventyテンプレートの参照先です。
 ### src/public
 
 静的アセットを配置します。distディレクトリ直下に出力されます。
-
-### src/style
-
-スタイルシートを配置します。
 
 ## Docker
 
