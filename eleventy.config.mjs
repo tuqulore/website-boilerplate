@@ -1,9 +1,8 @@
+import Image from "@11ty/eleventy-img";
 import fg from "fast-glob";
 import path from "node:path";
 import url from "node:url";
-import Image from "@11ty/eleventy-img";
-import postcss from "postcss";
-import postcssrc from "postcss-load-config";
+import css from "./lib/css.mjs";
 
 const optimizeImages = async () => {
   const images = await fg(["src/**/*.{jpeg,jpg,png,webp,gif,tiff,avif,svg}"], {
@@ -22,21 +21,10 @@ const optimizeImages = async () => {
 };
 
 export default (eleventyConfig) => {
+  eleventyConfig.addTemplateFormats("css");
+  eleventyConfig.addExtension("css", css);
   eleventyConfig.addFilter("date", (date) => date.toLocaleDateString("ja-JP"));
   eleventyConfig.addFilter("origin", (url) => new URL(url).origin);
-  eleventyConfig.addBundle("css", {
-    transforms: [
-      async function (css) {
-        const { page } = this;
-        const { plugins, options } = await postcssrc();
-        const result = await postcss(plugins).process(css, {
-          ...options,
-          from: page.inputPath,
-        });
-        return result.css;
-      },
-    ],
-  });
   eleventyConfig.amendLibrary("md", (md) =>
     md.set({ html: true, breaks: true, linkify: true }),
   );
