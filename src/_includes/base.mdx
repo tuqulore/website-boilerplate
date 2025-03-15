@@ -12,7 +12,10 @@ import Footer from "./partials/footer.mdx";
       {props.title && `${props.title} | `}
       {props.site.name}
     </title>
-    <script type="importmap" dangerouslySetInnerHTML={{ __html: `
+    <script
+      type="importmap"
+      dangerouslySetInnerHTML={{
+        __html: `
       {
         "imports": {
           "preact": "https://esm.sh/preact",
@@ -20,7 +23,9 @@ import Footer from "./partials/footer.mdx";
           "preact/jsx-runtime": "https://esm.sh/preact/jsx-runtime?external=preact"
         }
       }
-    `}} />
+    `,
+      }}
+    />
     <script type="module" defer src="/is-land.js"></script>
     <script type="module" defer src="/is-land-autoinit.js"></script>
   </head>
