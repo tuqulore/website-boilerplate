@@ -27,6 +27,7 @@
     "@tailwindcss/postcss": "^4.0.14",
     "@tailwindcss/typography": "0.5.16",
     "dotenv-cli": "^8.0.0",
+    "esbuild": "^0.25.1",
     "eslint": "9.22.0",
     "eslint-config-prettier": "10.1.1",
     "eslint-plugin-mdx": "^3.2.0",
