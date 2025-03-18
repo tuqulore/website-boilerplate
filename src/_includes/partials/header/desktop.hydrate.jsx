@@ -1,7 +1,7 @@
 import slugify from "slugify";
 import { useState } from "preact/hooks";
 
-function Desktop(props) {
+export default function Desktop(props) {
   const [open, setOpen] = useState(false);
   return (
     <nav className="hidden md:block">
@@ -50,8 +50,4 @@ function Desktop(props) {
       </ul>
     </nav>
   );
-}
-
-export default function Template(props) {
-  return <Desktop {...props} />;
 }

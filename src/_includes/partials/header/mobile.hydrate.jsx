@@ -1,6 +1,6 @@
 import { useState } from "preact/hooks";
 
-function Mobile(props) {
+export default function Mobile(props) {
   const [open, setOpen] = useState(false);
   return (
     <div
@@ -76,8 +76,4 @@ function Mobile(props) {
       )}
     </div>
   );
-}
-
-export default function Template(props) {
-  return <Mobile {...props} />;
 }

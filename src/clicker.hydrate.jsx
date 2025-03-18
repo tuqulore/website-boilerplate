@@ -1,6 +1,6 @@
 import { useState } from "preact/hooks";
 
-function Clicker() {
+export default function Clicker() {
   const [counter, setCounter] = useState(0);
 
   return (
@@ -11,8 +11,4 @@ function Clicker() {
       <p>{counter}</p>
     </div>
   );
-}
-
-export default function Teamplate() {
-  return <Clicker />;
 }
