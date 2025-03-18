@@ -93,7 +93,7 @@ SVGアイコンを参照するためのライブラリです。
 
 ### lib
 
-Node.jsで実行するCommonJSモジュールを配置します。主にEleventyで実行するコードに使用します。
+Node.jsで実行するCommonJS/ESMスクリプトを配置します。主にEleventyで実行するコードに使用します。
 
 ### src
 
