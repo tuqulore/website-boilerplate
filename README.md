@@ -135,7 +135,7 @@ import Component from "./component.hydrate.jsx"; // ./component.hydrate.jsxはJS
 
 > [!NOTE]
 >
-> [\<is-land>](https://github.com/11ty/is-land?tab=readme-ov-file#usage)の初期化条件を指定する属性は、デフォルトでは`on:*`の書式で指定する必要がありますが、JSXでの書式と競合するので`land-on:*`に変更しています。
+> [\<is-land>](https://github.com/11ty/is-land?tab=readme-ov-file#usage)の初期化条件を指定する属性は、デフォルトでは`on:*`の書式で指定する必要がありますが、JSXの書式と競合するので`land-on:*`に変更しています。
 
 \<is-land>Webコンポーネントは`land-on:*`属性のほか、次の属性を受け付けます。
 
