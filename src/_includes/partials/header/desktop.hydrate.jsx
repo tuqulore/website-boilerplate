@@ -1,4 +1,4 @@
-import { useState } from "preact/hooks";
+import { useState, useRef, useEffect } from "preact/hooks";
 import slugify from "slugify";
 import { twMerge } from "tailwind-merge";
 
@@ -7,8 +7,17 @@ function MenuList(props) {
   const [visible, setVisible] = useState(open);
   const handleTransitionStart = () => open && setVisible(true);
   const handleTransitionEnd = () => !open && setVisible(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    const handler = (e) => {
+      if (!ref.current || ref.current.contains(e.target)) return;
+      setOpen(false);
+    };
+    document.addEventListener("click", handler);
+    return () => document.removeEventListener("click", handler);
+  }, [ref.current, setOpen]);
   return (
-    <>
+    <div role="presentation" ref={ref}>
       <button
         id={`nav-button-${slugify(props.item.name)}`}
         aria-haspopup="menu"
@@ -34,7 +43,7 @@ function MenuList(props) {
       >
         {props.children}
       </ul>
-    </>
+    </div>
   );
 }
 
