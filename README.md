@@ -87,7 +87,7 @@ SVGアイコンを参照するためのライブラリです。
 └── src
     ├── _data
     ├── _includes
-    │   └── components
+    │   └── partials
     └── public
 ```
 
@@ -113,7 +113,7 @@ Eleventyテンプレートの参照先です。
 
 具体的には[フロントマター](https://www.11ty.dev/docs/data-frontmatter/)にてlayoutプロパティで指定するものを指します。
 
-### src/\_includes/components
+### src/\_includes/partials
 
 テンプレート内で呼び出すためのJSXコンポーネント/MDXテンプレートを配置します。
 
