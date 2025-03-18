@@ -68,7 +68,7 @@ JSXテンプレートから動的な振る舞いとHTMLを生成するための�
 
 ### [Jumpu UI](https://github.com/tuqulore/jumpu-ui)
 
-一貫性のある見た目を実装するためのユーティリティフレンドリーなUIコンポーネントライブラリです。
+一貫性のある見た目を実装するためのユーティリティフレンドリーなデザインシステムです。
 
 ### [Iconify SVG Framework](https://docs.iconify.design/icon-components/svg-framework/)
 
