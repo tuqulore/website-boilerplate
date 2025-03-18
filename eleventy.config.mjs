@@ -47,6 +47,7 @@ const transformJsx = async ({ runMode }) => {
   }
 };
 
+/** @param {import("@11ty/eleventy").UserConfig} eleventyConfig */
 export default (eleventyConfig) => {
   eleventyConfig.addTemplateFormats(["jsx", "mdx"]);
   eleventyConfig.ignores.add("src/**/*.hydrate.jsx");
