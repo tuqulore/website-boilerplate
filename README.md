@@ -60,19 +60,15 @@ pnpm dev # 開発サーバーの起動
 
 ### [Preact](https://preactjs.com/)
 
-JSXテンプレートからHTMLを生成するためのライブラリです。
+JSXテンプレートから動的な振る舞いとHTMLを生成するためのライブラリです。
 
-### [TailwindCSS](https://tailwindcss.com/)
+### [Tailwind CSS](https://tailwindcss.com/)
 
 見た目を実装するためのユーティリティファーストなCSSフレームワークです。
 
 ### [Jumpu UI](https://github.com/tuqulore/jumpu-ui)
 
 一貫性のある見た目を実装するためのユーティリティフレンドリーなUIコンポーネントライブラリです。
-
-### [Alpine.js](https://alpinejs.dev/)
-
-動的な振る舞いの実装するためのライブラリです。
 
 ### [Iconify SVG Framework](https://docs.iconify.design/icon-components/svg-framework/)
 
