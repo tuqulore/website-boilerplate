@@ -149,7 +149,7 @@ import Component from "./component.hydrate.jsx"; // ./component.hydrate.jsxはJS
 
 ### `props`属性
 
-`dist/**/*.hydrate.js`に渡すプロパティ。オブジェクトを文字列化した値（通常文字列化にJSON.stringifyを使用することができます）を指定します。
+`dist/**/*.hydrate.js`に渡すプロパティ。オブジェクトを文字列化した値を指定します。通常、オブジェクトの文字列化にJSON.stringifyを使用することができます。
 
 ## Docker
 
