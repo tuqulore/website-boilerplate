@@ -13,7 +13,7 @@ function MenuList(props) {
         id={`nav-button-${slugify(props.item.name)}`}
         aria-haspopup="menu"
         aria-controls={`nav-menu-${slugify(props.item.name)}`}
-        className="jumpu-text-button"
+        class="jumpu-text-button"
         type="button"
         onClick={() => setOpen(!open)}
       >
@@ -23,10 +23,10 @@ function MenuList(props) {
         id={`nav-menu-${slugify(props.item.name)}`}
         role="menu"
         aria-labelledby={`nav-button-${slugify(props.item.name)}`}
-        className={twMerge(
-          "jumpu-card p-2 max-h-[50vh] overflow-y-auto absolute top-full left-1/2 -translate-x-1/2",
-          "transition ease-in-out duration-75 translate-y-2",
-          !open && "opacity-0 translate-y-[2.5%] scale-95",
+        class={twMerge(
+          "jumpu-card absolute top-full left-1/2 max-h-[50vh] -translate-x-1/2 overflow-y-auto p-2",
+          "translate-y-2 transition duration-75 ease-in-out",
+          !open && "translate-y-[2.5%] scale-95 opacity-0",
           open || visible ? "visible" : "invisible",
         )}
         onTransitionStart={handleTransitionStart}
@@ -40,16 +40,16 @@ function MenuList(props) {
 
 export default function Desktop(props) {
   return (
-    <nav className="hidden md:block">
-      <ul className="flex items-center">
+    <nav class="hidden md:block">
+      <ul class="flex items-center">
         {props.nav.map((item, itemIndex) =>
           "children" in item ? (
-            <li key={`${item.name}-${itemIndex}`} className="relative">
+            <li key={`${item.name}-${itemIndex}`} class="relative">
               <MenuList item={item}>
                 {item.children.map((child, childIndex) => (
                   <li key={`${child.name}-${childIndex}`} role="menuitem">
                     <a
-                      className="jumpu-text-button w-full whitespace-nowrap"
+                      class="jumpu-text-button w-full whitespace-nowrap"
                       href={child.path}
                     >
                       {child.name}
@@ -60,7 +60,7 @@ export default function Desktop(props) {
             </li>
           ) : (
             <li key={`${item.name}-${itemIndex}`}>
-              <a className="jumpu-text-button" href={item.path}>
+              <a class="jumpu-text-button" href={item.path}>
                 {item.name}
               </a>
             </li>
