@@ -1,9 +1,9 @@
 import js from "@eslint/js";
 import prettier from "eslint-config-prettier/flat";
-import { defineConfig, globalIgnores } from "eslint/config";
-import globals from "globals";
 import * as mdx from "eslint-plugin-mdx";
 import react from "eslint-plugin-react";
+import { defineConfig, globalIgnores } from "eslint/config";
+import globals from "globals";
 
 export default defineConfig([
   {
