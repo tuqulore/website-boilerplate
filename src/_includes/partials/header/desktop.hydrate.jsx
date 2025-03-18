@@ -1,5 +1,5 @@
-import slugify from "slugify";
 import { useState } from "preact/hooks";
+import slugify from "slugify";
 import { twMerge } from "tailwind-merge";
 
 function MenuList(props) {

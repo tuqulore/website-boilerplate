@@ -1,11 +1,11 @@
 import Image from "@11ty/eleventy-img";
+import * as esbuild from "esbuild";
 import fg from "fast-glob";
 import module from "node:module";
 import path from "node:path";
 import url from "node:url";
 import css from "./lib/css.mjs";
 import preact from "./lib/preact.mjs";
-import * as esbuild from "esbuild";
 
 module.register("./lib/mdx-loader.mjs", url.pathToFileURL("./"));
 module.register("./lib/jsx-loader.mjs", url.pathToFileURL("./"));
