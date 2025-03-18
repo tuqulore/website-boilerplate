@@ -18,6 +18,7 @@ import Footer from "./partials/footer.mdx";
         __html: `
       {
         "imports": {
+          "is-land": "/is-land.js",
           "preact": "https://esm.sh/preact",
           "preact/hooks": "https://esm.sh/preact/hooks?external=preact",
           "preact/jsx-runtime": "https://esm.sh/preact/jsx-runtime?external=preact"
@@ -26,8 +27,21 @@ import Footer from "./partials/footer.mdx";
     `,
       }}
     />
-    <script type="module" defer src="/is-land.js"></script>
-    <script type="module" defer src="/is-land-autoinit.js"></script>
+    <script
+      type="module"
+      dangerouslySetInnerHTML={{
+        __html: `
+      import { Island } from "is-land";
+      import { h, hydrate } from "preact";
+      Island.attributePrefix = "land-on:";
+      Island.addInitType("preact", async (target) => {
+        const component = await import(target.getAttribute("import"));
+        const props = JSON.parse(target.getAttribute("props"));
+        hydrate(h(component.default, props), target);
+      });
+    `,
+      }}
+    />
   </head>
   <body>
     <Header {...props} />

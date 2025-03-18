@@ -28,9 +28,9 @@ export default defineConfig([
     ],
     languageOptions: { globals: globals.node },
   },
+  react.configs.flat.recommended,
   {
-    ...react.configs.flat.recommended,
-    files: ["**/*.jsx"],
+    files: ["**/*.{jsx,mdx}"],
     plugins: { react },
     languageOptions: {
       parserOptions: {
@@ -43,15 +43,12 @@ export default defineConfig([
     },
     rules: {
       "react/jsx-uses-react": "off",
+      "react/react-in-jsx-scope": "off",
+      "react/prop-types": "off",
+      "react/no-unknown-property": "off",
     },
   },
-  /*
-  {
-    ...mdx.flat,
-    processor: mdx.createRemarkProcessor({ lintCodeBlocks: true }),
-  },
-  */
-  mdx.configs.flatCodeBlocks,
+  mdx.flat,
   globalIgnores(["dist/"]),
   prettier,
 ]);

@@ -1,14 +1,18 @@
 import { useState } from "preact/hooks";
 
-export default function Clicker() {
+function Clicker() {
   const [counter, setCounter] = useState(0);
 
   return (
     <div>
       <button class="jumpu-button" onClick={() => setCounter(counter + 1)}>
-        count
+        Count
       </button>
       <p>{counter}</p>
     </div>
   );
+}
+
+export default function Teamplate() {
+  return <Clicker />;
 }

@@ -4,8 +4,8 @@ import module from "node:module";
 import path from "node:path";
 import url from "node:url";
 import css from "./lib/css.mjs";
-import * as preact from "./lib/preact.mjs";
-import { build, context } from "esbuild";
+import preact from "./lib/preact.mjs";
+import * as esbuild from "esbuild";
 
 module.register("./lib/mdx-loader.mjs", url.pathToFileURL("./"));
 module.register("./lib/jsx-loader.mjs", url.pathToFileURL("./"));
@@ -29,24 +29,28 @@ const optimizeImages = async () => {
 const transformJsx = async ({ runMode }) => {
   /** @type {import("esbuild").BuildOptions} */
   const options = {
+    bundle: true,
     entryPoints: ["./src/**/*.hydrate.jsx"],
-    outdir: "dist",
-    outbase: "src",
+    external: ["preact"],
+    format: "esm",
     jsx: "automatic",
     jsxImportSource: "preact",
+    outbase: "src",
+    outdir: "dist",
   };
-  const ctx = await context(options);
+  const ctx = await esbuild.context(options);
   if (runMode === "build") {
-    await build(options);
+    await esbuild.build(options);
+    await esbuild.stop();
   } else {
     ctx.watch();
   }
 };
 
 export default (eleventyConfig) => {
-  eleventyConfig.addTemplateFormats(["hydrate.jsx", "jsx", "mdx"]);
-  eleventyConfig.addExtension("hydrate.jsx", preact.hydrate);
-  eleventyConfig.addExtension(["jsx", "mdx"], preact.template);
+  eleventyConfig.addTemplateFormats(["jsx", "mdx"]);
+  eleventyConfig.ignores.add("src/**/*.hydrate.jsx");
+  eleventyConfig.addExtension(["jsx", "mdx"], preact);
   eleventyConfig.addTemplateFormats("css");
   eleventyConfig.addExtension("css", css);
   eleventyConfig.addFilter("date", (date) => date.toLocaleDateString("ja-JP"));
@@ -58,9 +62,6 @@ export default (eleventyConfig) => {
   eleventyConfig.addPassthroughCopy({ "src/public/**": "/" });
   eleventyConfig.addPassthroughCopy({
     [url.fileURLToPath(import.meta.resolve("@11ty/is-land/is-land.js"))]: "/",
-    [url.fileURLToPath(
-      import.meta.resolve("@11ty/is-land/is-land-autoinit.js"),
-    )]: "/",
   });
   eleventyConfig.on("eleventy.before", optimizeImages);
   eleventyConfig.on("eleventy.before", transformJsx);
