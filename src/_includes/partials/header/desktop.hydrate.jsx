@@ -40,7 +40,7 @@ function MenuList(props) {
 
 export default function Desktop(props) {
   return (
-    <nav class="hidden md:block">
+    <nav class={props.class}>
       <ul class="flex items-center">
         {props.nav.map((item, itemIndex) =>
           "children" in item ? (

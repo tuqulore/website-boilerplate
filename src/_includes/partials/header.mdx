@@ -10,17 +10,20 @@ import Mobile from "./header/mobile.hydrate.jsx";
       land-on:interaction
       type="preact"
       import="/_includes/partials/header/desktop.hydrate.js"
-      props={JSON.stringify({ nav: props.nav })}
+      props={JSON.stringify({ class: "hidden md:block", nav: props.nav })}
     >
-      <Desktop nav={props.nav} />
+      <Desktop class="hidden md:block" nav={props.nav} />
     </is-land>
     <is-land
       land-on:interaction
       type="preact"
       import="/_includes/partials/header/mobile.hydrate.js"
-      props={JSON.stringify({ nav: props.nav })}
+      props={JSON.stringify({
+        class: "ml-auto flex items-center md:hidden",
+        nav: props.nav,
+      })}
     >
-      <Mobile nav={props.nav} />
+      <Mobile class="ml-auto flex items-center md:hidden" nav={props.nav} />
     </is-land>
   </div>
 </header>

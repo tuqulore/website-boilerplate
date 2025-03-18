@@ -4,7 +4,7 @@ import { twMerge } from "tailwind-merge";
 export default function Mobile(props) {
   const [open, setOpen] = useState(false);
   return (
-    <div class="ml-auto flex items-center md:hidden">
+    <div class={props.class}>
       <button
         id="nav-button-mobile"
         aria-controls="nav-menu-mobile"
