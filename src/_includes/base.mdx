@@ -1,0 +1,54 @@
+import Ogp from "./partials/ogp.mdx";
+import Header from "./partials/header.mdx";
+import Footer from "./partials/footer.mdx";
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <Ogp {...props} />
+    <link rel="stylesheet" href="/main.css" />
+    <title>
+      {props.title && `${props.title} | `}
+      {props.site.name}
+    </title>
+    <script
+      type="importmap"
+      dangerouslySetInnerHTML={{
+        __html: `
+      {
+        "imports": {
+          "is-land": "/is-land.js",
+          "preact": "https://esm.sh/preact",
+          "preact/hooks": "https://esm.sh/preact/hooks?external=preact",
+          "preact/jsx-runtime": "https://esm.sh/preact/jsx-runtime?external=preact"
+        }
+      }
+    `,
+      }}
+    />
+    <script
+      type="module"
+      dangerouslySetInnerHTML={{
+        __html: `
+      import { Island } from "is-land";
+      import { h, hydrate } from "preact";
+      Island.attributePrefix = "land-on:";
+      Island.addInitType("preact", async (target) => {
+        const component = await import(target.getAttribute("import"));
+        const props = JSON.parse(target.getAttribute("props"));
+        hydrate(h(component.default, props), target);
+      });
+    `,
+      }}
+    />
+  </head>
+  <body>
+    <Header {...props} />
+    <div
+      class="max-w-6xl mx-auto px-4 min-h-[60vh] mb-4"
+      dangerouslySetInnerHTML={{ __html: props.content }}
+    ></div>
+    <Footer {...props} />
+  </body>
+</html>

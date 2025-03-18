@@ -1,0 +1,26 @@
+import Desktop from "./header/desktop.hydrate.jsx";
+import Mobile from "./header/mobile.hydrate.jsx";
+
+<header class="sticky top-0 bg-white mb-8 shadow">
+  <div class="max-w-6xl mx-auto px-4 flex items-center justify-between md:justify-start gap-4 h-16">
+    <a class="flex-shrink-0" href="/">
+      {props.site.name}
+    </a>
+    <is-land
+      land-on:interaction
+      type="preact"
+      import="/_includes/partials/header/desktop.hydrate.js"
+      props={JSON.stringify({ nav: props.nav })}
+    >
+      <Desktop nav={props.nav} />
+    </is-land>
+    <is-land
+      land-on:interaction
+      type="preact"
+      import="/_includes/partials/header/mobile.hydrate.js"
+      props={JSON.stringify({ nav: props.nav })}
+    >
+      <Mobile nav={props.nav} />
+    </is-land>
+  </div>
+</header>
