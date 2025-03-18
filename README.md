@@ -124,10 +124,11 @@ JSXテンプレートの拡張子を `.hydrate.jsx` にすると、`dist/**/*.hy
 次の例では、Componentコンポーネントをハイドレーションしています。
 
 ```mdx
-import Component from "./component.hydrate.jsx" // ./component.hydrate.jsxはJSXテンプレートとして使用できます
+import Component from "./component.hydrate.jsx"; // ./component.hydrate.jsxはJSXテンプレートとして使用できます
 
 {/* ./component.hydrate.jsxはブラウザーでの読み込み時に描画されます */}
 <is-land land-on:visible type="preact" import="./component.hydrate.js" props='{ "someProp": "somePropValue" }'>
+
   <Component someProp="somePropValue" />{/* <Component />はビルド時に描画されます */}
 </is-land>
 ```
