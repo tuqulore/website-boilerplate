@@ -2,8 +2,3 @@
 @import "@jumpu-ui/tailwindcss";
 @plugin "@tailwindcss/typography";
 @plugin "@iconify/tailwind4";
-
-/* see https://alpinejs.dev/directives/cloak */
-[x-cloak] {
-  display: none !important;
-}
