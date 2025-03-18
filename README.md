@@ -9,7 +9,7 @@
 
 > [!NOTE]
 >
-> 事前に [pnpm をインストール](https://pnpm.io/ja/installation)してください。
+> 事前に [pnpmをインストール](https://pnpm.io/ja/installation)してください。
 
 ```shell
 pnpm install # npmパッケージのインストール
@@ -107,7 +107,7 @@ Eleventyテンプレートの参照先です。
 
 [レイアウトチェイニング](https://www.11ty.dev/docs/layout-chaining/)のための[レイアウトテンプレート](https://www.11ty.dev/docs/layouts/)を配置します。
 
-具体的には[フロントマター](https://www.11ty.dev/docs/data-frontmatter/)にてlayoutプロパティで指定するものを指します。
+具体的には[フロントマター](https://www.11ty.dev/docs/data-frontmatter/)あるいはエクスポートしたdataオブジェクトにてlayoutプロパティで指定するものを指します。
 
 ### src/\_includes/partials
 
@@ -116,6 +116,39 @@ Eleventyテンプレートの参照先です。
 ### src/public
 
 静的アセットを配置します。distディレクトリ直下に出力されます。
+
+## Partial Hydration
+
+JSXテンプレートの拡張子を `.hydrate.jsx` にすると、`dist/**/*.hydrate.jsx` にハイドレーション用のスクリプトが生成されます。
+
+次の例では、Componentコンポーネントをハイドレーションしています。
+
+```mdx
+import Component from "./component.hydrate.jsx" // ./component.hydrate.jsxはJSXテンプレートとして使用できます
+
+{/* ./component.hydrate.jsxはブラウザーでの読み込み時に描画されます */}
+<is-land land-on:visible type="preact" import="./component.hydrate.js" props='{ "someProp": "somePropValue" }'>
+  <Component someProp="somePropValue" />{/* <Component />はビルド時に描画されます */}
+</is-land>
+```
+
+> [!NOTE]
+>
+> [\<is-land>](https://github.com/11ty/is-land?tab=readme-ov-file#usage)の初期化条件を指定する属性は、デフォルトでは`on:*`の書式で指定する必要がありますが、JSXでの書式と競合するので`land-on:*`に変更しています。
+
+\<is-land>Webコンポーネントは`land-on:*`属性のほか、次の属性を受け付けます。
+
+### `type`属性
+
+ハイドレーションに使用するランタイム。`"preact"`を指定します。
+
+### `import`属性
+
+ハイドレーションに使用する`dist/**/*.hydrate.js`のパス。
+
+### `props`属性
+
+`dist/**/*.hydrate.js`が受け付けるプロパティです。オブジェクトを文字列化した値（通常文字列化にJSON.stringifyを使用することができます）を指定します。
 
 ## Docker
 
