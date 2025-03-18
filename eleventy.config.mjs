@@ -53,8 +53,6 @@ export default (eleventyConfig) => {
   eleventyConfig.addExtension(["jsx", "mdx"], preact);
   eleventyConfig.addTemplateFormats("css");
   eleventyConfig.addExtension("css", css);
-  eleventyConfig.addFilter("date", (date) => date.toLocaleDateString("ja-JP"));
-  eleventyConfig.addFilter("origin", (url) => new URL(url).origin);
   eleventyConfig.amendLibrary("md", (md) =>
     md.set({ html: true, breaks: true, linkify: true }),
   );
