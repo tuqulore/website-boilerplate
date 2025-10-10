@@ -38,10 +38,10 @@ importers:
         version: 2.2.316
       '@iconify/tailwind4':
         specifier: ^1.0.6
-        version: 1.0.6(tailwindcss@4.1.11)
+        version: 1.0.6(tailwindcss@4.1.14)
       '@jumpu-ui/tailwindcss':
         specifier: 2.0.0
-        version: 2.0.0(tailwindcss@4.1.11)
+        version: 2.0.0(tailwindcss@4.1.14)
       '@lerna-lite/cli':
         specifier: ^4.0.0
         version: 4.1.2(@lerna-lite/version@4.1.2(@types/node@22.13.10)(conventional-commits-filter@5.0.0))(@types/node@22.13.10)
@@ -50,7 +50,7 @@ importers:
         version: 4.1.2(@types/node@22.13.10)(conventional-commits-filter@5.0.0)
       '@mdx-js/node-loader':
         specifier: ^3.1.0
-        version: 3.1.0(acorn@8.14.1)
+        version: 3.1.0(acorn@8.15.0)
       '@supercharge/promise-pool':
         specifier: ^3.0.0
         version: 3.2.0
@@ -58,8 +58,8 @@ importers:
         specifier: ^4.0.14
         version: 4.0.14
       '@tailwindcss/typography':
-        specifier: 0.5.16
-        version: 0.5.16(tailwindcss@4.1.11)
+        specifier: 0.5.19
+        version: 0.5.19(tailwindcss@4.1.14)
       dotenv-cli:
         specifier: ^10.0.0
         version: 10.0.0
@@ -67,17 +67,17 @@ importers:
         specifier: ^0.25.1
         version: 0.25.1
       eslint:
-        specifier: 9.32.0
-        version: 9.32.0(jiti@2.4.2)
+        specifier: 9.36.0
+        version: 9.36.0(jiti@2.4.2)
       eslint-config-prettier:
         specifier: 10.1.8
-        version: 10.1.8(eslint@9.32.0(jiti@2.4.2))
+        version: 10.1.8(eslint@9.36.0(jiti@2.4.2))
       eslint-plugin-mdx:
         specifier: ^3.2.0
-        version: 3.2.0(eslint@9.32.0(jiti@2.4.2))
+        version: 3.2.0(eslint@9.36.0(jiti@2.4.2))
       eslint-plugin-react:
         specifier: ^7.37.4
-        version: 7.37.4(eslint@9.32.0(jiti@2.4.2))
+        version: 7.37.4(eslint@9.36.0(jiti@2.4.2))
       fast-glob:
         specifier: 3.3.3
         version: 3.3.3
@@ -118,8 +118,8 @@ importers:
         specifier: ^3.0.2
         version: 3.0.2
       tailwindcss:
-        specifier: 4.1.11
-        version: 4.1.11
+        specifier: 4.1.14
+        version: 4.1.14
 
 packages:
 
@@ -472,8 +472,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@eslint-community/eslint-utils@4.5.1':
-    resolution: {integrity: sha512-soEIOALTfTK6EjmKMMoLugwaP0rzkad90iIWd1hMO9ARkSAyjfMfkRRhLvD5qH7vvM0Cg72pieUfR6yh6XxC4w==}
+  '@eslint-community/eslint-utils@4.9.0':
+    resolution: {integrity: sha512-ayVFHdtZ+hsq1t2Dy24wCmGXGe4q9Gu3smhLYALJrr473ZH27MsnSL+LKUlimp4BWJqMDMLmPpx/Q9R3OAlL4g==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     peerDependencies:
       eslint: ^6.0.0 || ^7.0.0 || >=8.0.0
@@ -486,16 +486,12 @@ packages:
     resolution: {integrity: sha512-ENIdc4iLu0d93HeYirvKmrzshzofPw6VkZRKQGe9Nv46ZnWUzcF1xV01dcvEg/1wXUR61OmmlSfyeyO7EvjLxQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@eslint/config-helpers@0.3.0':
-    resolution: {integrity: sha512-ViuymvFmcJi04qdZeDc2whTHryouGcDlaxPqarTD0ZE10ISpxGUVZGZDx4w01upyIynL3iu6IXH2bS1NhclQMw==}
+  '@eslint/config-helpers@0.3.1':
+    resolution: {integrity: sha512-xR93k9WhrDYpXHORXpxVL5oHj3Era7wo6k/Wd8/IsQNnZUTzkGS29lyn3nAT05v6ltUuTFVCCYDEGfy2Or/sPA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@eslint/core@0.15.0':
-    resolution: {integrity: sha512-b7ePw78tEWWkpgZCDYkbqDOP8dmM6qe+AOC6iuJqlq1R/0ahMAeH3qynpnqKFGkMltrp44ohV4ubGyvLX28tzw==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-
-  '@eslint/core@0.15.1':
-    resolution: {integrity: sha512-bkOp+iumZCCbt1K1CmWf0R9pM5yKpDv+ZXtvSyQpudrI9kuFLp+bM2WOPXImuD/ceQuaa8f5pj93Y7zyECIGNA==}
+  '@eslint/core@0.15.2':
+    resolution: {integrity: sha512-78Md3/Rrxh83gCxoUc0EiciuOHsIITzLy53m3d9UyiW8y9Dj2D29FeETqyKA+BRK76tnTp6RXWb3pCay8Oyomg==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@eslint/eslintrc@3.3.1':
@@ -506,16 +502,16 @@ packages:
     resolution: {integrity: sha512-vLFajx9o8d1/oL2ZkpMYbkLv8nDB6yaIwFNt7nI4+I80U/z03SxmfOMsLbvWr3p7C+Wnoh//aOu2pQW8cS0HCQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@eslint/js@9.32.0':
-    resolution: {integrity: sha512-BBpRFZK3eX6uMLKz8WxFOBIFFcGFJ/g8XuwjTHCqHROSIsopI+ddn/d5Cfh36+7+e5edVS8dbSHnBNhrLEX0zg==}
+  '@eslint/js@9.36.0':
+    resolution: {integrity: sha512-uhCbYtYynH30iZErszX78U+nR3pJU3RHGQ57NXy5QupD4SBVwDeU8TNBy+MjMngc1UyIW9noKqsRqfjQTBU2dw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@eslint/object-schema@2.1.6':
     resolution: {integrity: sha512-RBMg5FRL0I0gs51M/guSAj5/e14VQ4tpZnQNWwuDT66P14I43ItmPfIZRhO9fUVIPOAQXU47atlywZ/czoqFPA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@eslint/plugin-kit@0.3.4':
-    resolution: {integrity: sha512-Ul5l+lHEcw3L5+k8POx6r74mxEYKG5kOb6Xpy2gCRW6zweT6TEhAf8vhxGgjhqrd/VO/Dirhsb+1hNpD1ue9hw==}
+  '@eslint/plugin-kit@0.3.5':
+    resolution: {integrity: sha512-Z5kJ+wU3oA7MMIqVR9tyZRtjYPr4OC004Q4Rw7pgOKUOKkJfZ3O24nz3WYfGRpMDNmcOi3TwQOmgm7B7Tpii0w==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@humanfs/core@0.19.1':
@@ -1017,8 +1013,8 @@ packages:
   '@tailwindcss/postcss@4.0.14':
     resolution: {integrity: sha512-+uIR6KtKhla1XeIanF27KtrfYy+PX+R679v5LxbkmEZlhQe3g8rk+wKj7Xgt++rWGRuFLGMXY80Ek8JNn+kN/g==}
 
-  '@tailwindcss/typography@0.5.16':
-    resolution: {integrity: sha512-0wDLwCVF5V3x3b1SGXPCDcdsbDHMBe+lkFzBRaHeLvNi+nrrnZ1lA18u+OTWO8iSWU2GxUOCvlXtDuqftc1oiA==}
+  '@tailwindcss/typography@0.5.19':
+    resolution: {integrity: sha512-w31dd8HOx3k9vPtcQh5QHP9GwKcgbMp87j58qi6xgiBnFFtKEAgCWnDw4qUT8aHwkCp8bKvb/KGKWWHedP0AAg==}
     peerDependencies:
       tailwindcss: '>=3.0.0 || insiders || >=4.0.0-alpha.20 || >=4.0.0-beta.1'
 
@@ -1792,8 +1788,8 @@ packages:
     resolution: {integrity: sha512-Uhdk5sfqcee/9H/rCOJikYz67o0a2Tw2hGRPOG2Y1R2dg7brRe1uG0yaNQDHu+TO/uQPF/5eCapvYSmHUjt7JQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  eslint@9.32.0:
-    resolution: {integrity: sha512-LSehfdpgMeWcTZkWZVIJl+tkZ2nuSkyyB9C27MZqFWXuph7DvaowgcTvKqxvpLW1JZIk8PN7hFY3Rj9LQ7m7lg==}
+  eslint@9.36.0:
+    resolution: {integrity: sha512-hB4FIzXovouYzwzECDcUkJ4OcfOEkXTv2zRY6B9bkwjx/cprAq0uvm1nl7zvQ0/TsUk0zQiN4uPfJpB9m+rPMQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     hasBin: true
     peerDependencies:
@@ -2610,12 +2606,6 @@ packages:
   locate-path@6.0.0:
     resolution: {integrity: sha512-iPZK6eYjbxRu3uB4/WZ3EsEIMJFMqAoopl3R+zuq0UjcAm/MO6KCweDgPfP3elTztoKP3KtnVHxTn2NHBSDVUw==}
     engines: {node: '>=10'}
-
-  lodash.castarray@4.4.0:
-    resolution: {integrity: sha512-aVx8ztPv7/2ULbArGJ2Y42bG1mEQ5mGjpdvrbJcJFU3TbYybe+QlLS4pst9zV52ymy2in1KpFPiZnAOATxD4+Q==}
-
-  lodash.isplainobject@4.0.6:
-    resolution: {integrity: sha512-oSXzaWypCMHkPC3NvBEaPHf0KsA5mvPrOPgQWDsbg8n7orZ290M0BmC/jgRZ4vcJ6DTAhjrsSYgdsW/F+MFOBA==}
 
   lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
@@ -3809,8 +3799,8 @@ packages:
   tailwindcss@4.0.14:
     resolution: {integrity: sha512-92YT2dpt671tFiHH/e1ok9D987N9fHD5VWoly1CdPD/Cd1HMglvZwP3nx2yTj2lbXDAHt8QssZkxTLCCTNL+xw==}
 
-  tailwindcss@4.1.11:
-    resolution: {integrity: sha512-2E9TBm6MDD/xKYe+dvJZAmg3yxIEDNRc0jwlNyDg/4Fil2QcSLjFKGVff0lAf1jjeaArlG/M75Ey/EYr/OJtBA==}
+  tailwindcss@4.1.14:
+    resolution: {integrity: sha512-b7pCxjGO98LnxVkKjaZSDeNuljC4ueKUddjENJOADtubtdo8llTaJy7HwBMeLNSSo2N5QIAgklslK1+Ir8r6CA==}
 
   tapable@2.2.1:
     resolution: {integrity: sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==}
@@ -4556,9 +4546,9 @@ snapshots:
   '@esbuild/win32-x64@0.25.1':
     optional: true
 
-  '@eslint-community/eslint-utils@4.5.1(eslint@9.32.0(jiti@2.4.2))':
+  '@eslint-community/eslint-utils@4.9.0(eslint@9.36.0(jiti@2.4.2))':
     dependencies:
-      eslint: 9.32.0(jiti@2.4.2)
+      eslint: 9.36.0(jiti@2.4.2)
       eslint-visitor-keys: 3.4.3
 
   '@eslint-community/regexpp@4.12.1': {}
@@ -4571,13 +4561,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@eslint/config-helpers@0.3.0': {}
+  '@eslint/config-helpers@0.3.1': {}
 
-  '@eslint/core@0.15.0':
-    dependencies:
-      '@types/json-schema': 7.0.15
-
-  '@eslint/core@0.15.1':
+  '@eslint/core@0.15.2':
     dependencies:
       '@types/json-schema': 7.0.15
 
@@ -4597,13 +4583,13 @@ snapshots:
 
   '@eslint/js@9.22.0': {}
 
-  '@eslint/js@9.32.0': {}
+  '@eslint/js@9.36.0': {}
 
   '@eslint/object-schema@2.1.6': {}
 
-  '@eslint/plugin-kit@0.3.4':
+  '@eslint/plugin-kit@0.3.5':
     dependencies:
-      '@eslint/core': 0.15.1
+      '@eslint/core': 0.15.2
       levn: 0.4.1
 
   '@humanfs/core@0.19.1': {}
@@ -4626,11 +4612,11 @@ snapshots:
       '@iconify/types': 2.0.0
       pathe: 1.1.2
 
-  '@iconify/tailwind4@1.0.6(tailwindcss@4.1.11)':
+  '@iconify/tailwind4@1.0.6(tailwindcss@4.1.14)':
     dependencies:
       '@iconify/types': 2.0.0
       '@iconify/utils': 2.3.0
-      tailwindcss: 4.1.11
+      tailwindcss: 4.1.14
     transitivePeerDependencies:
       - supports-color
 
@@ -4798,9 +4784,9 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  '@jumpu-ui/tailwindcss@2.0.0(tailwindcss@4.1.11)':
+  '@jumpu-ui/tailwindcss@2.0.0(tailwindcss@4.1.14)':
     dependencies:
-      tailwindcss: 4.1.11
+      tailwindcss: 4.1.14
 
   '@keyv/serialize@1.0.3':
     dependencies:
@@ -4931,7 +4917,7 @@ snapshots:
       - supports-color
       - typescript
 
-  '@mdx-js/mdx@3.1.0(acorn@8.14.1)':
+  '@mdx-js/mdx@3.1.0(acorn@8.15.0)':
     dependencies:
       '@types/estree': 1.0.6
       '@types/estree-jsx': 1.0.5
@@ -4945,7 +4931,7 @@ snapshots:
       hast-util-to-jsx-runtime: 2.3.6
       markdown-extensions: 2.0.0
       recma-build-jsx: 1.0.0
-      recma-jsx: 1.0.0(acorn@8.14.1)
+      recma-jsx: 1.0.0(acorn@8.15.0)
       recma-stringify: 1.0.0
       rehype-recma: 1.0.0
       remark-mdx: 3.1.0
@@ -4961,9 +4947,9 @@ snapshots:
       - acorn
       - supports-color
 
-  '@mdx-js/node-loader@3.1.0(acorn@8.14.1)':
+  '@mdx-js/node-loader@3.1.0(acorn@8.15.0)':
     dependencies:
-      '@mdx-js/mdx': 3.1.0(acorn@8.14.1)
+      '@mdx-js/mdx': 3.1.0(acorn@8.15.0)
       source-map: 0.7.4
       vfile: 6.0.3
       vfile-reporter: 8.1.1
@@ -5235,13 +5221,10 @@ snapshots:
       postcss: 8.5.6
       tailwindcss: 4.0.14
 
-  '@tailwindcss/typography@0.5.16(tailwindcss@4.1.11)':
+  '@tailwindcss/typography@0.5.19(tailwindcss@4.1.14)':
     dependencies:
-      lodash.castarray: 4.4.0
-      lodash.isplainobject: 4.0.6
-      lodash.merge: 4.6.2
       postcss-selector-parser: 6.0.10
-      tailwindcss: 4.1.11
+      tailwindcss: 4.1.14
 
   '@types/acorn@4.0.6':
     dependencies:
@@ -5311,7 +5294,7 @@ snapshots:
 
   acorn-walk@8.3.4:
     dependencies:
-      acorn: 8.14.1
+      acorn: 8.15.0
 
   acorn@8.14.1: {}
 
@@ -6011,7 +5994,7 @@ snapshots:
   esast-util-from-js@2.0.1:
     dependencies:
       '@types/estree-jsx': 1.0.5
-      acorn: 8.14.1
+      acorn: 8.15.0
       esast-util-from-estree: 2.0.0
       vfile-message: 4.0.2
 
@@ -6051,15 +6034,15 @@ snapshots:
 
   escape-string-regexp@5.0.0: {}
 
-  eslint-config-prettier@10.1.8(eslint@9.32.0(jiti@2.4.2)):
+  eslint-config-prettier@10.1.8(eslint@9.36.0(jiti@2.4.2)):
     dependencies:
-      eslint: 9.32.0(jiti@2.4.2)
+      eslint: 9.36.0(jiti@2.4.2)
 
-  eslint-mdx@3.2.0(eslint@9.32.0(jiti@2.4.2)):
+  eslint-mdx@3.2.0(eslint@9.36.0(jiti@2.4.2)):
     dependencies:
       acorn: 8.14.1
       acorn-jsx: 5.3.2(acorn@8.14.1)
-      eslint: 9.32.0(jiti@2.4.2)
+      eslint: 9.36.0(jiti@2.4.2)
       espree: 9.6.1
       estree-util-visit: 2.0.0
       remark-mdx: 3.1.0
@@ -6076,10 +6059,10 @@ snapshots:
       - bluebird
       - supports-color
 
-  eslint-plugin-mdx@3.2.0(eslint@9.32.0(jiti@2.4.2)):
+  eslint-plugin-mdx@3.2.0(eslint@9.36.0(jiti@2.4.2)):
     dependencies:
-      eslint: 9.32.0(jiti@2.4.2)
-      eslint-mdx: 3.2.0(eslint@9.32.0(jiti@2.4.2))
+      eslint: 9.36.0(jiti@2.4.2)
+      eslint-mdx: 3.2.0(eslint@9.36.0(jiti@2.4.2))
       mdast-util-from-markdown: 2.0.2
       remark-mdx: 3.1.0
       remark-parse: 11.0.0
@@ -6092,7 +6075,7 @@ snapshots:
       - bluebird
       - supports-color
 
-  eslint-plugin-react@7.37.4(eslint@9.32.0(jiti@2.4.2)):
+  eslint-plugin-react@7.37.4(eslint@9.36.0(jiti@2.4.2)):
     dependencies:
       array-includes: 3.1.8
       array.prototype.findlast: 1.2.5
@@ -6100,7 +6083,7 @@ snapshots:
       array.prototype.tosorted: 1.1.4
       doctrine: 2.1.0
       es-iterator-helpers: 1.2.1
-      eslint: 9.32.0(jiti@2.4.2)
+      eslint: 9.36.0(jiti@2.4.2)
       estraverse: 5.3.0
       hasown: 2.0.2
       jsx-ast-utils: 3.3.5
@@ -6123,16 +6106,16 @@ snapshots:
 
   eslint-visitor-keys@4.2.1: {}
 
-  eslint@9.32.0(jiti@2.4.2):
+  eslint@9.36.0(jiti@2.4.2):
     dependencies:
-      '@eslint-community/eslint-utils': 4.5.1(eslint@9.32.0(jiti@2.4.2))
+      '@eslint-community/eslint-utils': 4.9.0(eslint@9.36.0(jiti@2.4.2))
       '@eslint-community/regexpp': 4.12.1
       '@eslint/config-array': 0.21.0
-      '@eslint/config-helpers': 0.3.0
-      '@eslint/core': 0.15.0
+      '@eslint/config-helpers': 0.3.1
+      '@eslint/core': 0.15.2
       '@eslint/eslintrc': 3.3.1
-      '@eslint/js': 9.32.0
-      '@eslint/plugin-kit': 0.3.4
+      '@eslint/js': 9.36.0
+      '@eslint/plugin-kit': 0.3.5
       '@humanfs/node': 0.16.6
       '@humanwhocodes/module-importer': 1.0.1
       '@humanwhocodes/retry': 0.4.2
@@ -6167,7 +6150,7 @@ snapshots:
 
   esm-import-transformer@3.0.3:
     dependencies:
-      acorn: 8.14.1
+      acorn: 8.15.0
 
   espree@10.4.0:
     dependencies:
@@ -6177,8 +6160,8 @@ snapshots:
 
   espree@9.6.1:
     dependencies:
-      acorn: 8.14.1
-      acorn-jsx: 5.3.2(acorn@8.14.1)
+      acorn: 8.15.0
+      acorn-jsx: 5.3.2(acorn@8.15.0)
       eslint-visitor-keys: 3.4.3
 
   esprima@4.0.1: {}
@@ -6998,10 +6981,6 @@ snapshots:
     dependencies:
       p-locate: 5.0.0
 
-  lodash.castarray@4.4.0: {}
-
-  lodash.isplainobject@4.0.6: {}
-
   lodash.merge@4.6.2: {}
 
   longest-streak@3.1.0: {}
@@ -7225,8 +7204,8 @@ snapshots:
 
   micromark-extension-mdxjs@3.0.0:
     dependencies:
-      acorn: 8.14.1
-      acorn-jsx: 5.3.2(acorn@8.14.1)
+      acorn: 8.15.0
+      acorn-jsx: 5.3.2(acorn@8.15.0)
       micromark-extension-mdx-expression: 3.0.0
       micromark-extension-mdx-jsx: 3.0.1
       micromark-extension-mdx-md: 2.0.0
@@ -7952,9 +7931,9 @@ snapshots:
       estree-util-build-jsx: 3.0.1
       vfile: 6.0.3
 
-  recma-jsx@1.0.0(acorn@8.14.1):
+  recma-jsx@1.0.0(acorn@8.15.0):
     dependencies:
-      acorn-jsx: 5.3.2(acorn@8.14.1)
+      acorn-jsx: 5.3.2(acorn@8.15.0)
       estree-util-to-js: 2.0.0
       recma-parse: 1.0.0
       recma-stringify: 1.0.0
@@ -8439,7 +8418,7 @@ snapshots:
 
   tailwindcss@4.0.14: {}
 
-  tailwindcss@4.1.11: {}
+  tailwindcss@4.1.14: {}
 
   tapable@2.2.1: {}
 
