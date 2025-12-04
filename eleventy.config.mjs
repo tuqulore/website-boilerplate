@@ -64,6 +64,9 @@ export default (eleventyConfig) => {
   });
   eleventyConfig.on("eleventy.before", optimizeImages);
   eleventyConfig.on("eleventy.before", transformJsx);
+  eleventyConfig.setServerOptions({
+    watch: ["dist/**/*.css"],
+  });
   return {
     dir: {
       input: "src",
