@@ -5,6 +5,7 @@ import module from "node:module";
 import path from "node:path";
 import url from "node:url";
 import postcss from "@tuqulore/eleventy-plugin-postcss";
+import preactIsland from "@tuqulore/eleventy-plugin-preact-island";
 import preact from "./lib/preact.mjs";
 
 module.register("./lib/mdx-loader.mjs", url.pathToFileURL("./"));
@@ -55,6 +56,7 @@ export default (eleventyConfig) => {
   eleventyConfig.addPlugin(postcss, {
     contentGlob: ["src/**/*.{md,mdx,jsx}"],
   });
+  eleventyConfig.addPlugin(preactIsland);
   eleventyConfig.amendLibrary("md", (md) =>
     md.set({ html: true, breaks: true, linkify: true }),
   );
