@@ -105,6 +105,13 @@ ${rehydrateScript}
         return content;
       }
 
+      if (!content.includes("</head>")) {
+        console.warn(
+          `[eleventy-plugin-preact-island] WARN: No </head> tag found in ${outputPath}. Scripts not injected.`,
+        );
+        return content;
+      }
+
       const scripts = [
         generateImportMap(),
         generateDevScript(),
