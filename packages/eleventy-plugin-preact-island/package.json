@@ -29,9 +29,11 @@
     "url": "git+https://github.com/tuqulore/website-boilerplate.git",
     "directory": "packages/eleventy-plugin-preact-island"
   },
+  "dependencies": {
+    "@11ty/is-land": "^5.0.0"
+  },
   "peerDependencies": {
-    "@11ty/eleventy": ">=3.0.0",
-    "@11ty/is-land": ">=5.0.0"
+    "@11ty/eleventy": ">=3.0.0"
   },
   "engines": {
     "node": ">=20"
