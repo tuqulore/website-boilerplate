@@ -4,7 +4,7 @@ import fg from "fast-glob";
 import module from "node:module";
 import path from "node:path";
 import url from "node:url";
-import css from "./lib/css.mjs";
+import postcss from "@tuqulore/eleventy-plugin-postcss";
 import preact from "./lib/preact.mjs";
 
 module.register("./lib/mdx-loader.mjs", url.pathToFileURL("./"));
@@ -52,8 +52,9 @@ export default (eleventyConfig) => {
   eleventyConfig.addTemplateFormats(["jsx", "mdx"]);
   eleventyConfig.ignores.add("src/**/*.hydrate.jsx");
   eleventyConfig.addExtension(["jsx", "mdx"], preact);
-  eleventyConfig.addTemplateFormats("css");
-  eleventyConfig.addExtension("css", css);
+  eleventyConfig.addPlugin(postcss, {
+    contentGlob: ["src/**/*.{md,mdx,jsx}"],
+  });
   eleventyConfig.amendLibrary("md", (md) =>
     md.set({ html: true, breaks: true, linkify: true }),
   );
