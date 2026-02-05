@@ -1,16 +1,18 @@
+import { eleventy } from "@tuqulore/eleventy-plugin-preact/eleventy";
+
 <meta
   property="og:description"
-  content={props.description ?? props.site.description}
+  content={eleventy.description ?? eleventy.site.description}
 />
-<meta property="og:site_name" content={props.site.name} />
-<meta property="og:title" content={props.title} />
+<meta property="og:site_name" content={eleventy.site.name} />
+<meta property="og:title" content={eleventy.title} />
 <meta property="og:type" content="website" />
 <meta
   property="og:url"
-  content={new URL(props.site.url).origin.concat(props.page.url)}
+  content={new URL(eleventy.site.url).origin.concat(eleventy.page.url)}
 />
 <meta
   property="og:image"
-  content={new URL(props.site.url).origin.concat(props.ogp ?? "ogp.png")}
+  content={new URL(eleventy.site.url).origin.concat(eleventy.ogp ?? "ogp.png")}
 />
 <meta property="twitter:card" content="summary" />

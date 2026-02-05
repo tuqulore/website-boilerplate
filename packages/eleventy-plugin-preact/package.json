@@ -9,6 +9,10 @@
       "types": "./index.d.ts",
       "default": "./index.mjs"
     },
+    "./eleventy": {
+      "types": "./eleventy.d.ts",
+      "default": "./eleventy.mjs"
+    },
     "./loaders/mdx": {
       "default": "./loaders/mdx.mjs"
     },
@@ -20,6 +24,8 @@
     "README.md",
     "index.d.ts",
     "index.mjs",
+    "eleventy.d.ts",
+    "eleventy.mjs",
     "loaders"
   ],
   "keywords": [

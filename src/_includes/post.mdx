@@ -1,5 +1,7 @@
+import { eleventy } from "@tuqulore/eleventy-plugin-preact/eleventy";
+
 export const data = {
   layout: "base",
 };
 
-<article class="prose" dangerouslySetInnerHTML={{ __html: props.content }} />
+<article class="prose" dangerouslySetInnerHTML={{ __html: eleventy.content }} />
