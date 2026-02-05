@@ -73,10 +73,14 @@ import Footer from "./partials/footer.mdx";
       Island.attributePrefix = "land-on:";
 
       const mount = async (target) => {
-        const component = await import(target.getAttribute("import"));
-        const propsAttr = target.getAttribute("props");
-        const props = propsAttr ? JSON.parse(propsAttr) : {};
-        hydrate(h(component.default, props), target);
+        try {
+          const component = await import(target.getAttribute("import"));
+          const propsAttr = target.getAttribute("props");
+          const props = propsAttr ? JSON.parse(propsAttr) : {};
+          hydrate(h(component.default, props), target);
+        } catch (e) {
+          console.error("Failed to mount component:", e);
+        }
       };
 
       Island.addInitType("preact", mount);
