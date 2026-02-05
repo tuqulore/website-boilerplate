@@ -1,7 +1,7 @@
 {
   "name": "@tuqulore/eleventy-preset",
   "version": "3.0.0",
-  "description": "Eleventy preset for tuqulore website boilerplate",
+  "description": "Eleventy preset for building static sites with Preact JSX/MDX templates, partial hydration, and PostCSS",
   "type": "module",
   "main": "./index.mjs",
   "exports": {

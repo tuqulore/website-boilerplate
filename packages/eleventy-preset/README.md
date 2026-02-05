@@ -1,8 +1,6 @@
 # @tuqulore/eleventy-preset
 
-Eleventy preset for tuqulore website boilerplate.
-
-A pre-configured setup that bundles commonly used plugins and settings.
+An Eleventy preset for building static sites with Preact JSX/MDX templates, partial hydration, and PostCSS.
 
 ## Installation
 
