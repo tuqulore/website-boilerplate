@@ -31,7 +31,7 @@ export default (eleventyConfig) => {
   });
   eleventyConfig.addPlugin(preactIsland);
   eleventyConfig.amendLibrary("md", (md) =>
-    md.set({ html: true, breaks: true, linkify: true }),
+    md.set({ breaks: true, linkify: true }),
   );
   eleventyConfig.addWatchTarget("src/style/**/*.css");
   eleventyConfig.addPassthroughCopy({ "src/public/**": "/" });
