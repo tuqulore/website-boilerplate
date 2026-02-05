@@ -52,11 +52,13 @@ To hydrate a component, use the `<is-land>` web component with `type="preact"`.
 import Component from "./component.hydrate.jsx";
 
 <is-land
-  land-on:visible
-  type="preact"
-  import="./component.hydrate.js"
-  props='{ "someProp": "value" }'
+land-on:visible
+type="preact"
+import="./component.hydrate.js"
+props='{ "someProp": "value" }'
+
 >
+
   <Component someProp="value" />
 </is-land>
 ```
