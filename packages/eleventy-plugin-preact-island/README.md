@@ -7,7 +7,7 @@ This plugin automatically injects the necessary scripts for Preact hydration int
 ## Installation
 
 ```bash
-npm install -D @11ty/eleventy @11ty/is-land @tuqulore/eleventy-plugin-preact-island
+npm install -D @11ty/eleventy @tuqulore/eleventy-plugin-preact-island
 ```
 
 ## Usage
@@ -78,7 +78,6 @@ import Component from "./component.hydrate.jsx";
 ## Requirements
 
 - Eleventy 3.0 or higher
-- @11ty/is-land 5.0 or higher
 
 ## License
 
