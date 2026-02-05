@@ -5,7 +5,7 @@ Eleventy plugin for processing CSS with PostCSS.
 ## Installation
 
 ```bash
-npm install -D @11ty/eleventy postcss postcss-load-config @tuqulore/eleventy-plugin-postcss
+npm install -D @11ty/eleventy postcss @tuqulore/eleventy-plugin-postcss
 ```
 
 ## Usage
@@ -41,11 +41,21 @@ export default {
 
 Glob patterns for files to track as dependencies. When any of these files change, the CSS will be rebuilt. This is useful for TailwindCSS which scans content files for class names.
 
+When using `contentGlob`, you should also configure `setServerOptions` to watch the generated CSS files for dev server reload:
+
+```javascript
+eleventyConfig.addPlugin(postcss, {
+  contentGlob: ["src/**/*.{md,mdx,jsx}"],
+});
+eleventyConfig.setServerOptions({
+  watch: ["dist/**/*.css"],
+});
+```
+
 ## Requirements
 
 - Eleventy 3.0 or higher
 - PostCSS 8.0 or higher
-- postcss-load-config 6.0 or higher
 
 ## License
 
