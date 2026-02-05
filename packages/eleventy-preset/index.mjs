@@ -31,6 +31,8 @@ const optimizeImages = async () => {
  */
 export default function preset(extend = () => {}) {
   return (eleventyConfig) => {
+    eleventyConfig.versionCheck(">=3.0");
+
     // Input & Output Directories
     eleventyConfig.setInputDirectory("src");
     eleventyConfig.setOutputDirectory("dist");
