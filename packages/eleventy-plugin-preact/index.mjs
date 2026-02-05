@@ -5,8 +5,14 @@ import { jsx } from "preact/jsx-runtime";
 import * as esbuild from "esbuild";
 
 // Register Node.js loaders for JSX/MDX support
-module.register(import.meta.resolve("./loaders/mdx.mjs"), url.pathToFileURL("./"));
-module.register(import.meta.resolve("./loaders/jsx.mjs"), url.pathToFileURL("./"));
+module.register(
+  import.meta.resolve("./loaders/mdx.mjs"),
+  url.pathToFileURL("./"),
+);
+module.register(
+  import.meta.resolve("./loaders/jsx.mjs"),
+  url.pathToFileURL("./"),
+);
 
 /**
  * Eleventy plugin for Preact server-side rendering with JSX/MDX support

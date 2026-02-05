@@ -37,6 +37,7 @@ export default function (eleventyConfig) {
 - Default: `undefined`
 
 Glob pattern for hydration entry points. Files matching this pattern will be:
+
 - Ignored by Eleventy (not processed as templates)
 - Bundled with esbuild for client-side hydration
 
