@@ -27,6 +27,43 @@ import Footer from "./partials/footer.mdx";
     `,
       }}
     />
+    {process.env.NODE_ENV === "development" && (
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+        // Hooking WebSockets to rehydrate after a hot reload
+        (function() {
+          const OriginalWebSocket = window.WebSocket;
+          window.WebSocket = function(url, protocols) {
+            const ws = new OriginalWebSocket(url, protocols);
+            ws.addEventListener("message", (event) => {
+              try {
+                const data = JSON.parse(event.data);
+                if (data.type === "eleventy.reload") {
+                  // Schedule rehydration after morphdom completes
+                  // Use nested requestAnimationFrame to ensure DOM is fully updated
+                  requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                      window.__eleventyRehydrate?.();
+                    });
+                  });
+                }
+              } catch (e) {
+                console.error("Failed to parse WebSocket message:", e);
+              }
+            });
+            return ws;
+          };
+          window.WebSocket.prototype = OriginalWebSocket.prototype;
+          window.WebSocket.CONNECTING = OriginalWebSocket.CONNECTING;
+          window.WebSocket.OPEN = OriginalWebSocket.OPEN;
+          window.WebSocket.CLOSING = OriginalWebSocket.CLOSING;
+          window.WebSocket.CLOSED = OriginalWebSocket.CLOSED;
+        })();
+      `,
+        }}
+      />
+    )}
     <script
       type="module"
       dangerouslySetInnerHTML={{
@@ -34,14 +71,34 @@ import Footer from "./partials/footer.mdx";
       import { Island } from "is-land";
       import { h, hydrate } from "preact";
       Island.attributePrefix = "land-on:";
-      Island.addInitType("preact", async (target) => {
-        const component = await import(target.getAttribute("import"));
-        const props = JSON.parse(target.getAttribute("props"));
-        hydrate(h(component.default, props), target);
-      });
+
+      const mount = async (target) => {
+        try {
+          const component = await import(target.getAttribute("import"));
+          const propsAttr = target.getAttribute("props");
+          const props = propsAttr ? JSON.parse(propsAttr) : {};
+          hydrate(h(component.default, props), target);
+        } catch (e) {
+          console.error("Failed to mount component:", e);
+        }
+      };
+
+      Island.addInitType("preact", mount);
+
+      ${process.env.NODE_ENV === "development" ? `
+      // Rehydrate after hot reload
+      window.__eleventyRehydrate = () => {
+        document.querySelectorAll('is-land[type="preact"]').forEach(el => {
+          if (el.hasAttribute("import")) {
+            mount(el);
+          }
+        });
+      };
+      ` : ""}
     `,
       }}
     />
+
   </head>
   <body>
     <Header {...props} />
