@@ -28,7 +28,7 @@ export default function (eleventyConfig, pluginOptions = {}) {
         const deps = await fg(contentPatterns);
         this.addDependencies(inputPath, deps);
       }
-      const { plugins, options } = await postcssrc();
+      const { plugins, options } = await postcssrc({ from: inputPath });
       const result = await postcss(plugins).process(content, {
         ...options,
         from: inputPath,
