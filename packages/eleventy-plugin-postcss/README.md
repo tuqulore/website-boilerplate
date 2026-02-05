@@ -21,6 +21,17 @@ export default function (eleventyConfig) {
 }
 ```
 
+This plugin requires a PostCSS configuration file (`postcss.config.mjs` or `postcss.config.js`) in your project root:
+
+```javascript
+// postcss.config.mjs
+export default {
+  plugins: {
+    "@tailwindcss/postcss": {},
+  },
+};
+```
+
 ## Options
 
 ### `contentGlob`
