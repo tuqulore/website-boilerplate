@@ -5,7 +5,7 @@ Eleventy plugin for processing CSS with PostCSS.
 ## Installation
 
 ```bash
-npm install -D @11ty/eleventy postcss postcss-load-config @tuqulore/eleventy-plugin-postcss
+npm install -D @11ty/eleventy postcss @tuqulore/eleventy-plugin-postcss
 ```
 
 ## Usage
@@ -45,7 +45,6 @@ Glob patterns for files to track as dependencies. When any of these files change
 
 - Eleventy 3.0 or higher
 - PostCSS 8.0 or higher
-- postcss-load-config 6.0 or higher
 
 ## License
 
