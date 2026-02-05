@@ -11,9 +11,7 @@
   },
   "devDependencies": {
     "@11ty/eleventy": "3.1.2",
-    "@tuqulore/eleventy-plugin-postcss": "workspace:*",
-    "@tuqulore/eleventy-plugin-preact": "workspace:*",
-    "@tuqulore/eleventy-plugin-preact-island": "workspace:*",
+    "@tuqulore/eleventy-preset": "workspace:*",
     "@11ty/eleventy-img": "6.0.4",
     "@eslint/js": "^9.22.0",
     "@iconify/json": "^2.2.90",

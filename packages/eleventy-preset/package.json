@@ -1,0 +1,44 @@
+{
+  "name": "@tuqulore/eleventy-preset",
+  "version": "3.0.0",
+  "description": "Eleventy preset for tuqulore website boilerplate",
+  "type": "module",
+  "main": "./index.mjs",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.mjs"
+    }
+  },
+  "files": [
+    "README.md",
+    "index.d.ts",
+    "index.mjs"
+  ],
+  "keywords": [
+    "eleventy",
+    "eleventy-preset",
+    "preact",
+    "postcss"
+  ],
+  "author": "tuqulore inc.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tuqulore/website-boilerplate.git",
+    "directory": "packages/eleventy-preset"
+  },
+  "dependencies": {
+    "@tuqulore/eleventy-plugin-postcss": "workspace:*",
+    "@tuqulore/eleventy-plugin-preact": "workspace:*",
+    "@tuqulore/eleventy-plugin-preact-island": "workspace:*"
+  },
+  "peerDependencies": {
+    "@11ty/eleventy": ">=3.0.0",
+    "postcss": ">=8.0.0",
+    "preact": ">=10.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
