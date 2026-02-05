@@ -33,6 +33,11 @@ export default function (eleventyConfig, pluginOptions = {}) {
         ...options,
         from: inputPath,
       });
+      result.warnings?.().forEach((warning) => {
+        console.warn(
+          `[eleventy-plugin-postcss] ${warning.node?.source?.input?.file ?? inputPath}: ${warning.text}`,
+        );
+      });
       return () => result.css;
     },
   });
