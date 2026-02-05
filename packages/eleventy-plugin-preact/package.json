@@ -1,0 +1,54 @@
+{
+  "name": "@tuqulore/eleventy-plugin-preact",
+  "version": "3.0.0",
+  "description": "Eleventy plugin for Preact server-side rendering with JSX/MDX support",
+  "type": "module",
+  "main": "./index.mjs",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.mjs"
+    },
+    "./loaders/mdx": {
+      "default": "./loaders/mdx.mjs"
+    },
+    "./loaders/jsx": {
+      "default": "./loaders/jsx.mjs"
+    }
+  },
+  "files": [
+    "README.md",
+    "index.d.ts",
+    "index.mjs",
+    "loaders"
+  ],
+  "keywords": [
+    "eleventy",
+    "eleventy-plugin",
+    "preact",
+    "jsx",
+    "mdx",
+    "ssr"
+  ],
+  "author": "tuqulore inc.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tuqulore/website-boilerplate.git",
+    "directory": "packages/eleventy-plugin-preact"
+  },
+  "dependencies": {
+    "@babel/core": "^7.26.10",
+    "@babel/preset-react": "^7.26.3",
+    "@mdx-js/node-loader": "^3.1.0",
+    "esbuild": "^0.25.0",
+    "preact-render-to-string": "^6.5.13"
+  },
+  "peerDependencies": {
+    "@11ty/eleventy": ">=3.0.0",
+    "preact": ">=10.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

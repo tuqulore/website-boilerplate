@@ -1,15 +1,9 @@
 import Image from "@11ty/eleventy-img";
-import * as esbuild from "esbuild";
 import fg from "fast-glob";
-import module from "node:module";
 import path from "node:path";
-import url from "node:url";
 import postcss from "@tuqulore/eleventy-plugin-postcss";
+import preact from "@tuqulore/eleventy-plugin-preact";
 import preactIsland from "@tuqulore/eleventy-plugin-preact-island";
-import preact from "./lib/preact.mjs";
-
-module.register("./lib/mdx-loader.mjs", url.pathToFileURL("./"));
-module.register("./lib/jsx-loader.mjs", url.pathToFileURL("./"));
 
 const optimizeImages = async () => {
   const images = await fg(["src/**/*.{jpeg,jpg,png,webp,gif,tiff,avif,svg}"], {
@@ -27,32 +21,11 @@ const optimizeImages = async () => {
   }
 };
 
-const transformJsx = async ({ runMode }) => {
-  /** @type {import("esbuild").BuildOptions} */
-  const options = {
-    bundle: true,
-    entryPoints: ["./src/**/*.hydrate.jsx"],
-    external: ["preact"],
-    format: "esm",
-    jsx: "automatic",
-    jsxImportSource: "preact",
-    outbase: "src",
-    outdir: "dist",
-  };
-  const ctx = await esbuild.context(options);
-  if (runMode === "build") {
-    await esbuild.build(options);
-    await esbuild.stop();
-  } else {
-    ctx.watch();
-  }
-};
-
 /** @param {import("@11ty/eleventy").UserConfig} eleventyConfig */
 export default (eleventyConfig) => {
-  eleventyConfig.addTemplateFormats(["jsx", "mdx"]);
-  eleventyConfig.ignores.add("src/**/*.hydrate.jsx");
-  eleventyConfig.addExtension(["jsx", "mdx"], preact);
+  eleventyConfig.addPlugin(preact, {
+    hydrateGlob: "./src/**/*.hydrate.jsx",
+  });
   eleventyConfig.addPlugin(postcss, {
     contentGlob: ["src/**/*.{md,mdx,jsx}"],
   });
@@ -63,7 +36,6 @@ export default (eleventyConfig) => {
   eleventyConfig.addWatchTarget("src/style/**/*.css");
   eleventyConfig.addPassthroughCopy({ "src/public/**": "/" });
   eleventyConfig.on("eleventy.before", optimizeImages);
-  eleventyConfig.on("eleventy.before", transformJsx);
   eleventyConfig.setServerOptions({
     watch: ["dist/**/*.css"],
   });
