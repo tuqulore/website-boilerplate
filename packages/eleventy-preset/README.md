@@ -50,6 +50,8 @@ export default preset((eleventyConfig) => {
 | Static assets        | `src/public/**` copied to root                    |
 | Image optimization   | Images in `src/**` optimized and copied to `dist` |
 
+**Note:** The input/output directories (`src`/`dist`) are fixed and cannot be customized via `setInputDirectory` or `setOutputDirectory`. Image optimization and other features depend on this directory structure.
+
 ### Image Optimization
 
 On `eleventy.before` event, all images in `src/**/*.{jpeg,jpg,png,webp,gif,tiff,avif,svg}` (excluding `src/public`) are processed with `@11ty/eleventy-img` and output to the corresponding location in `dist`.
