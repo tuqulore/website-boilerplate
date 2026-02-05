@@ -23,13 +23,13 @@ export default function (eleventyConfig) {
 }
 ```
 
-## What it injects
+## What it does
 
-The plugin injects the following scripts before `</head>`:
-
-1. **Import map** for is-land and Preact (from esm.sh CDN)
-2. **Development-only WebSocket hook** for rehydration after hot reload
-3. **is-land setup script** with `Island.addInitType("preact", mount)`
+1. **Copies `is-land.js`** from `@11ty/is-land` to the output directory
+2. **Injects scripts** before `</head>`:
+   - Import map for is-land and Preact (from esm.sh CDN)
+   - Development-only WebSocket hook for rehydration after hot reload
+   - is-land setup script with `Island.addInitType("preact", mount)`
 
 ## Options
 

@@ -1,3 +1,5 @@
+import url from "node:url";
+
 /**
  * Eleventy plugin for Preact partial hydration with is-land
  * @param {import("@11ty/eleventy").UserConfig} eleventyConfig
@@ -12,6 +14,11 @@ export default function (eleventyConfig, pluginOptions = {}) {
   }
 
   const { preactVersion = "" } = pluginOptions;
+
+  // Copy is-land.js to output directory
+  eleventyConfig.addPassthroughCopy({
+    [url.fileURLToPath(import.meta.resolve("@11ty/is-land/is-land.js"))]: "/",
+  });
   const preactSuffix = preactVersion ? `@${preactVersion}` : "";
 
   const generateImportMap = () => `<script type="importmap">

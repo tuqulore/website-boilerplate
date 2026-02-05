@@ -62,9 +62,6 @@ export default (eleventyConfig) => {
   );
   eleventyConfig.addWatchTarget("src/style/**/*.css");
   eleventyConfig.addPassthroughCopy({ "src/public/**": "/" });
-  eleventyConfig.addPassthroughCopy({
-    [url.fileURLToPath(import.meta.resolve("@11ty/is-land/is-land.js"))]: "/",
-  });
   eleventyConfig.on("eleventy.before", optimizeImages);
   eleventyConfig.on("eleventy.before", transformJsx);
   eleventyConfig.setServerOptions({
