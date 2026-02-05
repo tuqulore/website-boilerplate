@@ -7,7 +7,7 @@ This plugin enables you to use JSX and MDX files as Eleventy templates, renderin
 ## Installation
 
 ```bash
-npm install -D @11ty/eleventy @tuqulore/eleventy-plugin-preact
+npm install -D @11ty/eleventy @tuqulore/eleventy-plugin-preact preact
 ```
 
 ## Usage
@@ -17,9 +17,7 @@ npm install -D @11ty/eleventy @tuqulore/eleventy-plugin-preact
 import preact from "@tuqulore/eleventy-plugin-preact";
 
 export default function (eleventyConfig) {
-  eleventyConfig.addPlugin(preact, {
-    hydrateGlob: "./src/**/*.hydrate.jsx", // optional
-  });
+  eleventyConfig.addPlugin(preact);
 }
 ```
 
@@ -39,13 +37,17 @@ export default function (eleventyConfig) {
 Glob pattern for hydration entry points. Files matching this pattern will be:
 
 - Ignored by Eleventy (not processed as templates)
-- Bundled with esbuild for client-side hydration
+- Bundled with esbuild for client-side use
 
-Example: `"./src/**/*.hydrate.jsx"`
+```javascript
+eleventyConfig.addPlugin(preact, {
+  hydrateGlob: "./src/**/*.hydrate.jsx",
+});
+```
 
 ## With Partial Hydration
 
-For client-side partial hydration, use this plugin together with `@tuqulore/eleventy-plugin-preact-island`:
+For partial hydration, use this plugin together with `@tuqulore/eleventy-plugin-preact-island`:
 
 ```javascript
 import preact from "@tuqulore/eleventy-plugin-preact";
@@ -57,7 +59,7 @@ export default function (eleventyConfig) {
     hydrateGlob: "./src/**/*.hydrate.jsx",
   });
 
-  // Client-side hydration
+  // Partial hydration
   eleventyConfig.addPlugin(preactIsland);
 }
 ```
@@ -66,7 +68,7 @@ export default function (eleventyConfig) {
 
 - Node.js 20 or higher
 - Eleventy 3.0 or higher
-- Preact 10 or later
+- Preact 10 or higher
 
 ## License
 

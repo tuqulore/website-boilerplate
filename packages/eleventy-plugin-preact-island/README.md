@@ -17,9 +17,7 @@ npm install -D @11ty/eleventy @11ty/is-land @tuqulore/eleventy-plugin-preact-isl
 import preactIsland from "@tuqulore/eleventy-plugin-preact-island";
 
 export default function (eleventyConfig) {
-  eleventyConfig.addPlugin(preactIsland, {
-    preactVersion: "10.26.4", // optional
-  });
+  eleventyConfig.addPlugin(preactIsland);
 }
 ```
 
@@ -40,10 +38,42 @@ export default function (eleventyConfig) {
 
 Specify the Preact version to use from esm.sh CDN.
 
+```javascript
+eleventyConfig.addPlugin(preactIsland, {
+  preactVersion: "10.26.4",
+});
+```
+
+## Partial Hydration
+
+To hydrate a component, use the `<is-land>` web component with `type="preact"`.
+
+```mdx
+import Component from "./component.hydrate.jsx";
+
+<is-land land-on:visible type="preact" import="./component.hydrate.js" props='{ "someProp": "value" }'>
+  <Component someProp="value" />
+</is-land>
+```
+
+- The inner `<Component />` is rendered at build time (SSR)
+- The component is hydrated in the browser when the `<is-land>` becomes visible
+
+> **Note:** The `on:*` attribute prefix is changed to `land-on:*` to avoid conflicts with JSX syntax.
+
+### `<is-land>` Attributes
+
+| Attribute | Description |
+|-----------|-------------|
+| `type` | Hydration runtime. Set to `"preact"`. |
+| `import` | Path to the hydration script (e.g., `./component.hydrate.js`). |
+| `props` | JSON-stringified props to pass to the component. |
+| `land-on:*` | [Initialization conditions](https://github.com/11ty/is-land?tab=readme-ov-file#usage) (e.g., `land-on:visible`, `land-on:idle`). |
+
 ## Requirements
 
 - Eleventy 3.0 or higher
-- @11ty/is-land
+- @11ty/is-land 5.0 or higher
 
 ## License
 
