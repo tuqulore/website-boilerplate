@@ -41,8 +41,11 @@ import Footer from "./partials/footer.mdx";
                 const data = JSON.parse(event.data);
                 if (data.type === "eleventy.reload") {
                   // Schedule rehydration after morphdom completes
+                  // Use nested requestAnimationFrame to ensure DOM is fully updated
                   requestAnimationFrame(() => {
-                    window.__eleventyRehydrate?.();
+                    requestAnimationFrame(() => {
+                      window.__eleventyRehydrate?.();
+                    });
                   });
                 }
               } catch (e) { console.error(e) }
