@@ -10,8 +10,16 @@
       "default": "./index.mjs"
     }
   },
-  "files": ["index.mjs", "index.d.ts"],
-  "keywords": ["eleventy", "eleventy-plugin", "postcss", "css"],
+  "files": [
+    "index.mjs",
+    "index.d.ts"
+  ],
+  "keywords": [
+    "eleventy",
+    "eleventy-plugin",
+    "postcss",
+    "css"
+  ],
   "author": "tuqulore inc.",
   "license": "MIT",
   "repository": {
