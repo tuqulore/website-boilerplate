@@ -41,7 +41,7 @@
     "@babel/core": "^7.26.10",
     "@babel/preset-react": "^7.26.3",
     "@mdx-js/node-loader": "^3.1.0",
-    "esbuild": "^0.25.0",
+    "esbuild": "^0.27.0",
     "preact-render-to-string": "^6.5.13"
   },
   "peerDependencies": {
