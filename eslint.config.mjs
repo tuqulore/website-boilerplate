@@ -23,7 +23,6 @@ export default defineConfig([
     files: [
       "**/*.cjs",
       "*.mjs",
-      "lib/**/*.{mjs,js}",
       "packages/**/*.{mjs,js}",
       "src/_data/**/*.{mjs,js}",
     ],
