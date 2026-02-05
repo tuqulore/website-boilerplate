@@ -36,6 +36,9 @@ export default (eleventyConfig) => {
   eleventyConfig.addWatchTarget("src/style/**/*.css");
   eleventyConfig.addPassthroughCopy({ "src/public/**": "/" });
   eleventyConfig.on("eleventy.before", optimizeImages);
+  eleventyConfig.setServerOptions({
+    watch: ["dist/**/*.css"],
+  });
   return {
     dir: {
       input: "src",

@@ -21,14 +21,6 @@ export default function (eleventyConfig, pluginOptions = {}) {
     : [contentGlob];
 
   eleventyConfig.addTemplateFormats("css");
-
-  // Watch generated CSS files for dev server reload when contentGlob is specified
-  if (contentPatterns.length > 0) {
-    eleventyConfig.setServerOptions({
-      watch: ["dist/**/*.css"],
-    });
-  }
-
   eleventyConfig.addExtension("css", {
     outputFileExtension: "css",
     compile: async function (content, inputPath) {
