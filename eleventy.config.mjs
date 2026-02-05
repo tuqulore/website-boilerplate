@@ -33,7 +33,6 @@ export default (eleventyConfig) => {
   eleventyConfig.amendLibrary("md", (md) =>
     md.set({ breaks: true, linkify: true }),
   );
-  eleventyConfig.addWatchTarget("src/style/**/*.css");
   eleventyConfig.addPassthroughCopy({ "src/public/**": "/" });
   eleventyConfig.on("eleventy.before", optimizeImages);
   eleventyConfig.setServerOptions({
