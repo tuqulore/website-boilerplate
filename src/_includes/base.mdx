@@ -69,7 +69,8 @@ import Footer from "./partials/footer.mdx";
 
       const mount = async (target) => {
         const component = await import(target.getAttribute("import"));
-        const props = JSON.parse(target.getAttribute("props"));
+        const propsAttr = target.getAttribute("props");
+        const props = propsAttr ? JSON.parse(propsAttr) : {};
         hydrate(h(component.default, props), target);
       };
 
