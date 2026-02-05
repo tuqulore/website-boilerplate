@@ -51,7 +51,12 @@ To hydrate a component, use the `<is-land>` web component with `type="preact"`.
 ```mdx
 import Component from "./component.hydrate.jsx";
 
-<is-land land-on:visible type="preact" import="./component.hydrate.js" props='{ "someProp": "value" }'>
+<is-land
+  land-on:visible
+  type="preact"
+  import="./component.hydrate.js"
+  props='{ "someProp": "value" }'
+>
   <Component someProp="value" />
 </is-land>
 ```
@@ -63,11 +68,11 @@ import Component from "./component.hydrate.jsx";
 
 ### `<is-land>` Attributes
 
-| Attribute | Description |
-|-----------|-------------|
-| `type` | Hydration runtime. Set to `"preact"`. |
-| `import` | Path to the hydration script (e.g., `./component.hydrate.js`). |
-| `props` | JSON-stringified props to pass to the component. |
+| Attribute   | Description                                                                                                                      |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `type`      | Hydration runtime. Set to `"preact"`.                                                                                            |
+| `import`    | Path to the hydration script (e.g., `./component.hydrate.js`).                                                                   |
+| `props`     | JSON-stringified props to pass to the component.                                                                                 |
 | `land-on:*` | [Initialization conditions](https://github.com/11ty/is-land?tab=readme-ov-file#usage) (e.g., `land-on:visible`, `land-on:idle`). |
 
 ## Requirements
