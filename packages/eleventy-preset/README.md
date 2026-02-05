@@ -41,16 +41,16 @@ export default preset((eleventyConfig) => {
 
 ### Default Behavior
 
-| Feature | Description |
-|---------|-------------|
-| Input directory | `src` |
-| Output directory | `dist` |
-| Hydration glob | `./src/**/*.hydrate.jsx` |
-| PostCSS content glob | `src/**/*.{md,mdx,jsx}` |
-| Server watches | `dist/**/*.css` |
-| Markdown | `breaks: true`, `linkify: true` |
-| Static assets | `src/public/**` copied to root |
-| Image optimization | Images in `src/**` optimized and copied to `dist` |
+| Feature              | Description                                       |
+| -------------------- | ------------------------------------------------- |
+| Input directory      | `src`                                             |
+| Output directory     | `dist`                                            |
+| Hydration glob       | `./src/**/*.hydrate.jsx`                          |
+| PostCSS content glob | `src/**/*.{md,mdx,jsx}`                           |
+| Server watches       | `dist/**/*.css`                                   |
+| Markdown             | `breaks: true`, `linkify: true`                   |
+| Static assets        | `src/public/**` copied to root                    |
+| Image optimization   | Images in `src/**` optimized and copied to `dist` |
 
 ### Image Optimization
 
@@ -60,10 +60,10 @@ On `eleventy.before` event, all images in `src/**/*.{jpeg,jpg,png,webp,gif,tiff,
 
 This preset supports JSX and MDX as template languages via `@tuqulore/eleventy-plugin-preact`.
 
-| Extension | Description |
-|-----------|-------------|
-| `.jsx` | Preact JSX components |
-| `.mdx` | Markdown with JSX support |
+| Extension | Description               |
+| --------- | ------------------------- |
+| `.jsx`    | Preact JSX components     |
+| `.mdx`    | Markdown with JSX support |
 
 ### Basic MDX Example
 
@@ -156,12 +156,12 @@ export const data = {
 
 Layouts receive the following props:
 
-| Prop | Description |
-|------|-------------|
-| `props.content` | Rendered HTML from child template |
+| Prop                                     | Description                               |
+| ---------------------------------------- | ----------------------------------------- |
+| `props.content`                          | Rendered HTML from child template         |
 | `props.title`, `props.description`, etc. | Values from `data` export or front matter |
-| `props.site`, `props.nav`, etc. | Global data from `_data/` directory |
-| `props.page` | Eleventy page data (url, date, etc.) |
+| `props.site`, `props.nav`, etc.          | Global data from `_data/` directory       |
+| `props.page`                             | Eleventy page data (url, date, etc.)      |
 
 ### Global Data Example
 
@@ -265,23 +265,25 @@ For hydrated components that need props, serialize them with `JSON.stringify`:
 import Navigation from "./partials/header/navigation.hydrate.jsx";
 
 <is-land
-  land-on:interaction
-  type="preact"
-  import="/_includes/partials/header/navigation.hydrate.js"
-  props={JSON.stringify({ nav: props.nav, class: "hidden md:block" })}
+land-on:interaction
+type="preact"
+import="/\_includes/partials/header/navigation.hydrate.js"
+props={JSON.stringify({ nav: props.nav, class: "hidden md:block" })}
+
 >
+
   <Navigation nav={props.nav} class="hidden md:block" />
 </is-land>
 ```
 
 ### Hydration Triggers
 
-| Attribute | Description |
-|-----------|-------------|
+| Attribute             | Description                                      |
+| --------------------- | ------------------------------------------------ |
 | `land-on:interaction` | Hydrate on user interaction (click, focus, etc.) |
-| `land-on:visible` | Hydrate when element becomes visible |
-| `land-on:idle` | Hydrate when browser is idle |
-| `land-on:media` | Hydrate based on media query |
+| `land-on:visible`     | Hydrate when element becomes visible             |
+| `land-on:idle`        | Hydrate when browser is idle                     |
+| `land-on:media`       | Hydrate based on media query                     |
 
 See [@tuqulore/eleventy-plugin-preact-island](../eleventy-plugin-preact-island/README.md) for more details.
 
