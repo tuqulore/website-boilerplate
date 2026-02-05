@@ -27,10 +27,7 @@ import preset from "@tuqulore/eleventy-preset";
 
 export default preset((eleventyConfig) => {
   // Add your custom configuration
-  eleventyConfig.addPassthroughCopy({ "src/public/**": "/" });
-  eleventyConfig.on("eleventy.before", async () => {
-    // Custom build tasks
-  });
+  eleventyConfig.addFilter("myFilter", (value) => value);
 });
 ```
 
@@ -42,14 +39,26 @@ export default preset((eleventyConfig) => {
 - **@tuqulore/eleventy-plugin-preact-island** - Partial hydration with is-land
 - **@tuqulore/eleventy-plugin-postcss** - CSS processing with PostCSS
 
-### Default Configuration
+### Default Behavior
 
-- Input directory: `src`
-- Output directory: `dist`
-- Hydration glob: `./src/**/*.hydrate.jsx`
-- PostCSS content glob: `src/**/*.{md,mdx,jsx}`
-- Server watches: `dist/**/*.css`
-- Markdown: `breaks: true`, `linkify: true`
+| Feature | Description |
+|---------|-------------|
+| Input directory | `src` |
+| Output directory | `dist` |
+| Hydration glob | `./src/**/*.hydrate.jsx` |
+| PostCSS content glob | `src/**/*.{md,mdx,jsx}` |
+| Server watches | `dist/**/*.css` |
+| Markdown | `breaks: true`, `linkify: true` |
+| Static assets | `src/public/**` copied to root |
+| Image optimization | Images in `src/**` optimized and copied to `dist` |
+
+### Image Optimization
+
+On `eleventy.before` event, all images in `src/**/*.{jpeg,jpg,png,webp,gif,tiff,avif,svg}` (excluding `src/public`) are processed with `@11ty/eleventy-img` and output to the corresponding location in `dist`.
+
+### Static Assets
+
+Files in `src/public/**` are copied to the root of the output directory. For example, `src/public/favicon.ico` becomes `dist/favicon.ico`.
 
 ## Requirements
 

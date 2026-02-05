@@ -29,9 +29,11 @@
     "directory": "packages/eleventy-preset"
   },
   "dependencies": {
+    "@11ty/eleventy-img": "^6.0.4",
     "@tuqulore/eleventy-plugin-postcss": "workspace:*",
     "@tuqulore/eleventy-plugin-preact": "workspace:*",
-    "@tuqulore/eleventy-plugin-preact-island": "workspace:*"
+    "@tuqulore/eleventy-plugin-preact-island": "workspace:*",
+    "fast-glob": "^3.3.3"
   },
   "peerDependencies": {
     "@11ty/eleventy": ">=3.0.0",
