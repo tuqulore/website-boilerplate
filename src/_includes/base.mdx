@@ -48,7 +48,9 @@ import Footer from "./partials/footer.mdx";
                     });
                   });
                 }
-              } catch (e) { console.error(e) }
+              } catch (e) {
+                console.error("Failed to parse WebSocket message:", e);
+              }
             });
             return ws;
           };
