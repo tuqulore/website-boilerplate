@@ -1,3 +1,3 @@
-import config from "@tuqulore/eslint-config";
+import config from "@tuqulore-inc/eslint-config";
 
 export default config;

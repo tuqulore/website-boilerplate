@@ -1,18 +1,18 @@
-# @tuqulore/eleventy-preset
+# @tuqulore-inc/eleventy-preset
 
 An Eleventy preset for building static sites with Preact JSX/MDX templates, partial hydration, and PostCSS.
 
 ## Installation
 
 ```bash
-npm install -D @11ty/eleventy @tuqulore/eleventy-preset preact postcss
+npm install -D @11ty/eleventy @tuqulore-inc/eleventy-preset preact postcss
 ```
 
 ## Usage
 
 ```javascript
 // eleventy.config.mjs
-import preset from "@tuqulore/eleventy-preset";
+import preset from "@tuqulore-inc/eleventy-preset";
 
 export default preset();
 ```
@@ -21,7 +21,7 @@ export default preset();
 
 ```javascript
 // eleventy.config.mjs
-import preset from "@tuqulore/eleventy-preset";
+import preset from "@tuqulore-inc/eleventy-preset";
 
 export default preset((eleventyConfig) => {
   // Add your custom configuration
@@ -33,9 +33,9 @@ export default preset((eleventyConfig) => {
 
 ### Plugins
 
-- **@tuqulore/eleventy-plugin-preact** - JSX/MDX server-side rendering
-- **@tuqulore/eleventy-plugin-preact-island** - Partial hydration with is-land
-- **@tuqulore/eleventy-plugin-postcss** - CSS processing with PostCSS
+- **@tuqulore-inc/eleventy-plugin-preact** - JSX/MDX server-side rendering
+- **@tuqulore-inc/eleventy-plugin-preact-island** - Partial hydration with is-land
+- **@tuqulore-inc/eleventy-plugin-postcss** - CSS processing with PostCSS
 
 ### Default Behavior
 
@@ -58,7 +58,7 @@ On `eleventy.before` event, all images in `src/**/*.{jpeg,jpg,png,webp,gif,tiff,
 
 ## Template Formats
 
-This preset supports JSX and MDX as template languages via `@tuqulore/eleventy-plugin-preact`.
+This preset supports JSX and MDX as template languages via `@tuqulore-inc/eleventy-plugin-preact`.
 
 | Extension | Description               |
 | --------- | ------------------------- |
@@ -113,7 +113,7 @@ index.mdx → post.mdx → base.mdx
 The root layout defines the complete HTML document structure:
 
 ```mdx
-import { eleventy } from "@tuqulore/eleventy-preset/eleventy";
+import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
 import Header from "./partials/header.mdx";
 import Footer from "./partials/footer.mdx";
 
@@ -140,7 +140,7 @@ import Footer from "./partials/footer.mdx";
 Intermediate layouts wrap content and chain to the root layout:
 
 ```mdx
-import { eleventy } from "@tuqulore/eleventy-preset/eleventy";
+import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
 
 export const data = {
   layout: "base",
@@ -162,7 +162,7 @@ This preset provides the `eleventy` singleton for accessing Eleventy data withou
 ### Usage
 
 ```jsx
-import { eleventy } from "@tuqulore/eleventy-preset/eleventy";
+import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
 
 // In layout
 <title>{eleventy.title} | {eleventy.site.name}</title>
@@ -209,7 +209,7 @@ export default {
 Access in templates:
 
 ```jsx
-import { eleventy } from "@tuqulore/eleventy-preset/eleventy";
+import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
 
 <title>{eleventy.site.name}</title>
 <nav>
@@ -235,7 +235,7 @@ src/_includes/partials/
 Import and use partials in layouts or other MDX files. Partials can access Eleventy data directly via the `eleventy` singleton:
 
 ```mdx
-import { eleventy } from "@tuqulore/eleventy-preset/eleventy";
+import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
 import Header from "./partials/header.mdx";
 import Footer from "./partials/footer.mdx";
 
@@ -246,7 +246,7 @@ import Footer from "./partials/footer.mdx";
 
 ## Partial Hydration
 
-This preset supports partial hydration using `@tuqulore/eleventy-plugin-preact-island` and `<is-land>`.
+This preset supports partial hydration using `@tuqulore-inc/eleventy-plugin-preact-island` and `<is-land>`.
 
 ### Creating a Hydrated Component
 
@@ -308,7 +308,7 @@ props={JSON.stringify({ nav: props.nav, class: "hidden md:block" })}
 | `land-on:idle`        | Hydrate when browser is idle                     |
 | `land-on:media`       | Hydrate based on media query                     |
 
-See [@tuqulore/eleventy-plugin-preact-island](../eleventy-plugin-preact-island/README.md) for more details.
+See [@tuqulore-inc/eleventy-plugin-preact-island](../eleventy-plugin-preact-island/README.md) for more details.
 
 ## Requirements
 

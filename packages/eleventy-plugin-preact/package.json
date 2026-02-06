@@ -1,5 +1,5 @@
 {
-  "name": "@tuqulore/eleventy-plugin-preact",
+  "name": "@tuqulore-inc/eleventy-plugin-preact",
   "version": "3.0.0",
   "description": "Eleventy plugin for Preact server-side rendering with JSX/MDX support",
   "keywords": [
@@ -55,7 +55,7 @@
     "preact-render-to-string": "^6.5.13"
   },
   "devDependencies": {
-    "@tuqulore/eslint-config": "workspace:*",
+    "@tuqulore-inc/eslint-config": "workspace:*",
     "eslint": "^9.39.2"
   },
   "peerDependencies": {

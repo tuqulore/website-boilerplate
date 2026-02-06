@@ -1,6 +1,7 @@
 {
   "name": "website-boilerplate",
   "version": "3.0.0",
+  "private": true,
   "description": "a boilerplate of website provided with npm scripts",
   "keywords": [
     "eleventy",

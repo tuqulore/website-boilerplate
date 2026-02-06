@@ -1,4 +1,4 @@
-# @tuqulore/create-eleventy
+# @tuqulore-inc/create-eleventy
 
 Eleventy + Preact + TailwindCSS のプロジェクトを作成するCLIツール
 
@@ -6,10 +6,10 @@ Eleventy + Preact + TailwindCSS のプロジェクトを作成するCLIツール
 
 ```bash
 # インタラクティブモード
-pnpm create @tuqulore/eleventy my-project
+pnpm create @tuqulore-inc/eleventy my-project
 
 # テンプレート指定
-pnpm create @tuqulore/eleventy my-project --template default
+pnpm create @tuqulore-inc/eleventy my-project --template default
 ```
 
 ## オプション

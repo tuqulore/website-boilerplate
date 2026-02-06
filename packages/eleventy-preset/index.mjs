@@ -1,7 +1,7 @@
 import Image from "@11ty/eleventy-img";
-import postcss from "@tuqulore/eleventy-plugin-postcss";
-import preact from "@tuqulore/eleventy-plugin-preact";
-import preactIsland from "@tuqulore/eleventy-plugin-preact-island";
+import postcss from "@tuqulore-inc/eleventy-plugin-postcss";
+import preact from "@tuqulore-inc/eleventy-plugin-preact";
+import preactIsland from "@tuqulore-inc/eleventy-plugin-preact-island";
 import fg from "fast-glob";
 import path from "node:path";
 
