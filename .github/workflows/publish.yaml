@@ -35,16 +35,16 @@ jobs:
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
 
+      - name: Publish to npm
+        run: pnpm -r publish --access public
+        env:
+          NPM_CONFIG_PROVENANCE: true
+
       - name: Create release tag
         run: |
           VERSION=$(cat lerna.json | jq -r .version)
           git tag "v${VERSION}"
           git push origin "v${VERSION}"
-
-      - name: Publish to npm
-        run: pnpm -r publish --access public
-        env:
-          NPM_CONFIG_PROVENANCE: true
 
       - name: Create alpha branch and bump version
         run: |
