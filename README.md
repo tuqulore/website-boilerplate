@@ -4,14 +4,14 @@ Eleventyプロジェクトのためのボイラープレートとツール群を
 
 ## パッケージ
 
-| パッケージ | 説明 |
-| :--------- | :--- |
-| [@tuqulore/create-eleventy](./packages/create-eleventy) | `pnpm create @tuqulore/eleventy` でプロジェクトを作成するCLI |
-| [@tuqulore/eleventy-preset](./packages/eleventy-preset) | Eleventy設定のプリセット |
-| [@tuqulore/eleventy-plugin-preact](./packages/eleventy-plugin-preact) | PreactでJSXテンプレートを使用するためのプラグイン |
-| [@tuqulore/eleventy-plugin-preact-island](./packages/eleventy-plugin-preact-island) | Partial Hydrationを実現するためのプラグイン |
-| [@tuqulore/eleventy-plugin-postcss](./packages/eleventy-plugin-postcss) | PostCSSを使用するためのプラグイン |
-| [@tuqulore/eslint-config](./packages/eslint-config) | 共有のESLint設定 |
+| パッケージ                                                                          | 説明                                                         |
+| :---------------------------------------------------------------------------------- | :----------------------------------------------------------- |
+| [@tuqulore/create-eleventy](./packages/create-eleventy)                             | `pnpm create @tuqulore/eleventy` でプロジェクトを作成するCLI |
+| [@tuqulore/eleventy-preset](./packages/eleventy-preset)                             | Eleventy設定のプリセット                                     |
+| [@tuqulore/eleventy-plugin-preact](./packages/eleventy-plugin-preact)               | PreactでJSXテンプレートを使用するためのプラグイン            |
+| [@tuqulore/eleventy-plugin-preact-island](./packages/eleventy-plugin-preact-island) | Partial Hydrationを実現するためのプラグイン                  |
+| [@tuqulore/eleventy-plugin-postcss](./packages/eleventy-plugin-postcss)             | PostCSSを使用するためのプラグイン                            |
+| [@tuqulore/eslint-config](./packages/eslint-config)                                 | 共有のESLint設定                                             |
 
 ## クイックスタート
 
