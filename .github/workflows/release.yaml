@@ -39,7 +39,12 @@ jobs:
         run: |
           git checkout -b release
           pnpm versionup ${{ inputs.semver }} --yes --no-git-tag-version
-          git commit --all --message "chore(release): v$(cat lerna.json | jq -r .version)"
+          VERSION=$(cat lerna.json | jq -r .version)
+          # テンプレート内の@tuqulore-inc/eleventy-presetのバージョンを更新
+          jq --arg version "^$VERSION" '.devDependencies["@tuqulore-inc/eleventy-preset"] = $version' \
+            packages/create-eleventy/templates/default/package.json > tmp.json && \
+            mv tmp.json packages/create-eleventy/templates/default/package.json
+          git commit --all --message "chore(release): v${VERSION}"
           git push -f origin release
 
       - name: Create pull request
