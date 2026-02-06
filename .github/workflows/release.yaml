@@ -11,6 +11,10 @@ on:
           - minor
           - major
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   release:
     runs-on: ubuntu-24.04
@@ -36,8 +40,6 @@ jobs:
           git checkout -b release
           pnpm versionup ${{ inputs.semver }} --yes --no-git-tag-version
           git push -f origin release
-        env:
-          GH_TOKEN: ${{ github.token }}
 
       - name: Create pull request
         run: |
