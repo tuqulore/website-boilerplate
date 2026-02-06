@@ -1,6 +1,6 @@
 {
   "name": "@tuqulore-inc/create-eleventy",
-  "version": "4.0.2",
+  "version": "4.0.3-alpha.0",
   "description": "Create a new Eleventy project with Preact and TailwindCSS",
   "keywords": [
     "create",
