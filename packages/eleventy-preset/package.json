@@ -2,8 +2,20 @@
   "name": "@tuqulore/eleventy-preset",
   "version": "3.0.0",
   "description": "Eleventy preset for building static sites with Preact JSX/MDX templates, partial hydration, and PostCSS",
+  "keywords": [
+    "eleventy",
+    "eleventy-preset",
+    "preact",
+    "postcss"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tuqulore/website-boilerplate.git",
+    "directory": "packages/eleventy-preset"
+  },
+  "license": "MIT",
+  "author": "tuqulore inc.",
   "type": "module",
-  "main": "./index.mjs",
   "exports": {
     ".": {
       "types": "./index.d.ts",
@@ -14,6 +26,7 @@
       "default": "./eleventy.mjs"
     }
   },
+  "main": "./index.mjs",
   "files": [
     "README.md",
     "index.d.ts",
@@ -21,18 +34,8 @@
     "eleventy.d.ts",
     "eleventy.mjs"
   ],
-  "keywords": [
-    "eleventy",
-    "eleventy-preset",
-    "preact",
-    "postcss"
-  ],
-  "author": "tuqulore inc.",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tuqulore/website-boilerplate.git",
-    "directory": "packages/eleventy-preset"
+  "scripts": {
+    "lint": "eslint --fix ."
   },
   "dependencies": {
     "@11ty/eleventy-img": "^6.0.4",
@@ -40,9 +43,6 @@
     "@tuqulore/eleventy-plugin-preact": "workspace:*",
     "@tuqulore/eleventy-plugin-preact-island": "workspace:*",
     "fast-glob": "^3.3.3"
-  },
-  "scripts": {
-    "lint": "eslint --fix ."
   },
   "devDependencies": {
     "@tuqulore/eslint-config": "workspace:*",
