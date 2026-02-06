@@ -54,6 +54,9 @@
     "@11ty/eleventy": ">=3.0.0",
     "preact": ">=10.0.0"
   },
+  "scripts": {
+    "test": "node --test"
+  },
   "engines": {
     "node": ">=20"
   }
