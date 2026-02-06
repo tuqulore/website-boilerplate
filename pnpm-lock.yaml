@@ -91,6 +91,9 @@ importers:
       '@11ty/is-land':
         specifier: ^5.0.0
         version: 5.0.1
+      '@tuqulore-inc/eleventy-plugin-preact':
+        specifier: '>=4.0.0'
+        version: 4.0.2(@11ty/eleventy@3.1.2)(acorn@8.15.0)(preact@10.26.4)
     devDependencies:
       '@tuqulore-inc/eslint-config':
         specifier: workspace:*
@@ -1061,6 +1064,13 @@ packages:
   '@sindresorhus/transliterate@1.6.0':
     resolution: {integrity: sha512-doH1gimEu3A46VX6aVxpHTeHrytJAG6HgdxntYnCFiIFHEM/ZGpG8KiZGBChchjQmG0XFIBL552kBTjVcMZXwQ==}
     engines: {node: '>=12'}
+
+  '@tuqulore-inc/eleventy-plugin-preact@4.0.2':
+    resolution: {integrity: sha512-tfCsszXbXZpcY+F9a/B6dT3pDTaVeOmrgEaZ/aNyCQTKd1866RDjNNTPwtxKYX1jQwtKCBajZ7LFx4cvM0tj3g==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      '@11ty/eleventy': '>=3.0.0'
+      preact: '>=10.0.0'
 
   '@types/acorn@4.0.6':
     resolution: {integrity: sha512-veQTnWP+1D/xbxVrPC3zHnCZRjSrKfhbMUlEA43iMZLu7EsnTtkJklIuwrCPbOi8YkvDQAiW05VQQFvvz9oieQ==}
@@ -4261,6 +4271,19 @@ snapshots:
   '@sindresorhus/transliterate@1.6.0':
     dependencies:
       escape-string-regexp: 5.0.0
+
+  '@tuqulore-inc/eleventy-plugin-preact@4.0.2(@11ty/eleventy@3.1.2)(acorn@8.15.0)(preact@10.26.4)':
+    dependencies:
+      '@11ty/eleventy': 3.1.2
+      '@babel/core': 7.26.10
+      '@babel/preset-react': 7.26.3(@babel/core@7.26.10)
+      '@mdx-js/node-loader': 3.1.0(acorn@8.15.0)
+      esbuild: 0.27.2
+      preact: 10.26.4
+      preact-render-to-string: 6.5.13(preact@10.26.4)
+    transitivePeerDependencies:
+      - acorn
+      - supports-color
 
   '@types/acorn@4.0.6':
     dependencies:
