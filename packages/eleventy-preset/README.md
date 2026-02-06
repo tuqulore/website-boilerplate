@@ -153,7 +153,7 @@ export const data = {
 
 - Root layout (`base.mdx`) defines the complete HTML shell
 - Intermediate layouts (`post.mdx`, etc.) define content wrappers
-- Use `dangerouslySetInnerHTML={{ __html: props.content }}` to inject child content
+- Use `dangerouslySetInnerHTML={{ __html: eleventy.content }}` to inject child content
 
 ## Data Access in Layouts
 
