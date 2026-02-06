@@ -1,6 +1,6 @@
 {
   "name": "@tuqulore-inc/eleventy-plugin-preact",
-  "version": "4.0.1-alpha.0",
+  "version": "4.0.1",
   "description": "Eleventy plugin for Preact server-side rendering with JSX/MDX support",
   "keywords": [
     "eleventy",
