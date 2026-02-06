@@ -270,7 +270,7 @@ export default function Clicker() {
 
 ### Using the Island Component (Recommended)
 
-The `Island` component simplifies partial hydration by wrapping `<is-land>` and automatically handling `JSON.stringify` for props:
+The `Island` component simplifies partial hydration by wrapping `<is-land>` and automatically extracting props from the child component:
 
 ```mdx
 import Island from "@tuqulore-inc/eleventy-preset/Island";
@@ -283,30 +283,25 @@ import Clicker from "./clicker.hydrate.jsx";
 
 #### Passing Props
 
-Props are automatically serialized:
+Props are automatically extracted from the child component - no need to specify them twice:
 
 ```mdx
 import Island from "@tuqulore-inc/eleventy-preset/Island";
 import Navigation from "./partials/header/navigation.hydrate.jsx";
 
-<Island
-  on="interaction"
-  import="/_includes/partials/header/navigation.hydrate.js"
-  nav={eleventy.nav}
-  class="hidden md:block"
->
+<Island on="interaction" import="/_includes/partials/header/navigation.hydrate.js">
   <Navigation nav={eleventy.nav} class="hidden md:block" />
 </Island>
 ```
 
 #### Island Props
 
-| Prop       | Type     | Default         | Description                                       |
-| ---------- | -------- | --------------- | ------------------------------------------------- |
-| `on`       | `string` | `"interaction"` | Hydration trigger (`interaction`, `visible`, etc) |
-| `import`   | `string` | -               | Path to the hydration script                      |
-| `children` | `node`   | -               | Component to hydrate (SSR rendered)               |
-| `...rest`  | `any`    | -               | Props passed to the hydrated component            |
+| Prop       | Type     | Default         | Description                                                    |
+| ---------- | -------- | --------------- | -------------------------------------------------------------- |
+| `on`       | `string` | `"interaction"` | Hydration trigger (`interaction`, `visible`, etc)              |
+| `import`   | `string` | -               | Path to the hydration script                                   |
+| `children` | `node`   | -               | Component to hydrate (props are auto-extracted)                |
+| `...rest`  | `any`    | -               | Additional props to merge (takes precedence over child props)  |
 
 ### Using is-land Directly
 
