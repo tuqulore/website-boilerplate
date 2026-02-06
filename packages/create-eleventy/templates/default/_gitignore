@@ -1,0 +1,6 @@
+*.log
+.cache
+.cssdist
+.env*.local
+dist
+node_modules

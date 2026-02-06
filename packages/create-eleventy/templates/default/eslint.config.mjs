@@ -20,12 +20,7 @@ export default defineConfig([
     languageOptions: { sourceType: "module" },
   },
   {
-    files: [
-      "**/*.cjs",
-      "*.mjs",
-      "packages/**/*.{mjs,js}",
-      "src/_data/**/*.{mjs,js}",
-    ],
+    files: ["**/*.cjs", "*.mjs", "src/_data/**/*.{mjs,js}"],
     languageOptions: { globals: globals.node },
   },
   react.configs.flat.recommended,
