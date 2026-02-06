@@ -28,7 +28,15 @@ Example:
 }
 
 const templatesDir = new URL("./templates/", import.meta.url);
-const templates = fs.readdirSync(templatesDir);
+let templates;
+
+try {
+  templates = fs.readdirSync(templatesDir);
+} catch (error) {
+  console.error(`Failed to read templates directory: ${templatesDir}`);
+  console.error(error instanceof Error ? error.message : String(error));
+  process.exit(1);
+}
 
 async function prompt(question) {
   const rl = readline.createInterface({
