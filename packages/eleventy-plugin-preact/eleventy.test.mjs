@@ -101,10 +101,13 @@ describe("eleventy singleton", () => {
 
   describe("非同期処理対応", () => {
     it("await後もデータが保持される", async () => {
-      const result = await _runWithEleventyData({ title: "Async Test" }, async () => {
-        await delay(5);
-        return eleventy.title;
-      });
+      const result = await _runWithEleventyData(
+        { title: "Async Test" },
+        async () => {
+          await delay(5);
+          return eleventy.title;
+        },
+      );
 
       assert.strictEqual(result, "Async Test");
     });
@@ -115,9 +118,12 @@ describe("eleventy singleton", () => {
         return eleventy.title;
       };
 
-      const result = await _runWithEleventyData({ title: "Nested" }, async () => {
-        return await innerFn();
-      });
+      const result = await _runWithEleventyData(
+        { title: "Nested" },
+        async () => {
+          return await innerFn();
+        },
+      );
 
       assert.strictEqual(result, "Nested");
     });
