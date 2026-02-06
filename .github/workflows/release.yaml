@@ -34,7 +34,7 @@ jobs:
       - name: Create release branch and bump version
         run: |
           git checkout -b release
-          pnpm versionup ${{ inputs.semver }} --yes
+          pnpm versionup ${{ inputs.semver }} --yes --no-git-tag-version
           git push -f origin release
         env:
           GH_TOKEN: ${{ github.token }}
