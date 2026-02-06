@@ -16,7 +16,8 @@ export interface IslandProps extends JSX.HTMLAttributes<HTMLElement> {
 
   /**
    * Module path for hydration.
-   * Required in Phase 1. Will be auto-detected in Phase 2 via Babel plugin.
+   * Auto-detected for files matching hydrateGlob in eleventy-plugin-preact.
+   * Can be provided manually if auto-detection is not available.
    */
   import?: string;
 }

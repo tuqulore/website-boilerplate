@@ -8,10 +8,10 @@ import Mobile from "./header/mobile.hydrate.jsx";
     <a class="flex-shrink-0" href="/">
       {eleventy.site.name}
     </a>
-    <Island on="interaction" import="/_includes/partials/header/desktop.hydrate.js">
+    <Island on="interaction">
       <Desktop class="hidden md:block" nav={eleventy.nav} />
     </Island>
-    <Island on="interaction" import="/_includes/partials/header/mobile.hydrate.js">
+    <Island on="interaction">
       <Mobile class="ml-auto flex items-center md:hidden" nav={eleventy.nav} />
     </Island>
   </div>

@@ -46,7 +46,13 @@
     "eslint": "^9.39.2"
   },
   "peerDependencies": {
-    "@11ty/eleventy": ">=3.0.0"
+    "@11ty/eleventy": ">=3.0.0",
+    "@tuqulore-inc/eleventy-plugin-preact": ">=4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@tuqulore-inc/eleventy-plugin-preact": {
+      "optional": true
+    }
   },
   "engines": {
     "node": ">=20"

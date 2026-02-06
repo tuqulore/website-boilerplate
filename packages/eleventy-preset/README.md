@@ -270,13 +270,16 @@ export default function Clicker() {
 
 ### Using the Island Component (Recommended)
 
-The `Island` component simplifies partial hydration by wrapping `<is-land>` and automatically extracting props from the child component:
+The `Island` component simplifies partial hydration by wrapping `<is-land>` and automatically:
+
+- Extracting props from the child component (no duplication needed)
+- Detecting the hydration module path (no `import` prop needed)
 
 ```mdx
 import Island from "@tuqulore-inc/eleventy-preset/Island";
 import Clicker from "./clicker.hydrate.jsx";
 
-<Island on="interaction" import="./clicker.hydrate.js">
+<Island on="interaction">
   <Clicker />
 </Island>
 ```
@@ -289,7 +292,7 @@ Props are automatically extracted from the child component - no need to specify 
 import Island from "@tuqulore-inc/eleventy-preset/Island";
 import Navigation from "./partials/header/navigation.hydrate.jsx";
 
-<Island on="interaction" import="/_includes/partials/header/navigation.hydrate.js">
+<Island on="interaction">
   <Navigation nav={eleventy.nav} class="hidden md:block" />
 </Island>
 ```
@@ -299,7 +302,7 @@ import Navigation from "./partials/header/navigation.hydrate.jsx";
 | Prop       | Type     | Default         | Description                                                    |
 | ---------- | -------- | --------------- | -------------------------------------------------------------- |
 | `on`       | `string` | `"interaction"` | Hydration trigger (`interaction`, `visible`, etc)              |
-| `import`   | `string` | -               | Path to the hydration script                                   |
+| `import`   | `string` | (auto-detected) | Path to the hydration script (usually not needed)              |
 | `children` | `node`   | -               | Component to hydrate (props are auto-extracted)                |
 | `...rest`  | `any`    | -               | Additional props to merge (takes precedence over child props)  |
 

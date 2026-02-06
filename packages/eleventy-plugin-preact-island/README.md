@@ -48,29 +48,30 @@ eleventyConfig.addPlugin(preactIsland, {
 
 ### Using `Island` Component (Recommended)
 
-The `Island` component simplifies partial hydration by wrapping `<is-land>` and automatically extracting props from the child component.
+The `Island` component simplifies partial hydration by wrapping `<is-land>` and automatically:
+
+- Extracting props from the child component (no duplication needed)
+- Detecting the hydration module path via `__hydrateModule` metadata
 
 ```mdx
 import Island from "@tuqulore-inc/eleventy-plugin-preact-island/Island";
 import Component from "./component.hydrate.jsx";
 
-<Island on="visible" import="./component.hydrate.js">
+<Island on="visible">
   <Component someProp="value" anotherProp={data} />
 </Island>
 ```
 
-Props are automatically extracted from the child component - no need to specify them twice.
-
-> **Note:** If using `@tuqulore-inc/eleventy-preset`, you can import from `@tuqulore-inc/eleventy-preset/Island` instead.
+> **Note:** The `import` prop is auto-detected for files matching `hydrateGlob` in `@tuqulore-inc/eleventy-plugin-preact`. If using `@tuqulore-inc/eleventy-preset`, you can import from `@tuqulore-inc/eleventy-preset/Island` instead.
 
 #### `Island` Props
 
-| Prop       | Type     | Default         | Description                                                    |
-| ---------- | -------- | --------------- | -------------------------------------------------------------- |
-| `on`       | `string` | `"interaction"` | Hydration trigger (`interaction`, `visible`, etc)              |
-| `import`   | `string` | -               | Path to the hydration script                                   |
-| `children` | `node`   | -               | Component to hydrate (props are auto-extracted)                |
-| `...rest`  | `any`    | -               | Additional props to merge (takes precedence over child props)  |
+| Prop       | Type     | Default         | Description                                                                    |
+| ---------- | -------- | --------------- | ------------------------------------------------------------------------------ |
+| `on`       | `string` | `"interaction"` | Hydration trigger (`interaction`, `visible`, etc)                              |
+| `import`   | `string` | (auto-detected) | Path to the hydration script (auto-detected for hydrateGlob files)             |
+| `children` | `node`   | -               | Component to hydrate (props are auto-extracted)                                |
+| `...rest`  | `any`    | -               | Additional props to merge (takes precedence over child props)                  |
 
 ### Using `<is-land>` Directly
 
