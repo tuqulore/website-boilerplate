@@ -50,6 +50,6 @@ pnpm install
 
 PRブランチで静的コード検査とコード整形をおこないます。
 
-### Release
+### Release / Publish
 
-リリースのためのPRを作成します。[手動で実行](https://docs.github.com/en/actions/using-workflows/manually-running-a-workflow)します。
+パッケージのリリースとnpm公開を行います。詳細は[リリースガイド](./RELEASING.md)を参照してください。

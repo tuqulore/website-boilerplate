@@ -10,25 +10,46 @@ on:
           - patch
           - minor
           - major
-          - prerelease
-          - prepatch
-          - preminor
-          - premajor
+
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   release:
     runs-on: ubuntu-24.04
     steps:
-      - uses: tuqulore/.github/setup@main
-      - run: |
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: package.json
+          cache: pnpm
+
+      - run: pnpm install
+
+      - name: Configure git
+        run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          git branch --move release
+
+      - name: Create release branch and bump version
+        run: |
+          git checkout -b release
+          pnpm versionup ${{ inputs.semver }} --yes --no-git-tag-version
           git push -f origin release
-          pnpm versionup ${{ github.event.inputs.semver }} --yes
-          git commit --all --message "chore(release): v$(cat lerna.json | jq -r .version)"
-          git push origin release
-          gh pr create --fill
+
+      - name: Create pull request
+        run: |
+          VERSION=$(cat lerna.json | jq -r .version)
+          gh pr create \
+            --base main \
+            --title "chore(release): v${VERSION}" \
+            --body "Release v${VERSION}"
         env:
           GH_TOKEN: ${{ github.token }}
-      - if: ${{ failure() }}
+
+      - if: failure()
         run: git push origin :release
