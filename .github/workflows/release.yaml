@@ -39,6 +39,7 @@ jobs:
         run: |
           git checkout -b release
           pnpm versionup ${{ inputs.semver }} --yes --no-git-tag-version
+          git commit --all --message "chore(release): v$(cat lerna.json | jq -r .version)"
           git push -f origin release
 
       - name: Create pull request
