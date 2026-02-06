@@ -81,8 +81,10 @@ function copyDir(src, dest) {
     const srcPath = path.join(src, entry.name);
     let destName = entry.name;
 
-    // Rename _prefix to .prefix
-    if (destName.startsWith("_")) {
+    // Rename __prefix to _prefix, _prefix to .prefix
+    if (destName.startsWith("__")) {
+      destName = destName.slice(1);
+    } else if (destName.startsWith("_")) {
       destName = "." + destName.slice(1);
     }
 
