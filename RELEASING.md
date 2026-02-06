@@ -33,7 +33,7 @@ alpha開発版 (3.0.2-alpha.1) ← 手動でpublish可能
 
 ### 1. release.yaml を実行
 
-1. GitHub Actions の [release.yaml](../../actions/workflows/release.yaml) を開く
+1. GitHub Actions の [release.yaml](https://github.com/tuqulore/website-boilerplate/actions/workflows/release.yaml) を開く
 2. 「Run workflow」をクリック
 3. semver（`patch` / `minor` / `major`）を選択
 4. 「Run workflow」を実行
@@ -67,7 +67,7 @@ alpha PRをマージして、mainブランチをalphaバージョンに更新し
 
 ### 1. publish.yaml を手動実行
 
-1. GitHub Actions の [publish.yaml](../../actions/workflows/publish.yaml) を開く
+1. GitHub Actions の [publish.yaml](https://github.com/tuqulore/website-boilerplate/actions/workflows/publish.yaml) を開く
 2. 「Run workflow」をクリック
 3. 「Run workflow」を実行
 
