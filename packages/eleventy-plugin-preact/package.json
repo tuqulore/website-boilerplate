@@ -2,8 +2,22 @@
   "name": "@tuqulore/eleventy-plugin-preact",
   "version": "3.0.0",
   "description": "Eleventy plugin for Preact server-side rendering with JSX/MDX support",
+  "keywords": [
+    "eleventy",
+    "eleventy-plugin",
+    "preact",
+    "jsx",
+    "mdx",
+    "ssr"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tuqulore/website-boilerplate.git",
+    "directory": "packages/eleventy-plugin-preact"
+  },
+  "license": "MIT",
+  "author": "tuqulore inc.",
   "type": "module",
-  "main": "./index.mjs",
   "exports": {
     ".": {
       "types": "./index.d.ts",
@@ -20,6 +34,7 @@
       "default": "./loaders/jsx.mjs"
     }
   },
+  "main": "./index.mjs",
   "files": [
     "README.md",
     "index.d.ts",
@@ -28,20 +43,9 @@
     "eleventy.mjs",
     "loaders"
   ],
-  "keywords": [
-    "eleventy",
-    "eleventy-plugin",
-    "preact",
-    "jsx",
-    "mdx",
-    "ssr"
-  ],
-  "author": "tuqulore inc.",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tuqulore/website-boilerplate.git",
-    "directory": "packages/eleventy-plugin-preact"
+  "scripts": {
+    "lint": "eslint --fix .",
+    "test": "node --test"
   },
   "dependencies": {
     "@babel/core": "^7.26.10",
@@ -50,17 +54,13 @@
     "esbuild": "^0.27.0",
     "preact-render-to-string": "^6.5.13"
   },
-  "peerDependencies": {
-    "@11ty/eleventy": ">=3.0.0",
-    "preact": ">=10.0.0"
-  },
-  "scripts": {
-    "lint": "eslint --fix .",
-    "test": "node --test"
-  },
   "devDependencies": {
     "@tuqulore/eslint-config": "workspace:*",
     "eslint": "^9.39.2"
+  },
+  "peerDependencies": {
+    "@11ty/eleventy": ">=3.0.0",
+    "preact": ">=10.0.0"
   },
   "engines": {
     "node": ">=20"

@@ -2,6 +2,19 @@
   "name": "@tuqulore/create-eleventy",
   "version": "3.0.0",
   "description": "Create a new Eleventy project with Preact and TailwindCSS",
+  "keywords": [
+    "create",
+    "eleventy",
+    "preact",
+    "tailwindcss"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tuqulore/website-boilerplate.git",
+    "directory": "packages/create-eleventy"
+  },
+  "license": "MIT",
+  "author": "tuqulore inc.",
   "type": "module",
   "bin": {
     "create-eleventy": "./index.mjs"
@@ -10,19 +23,6 @@
     "index.mjs",
     "templates"
   ],
-  "keywords": [
-    "create",
-    "eleventy",
-    "preact",
-    "tailwindcss"
-  ],
-  "author": "tuqulore inc.",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tuqulore/website-boilerplate.git",
-    "directory": "packages/create-eleventy"
-  },
   "scripts": {
     "lint": "eslint --fix ."
   },

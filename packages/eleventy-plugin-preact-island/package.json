@@ -2,19 +2,6 @@
   "name": "@tuqulore/eleventy-plugin-preact-island",
   "version": "3.0.0",
   "description": "Eleventy plugin for Preact partial hydration with is-land",
-  "type": "module",
-  "main": "./index.mjs",
-  "exports": {
-    ".": {
-      "types": "./index.d.ts",
-      "default": "./index.mjs"
-    }
-  },
-  "files": [
-    "README.md",
-    "index.d.ts",
-    "index.mjs"
-  ],
   "keywords": [
     "eleventy",
     "eleventy-plugin",
@@ -22,13 +9,26 @@
     "is-land",
     "partial-hydration"
   ],
-  "author": "tuqulore inc.",
-  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tuqulore/website-boilerplate.git",
     "directory": "packages/eleventy-plugin-preact-island"
   },
+  "license": "MIT",
+  "author": "tuqulore inc.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.mjs"
+    }
+  },
+  "main": "./index.mjs",
+  "files": [
+    "README.md",
+    "index.d.ts",
+    "index.mjs"
+  ],
   "scripts": {
     "lint": "eslint --fix ."
   },

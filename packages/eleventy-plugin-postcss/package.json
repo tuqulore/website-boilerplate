@@ -2,38 +2,34 @@
   "name": "@tuqulore/eleventy-plugin-postcss",
   "version": "3.0.0",
   "description": "Eleventy plugin for processing CSS with PostCSS",
-  "type": "module",
-  "main": "./index.mjs",
-  "exports": {
-    ".": {
-      "types": "./index.d.ts",
-      "default": "./index.mjs"
-    }
-  },
-  "files": [
-    "README.md",
-    "index.d.ts",
-    "index.mjs"
-  ],
   "keywords": [
     "eleventy",
     "eleventy-plugin",
     "postcss",
     "css"
   ],
-  "author": "tuqulore inc.",
-  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tuqulore/website-boilerplate.git",
     "directory": "packages/eleventy-plugin-postcss"
   },
+  "license": "MIT",
+  "author": "tuqulore inc.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.mjs"
+    }
+  },
+  "main": "./index.mjs",
+  "files": [
+    "README.md",
+    "index.d.ts",
+    "index.mjs"
+  ],
   "scripts": {
     "lint": "eslint --fix ."
-  },
-  "peerDependencies": {
-    "@11ty/eleventy": ">=3.0.0",
-    "postcss": ">=8.0.0"
   },
   "dependencies": {
     "fast-glob": "^3.3.3",
@@ -42,6 +38,10 @@
   "devDependencies": {
     "@tuqulore/eslint-config": "workspace:*",
     "eslint": "^9.39.2"
+  },
+  "peerDependencies": {
+    "@11ty/eleventy": ">=3.0.0",
+    "postcss": ">=8.0.0"
   },
   "engines": {
     "node": ">=20"
