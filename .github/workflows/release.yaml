@@ -43,6 +43,7 @@ jobs:
         run: |
           VERSION=$(cat lerna.json | jq -r .version)
           gh pr create \
+            --base main \
             --title "chore(release): v${VERSION}" \
             --body "Release v${VERSION}"
         env:
