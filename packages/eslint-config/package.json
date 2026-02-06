@@ -1,0 +1,38 @@
+{
+  "name": "@tuqulore/eslint-config",
+  "version": "3.0.0",
+  "description": "Shared ESLint configuration for tuqulore packages",
+  "type": "module",
+  "main": "./index.mjs",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.mjs"
+    }
+  },
+  "files": [
+    "index.mjs"
+  ],
+  "keywords": [
+    "eslint",
+    "eslint-config"
+  ],
+  "author": "tuqulore inc.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tuqulore/website-boilerplate.git",
+    "directory": "packages/eslint-config"
+  },
+  "dependencies": {
+    "@eslint/js": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.0.0"
+  },
+  "peerDependencies": {
+    "eslint": ">=9.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

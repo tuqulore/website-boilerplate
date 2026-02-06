@@ -6,36 +6,11 @@
   "bugs": {
     "url": "https://github.com/tuqulore/website-boilerplate/issues"
   },
-  "dependencies": {
-    "serve-handler": "6.1.6"
-  },
   "devDependencies": {
-    "@11ty/eleventy": "3.1.2",
-    "@tuqulore/eleventy-plugin-preact": "workspace:*",
-    "@tuqulore/eleventy-preset": "workspace:*",
-    "@eslint/js": "^9.22.0",
-    "@iconify/json": "^2.2.90",
-    "@iconify/tailwind4": "^1.0.6",
-    "@jumpu-ui/tailwindcss": "2.0.0",
     "@lerna-lite/cli": "^4.0.0",
     "@lerna-lite/version": "^4.0.0",
-    "@tailwindcss/postcss": "^4.0.14",
-    "@tailwindcss/typography": "0.5.19",
-    "dotenv-cli": "^11.0.0",
-    "eslint": "9.39.2",
-    "eslint-config-prettier": "10.1.8",
-    "eslint-plugin-mdx": "^3.2.0",
-    "eslint-plugin-react": "^7.37.4",
-    "globals": "^17.0.0",
-    "npm-run-all2": "8.0.4",
-    "postcss": "8.5.6",
-    "preact": "^10.26.4",
-    "prettier": "3.8.1",
-    "prettier-plugin-tailwindcss": "^0.7.0",
-    "shx": "^0.4.0",
-    "slugify": "^1.6.6",
-    "tailwind-merge": "^3.0.2",
-    "tailwindcss": "4.1.18"
+    "prettier": "^3.8.1",
+    "prettier-plugin-tailwindcss": "^0.7.2"
   },
   "engines": {
     "node": "24"
@@ -52,12 +27,8 @@
     "url": "git+https://github.com/tuqulore/website-boilerplate.git"
   },
   "scripts": {
-    "build": "NODE_ENV=production run-s clean build:eleventy",
-    "build:eleventy": "dotenv -c production -- eleventy",
-    "clean": "shx rm -rf dist",
-    "dev": "dotenv -c development -- eleventy --serve",
     "format": "prettier --write .",
-    "lint": "eslint --fix .",
+    "lint": "pnpm -r lint",
     "versionup": "lerna version --no-git-tag-version"
   },
   "type": "module"
