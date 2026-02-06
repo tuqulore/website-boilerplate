@@ -1,13 +1,15 @@
 import js from "@eslint/js";
 import prettier from "eslint-config-prettier/flat";
+import { defineConfig } from "eslint/config";
 import globals from "globals";
 
 /**
  * Base ESLint configuration for Node.js packages
  */
-export const node = [
+export const node = defineConfig([
   {
-    ...js.configs.recommended,
+    plugins: { js },
+    extends: ["js/recommended"],
     files: ["**/*.{cjs,mjs,js}"],
   },
   {
@@ -19,6 +21,6 @@ export const node = [
     languageOptions: { sourceType: "module", globals: globals.node },
   },
   prettier,
-];
+]);
 
 export default node;

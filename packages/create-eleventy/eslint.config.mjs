@@ -1,4 +1,4 @@
 import config from "@tuqulore/eslint-config";
-import { globalIgnores } from "eslint/config";
+import { defineConfig, globalIgnores } from "eslint/config";
 
-export default [...config, globalIgnores(["templates/**"])];
+export default defineConfig([...config, globalIgnores(["templates/**"])]);

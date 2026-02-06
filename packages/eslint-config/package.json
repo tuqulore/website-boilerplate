@@ -6,6 +6,7 @@
   "main": "./index.mjs",
   "exports": {
     ".": {
+      "types": "./index.d.ts",
       "default": "./index.mjs"
     }
   },
