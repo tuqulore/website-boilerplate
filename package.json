@@ -9,7 +9,7 @@
   "devDependencies": {
     "@lerna-lite/cli": "^4.0.0",
     "@lerna-lite/version": "^4.0.0",
-    "prettier": "3.8.1",
+    "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2"
   },
   "engines": {
