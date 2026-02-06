@@ -3,6 +3,7 @@ import url from "node:url";
 import render from "preact-render-to-string";
 import { jsx } from "preact/jsx-runtime";
 import * as esbuild from "esbuild";
+import { _runWithEleventyData } from "./eleventy.mjs";
 
 // Register Node.js loaders for JSX/MDX support
 module.register(
@@ -44,8 +45,10 @@ export default function (eleventyConfig, pluginOptions = {}) {
     key: "11ty.js",
     compile: () => {
       return async function (data) {
-        const content = await this.defaultRenderer(data);
-        return render(jsx(content.type, content.props, content.key));
+        return _runWithEleventyData(data, async () => {
+          const content = await this.defaultRenderer(data);
+          return render(jsx(content.type, content.props, content.key));
+        });
       };
     },
   });

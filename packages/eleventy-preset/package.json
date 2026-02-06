@@ -8,12 +8,18 @@
     ".": {
       "types": "./index.d.ts",
       "default": "./index.mjs"
+    },
+    "./eleventy": {
+      "types": "./eleventy.d.ts",
+      "default": "./eleventy.mjs"
     }
   },
   "files": [
     "README.md",
     "index.d.ts",
-    "index.mjs"
+    "index.mjs",
+    "eleventy.d.ts",
+    "eleventy.mjs"
   ],
   "keywords": [
     "eleventy",

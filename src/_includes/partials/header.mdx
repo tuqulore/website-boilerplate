@@ -1,18 +1,19 @@
+import { eleventy } from "@tuqulore/eleventy-preset/eleventy";
 import Desktop from "./header/desktop.hydrate.jsx";
 import Mobile from "./header/mobile.hydrate.jsx";
 
 <header class="sticky top-0 mb-8 bg-white shadow">
   <div class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 md:justify-start">
     <a class="flex-shrink-0" href="/">
-      {props.site.name}
+      {eleventy.site.name}
     </a>
     <is-land
       land-on:interaction
       type="preact"
       import="/_includes/partials/header/desktop.hydrate.js"
-      props={JSON.stringify({ class: "hidden md:block", nav: props.nav })}
+      props={JSON.stringify({ class: "hidden md:block", nav: eleventy.nav })}
     >
-      <Desktop class="hidden md:block" nav={props.nav} />
+      <Desktop class="hidden md:block" nav={eleventy.nav} />
     </is-land>
     <is-land
       land-on:interaction
@@ -20,10 +21,10 @@ import Mobile from "./header/mobile.hydrate.jsx";
       import="/_includes/partials/header/mobile.hydrate.js"
       props={JSON.stringify({
         class: "ml-auto flex items-center md:hidden",
-        nav: props.nav,
+        nav: eleventy.nav,
       })}
     >
-      <Mobile class="ml-auto flex items-center md:hidden" nav={props.nav} />
+      <Mobile class="ml-auto flex items-center md:hidden" nav={eleventy.nav} />
     </is-land>
   </div>
 </header>

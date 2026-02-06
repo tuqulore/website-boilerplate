@@ -113,6 +113,7 @@ index.mdx → post.mdx → base.mdx
 The root layout defines the complete HTML document structure:
 
 ```mdx
+import { eleventy } from "@tuqulore/eleventy-preset/eleventy";
 import Header from "./partials/header.mdx";
 import Footer from "./partials/footer.mdx";
 
@@ -122,14 +123,14 @@ import Footer from "./partials/footer.mdx";
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/main.css" />
     <title>
-      {props.title && `${props.title} | `}
-      {props.site.name}
+      {eleventy.title && `${eleventy.title} | `}
+      {eleventy.site.name}
     </title>
   </head>
   <body>
-    <Header {...props} />
-    <div dangerouslySetInnerHTML={{ __html: props.content }}></div>
-    <Footer {...props} />
+    <Header />
+    <div dangerouslySetInnerHTML={{ __html: eleventy.content }}></div>
+    <Footer />
   </body>
 </html>
 ```
@@ -139,33 +140,54 @@ import Footer from "./partials/footer.mdx";
 Intermediate layouts wrap content and chain to the root layout:
 
 ```mdx
+import { eleventy } from "@tuqulore/eleventy-preset/eleventy";
+
 export const data = {
   layout: "base",
 };
 
-<article class="prose" dangerouslySetInnerHTML={{ __html: props.content }} />
+<article class="prose" dangerouslySetInnerHTML={{ __html: eleventy.content }} />
 ```
 
 ### Best Practices
 
 - Root layout (`base.mdx`) defines the complete HTML shell
 - Intermediate layouts (`post.mdx`, etc.) define content wrappers
-- Use `dangerouslySetInnerHTML={{ __html: props.content }}` to inject child content
+- Use `dangerouslySetInnerHTML={{ __html: eleventy.content }}` to inject child content
 
-## Props in Layouts
+## Data Access in Layouts
 
-Layouts receive the following props:
+This preset provides the `eleventy` singleton for accessing Eleventy data without prop drilling.
 
-| Prop                                     | Description                               |
-| ---------------------------------------- | ----------------------------------------- |
-| `props.content`                          | Rendered HTML from child template         |
-| `props.title`, `props.description`, etc. | Values from `data` export or front matter |
-| `props.site`, `props.nav`, etc.          | Global data from `_data/` directory       |
-| `props.page`                             | Eleventy page data (url, date, etc.)      |
+### Usage
+
+```jsx
+import { eleventy } from "@tuqulore/eleventy-preset/eleventy";
+
+// In layout
+<title>{eleventy.title} | {eleventy.site.name}</title>
+
+// In partials (no need to pass props)
+<footer>&copy; {eleventy.site.author}</footer>
+```
+
+### Important Notes
+
+- The `eleventy` singleton is only available during SSR (server-side rendering)
+- For hydrated components (`<is-land>`), continue to pass props via `props={JSON.stringify(...)}` since client-side hydration cannot access server-side data
+
+### Available Data
+
+| Property                                       | Description                               |
+| ---------------------------------------------- | ----------------------------------------- |
+| `eleventy.content`                             | Rendered HTML from child template         |
+| `eleventy.title`, `eleventy.description`, etc. | Values from `data` export or front matter |
+| `eleventy.site`, `eleventy.nav`, etc.          | Global data from `_data/` directory       |
+| `eleventy.page`                                | Eleventy page data (url, date, etc.)      |
 
 ### Global Data Example
 
-Data files in `src/_data/` are available as props:
+Data files in `src/_data/` are available via the `eleventy` singleton:
 
 ```javascript
 // src/_data/site.mjs
@@ -187,9 +209,11 @@ export default {
 Access in templates:
 
 ```jsx
-<title>{props.site.name}</title>
+import { eleventy } from "@tuqulore/eleventy-preset/eleventy";
+
+<title>{eleventy.site.name}</title>
 <nav>
-  {props.nav.map((item) => (
+  {eleventy.nav.map((item) => (
     <a href={item.path}>{item.name}</a>
   ))}
 </nav>
@@ -208,18 +232,17 @@ src/_includes/partials/
 
 ### Using Partials
 
-Import and use partials in layouts or other MDX files:
+Import and use partials in layouts or other MDX files. Partials can access Eleventy data directly via the `eleventy` singleton:
 
 ```mdx
+import { eleventy } from "@tuqulore/eleventy-preset/eleventy";
 import Header from "./partials/header.mdx";
 import Footer from "./partials/footer.mdx";
 
-<Header {...props} />
-<main dangerouslySetInnerHTML={{ __html: props.content }}></main>
-<Footer {...props} />
+<Header />
+<main dangerouslySetInnerHTML={{ __html: eleventy.content }}></main>
+<Footer />
 ```
-
-Pass all props with `{...props}` to ensure partials have access to page data and global data.
 
 ## Partial Hydration
 

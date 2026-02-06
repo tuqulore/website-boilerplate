@@ -11,4 +11,5 @@ jobs:
     steps:
       - uses: tuqulore/.github/setup@main
       - run: pnpm lint
+      - run: pnpm -r test
       - uses: tuqulore/.github/format@main

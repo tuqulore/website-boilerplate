@@ -1,3 +1,4 @@
+import { eleventy } from "@tuqulore/eleventy-preset/eleventy";
 import Ogp from "./partials/ogp.mdx";
 import Header from "./partials/header.mdx";
 import Footer from "./partials/footer.mdx";
@@ -6,19 +7,19 @@ import Footer from "./partials/footer.mdx";
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <Ogp {...props} />
+    <Ogp />
     <link rel="stylesheet" href="/main.css" />
     <title>
-      {props.title && `${props.title} | `}
-      {props.site.name}
+      {eleventy.title && `${eleventy.title} | `}
+      {eleventy.site.name}
     </title>
   </head>
   <body>
-    <Header {...props} />
+    <Header />
     <div
       class="mx-auto mb-4 min-h-[60vh] max-w-6xl px-4"
-      dangerouslySetInnerHTML={{ __html: props.content }}
+      dangerouslySetInnerHTML={{ __html: eleventy.content }}
     ></div>
-    <Footer {...props} />
+    <Footer />
   </body>
 </html>
