@@ -1,6 +1,6 @@
 {
   "name": "@tuqulore/create-eleventy",
-  "version": "1.0.0",
+  "version": "3.0.0",
   "description": "Create a new Eleventy project with Preact and TailwindCSS",
   "type": "module",
   "bin": {
@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@tuqulore/eslint-config": "workspace:*",
-    "eslint": "9.39.2"
+    "eslint": "^9.39.2"
   },
   "engines": {
     "node": ">=20"
