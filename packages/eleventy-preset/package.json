@@ -41,6 +41,13 @@
     "@tuqulore/eleventy-plugin-preact-island": "workspace:*",
     "fast-glob": "^3.3.3"
   },
+  "scripts": {
+    "lint": "eslint --fix ."
+  },
+  "devDependencies": {
+    "@tuqulore/eslint-config": "workspace:*",
+    "eslint": "9.39.2"
+  },
   "peerDependencies": {
     "@11ty/eleventy": ">=3.0.0",
     "postcss": ">=8.0.0",

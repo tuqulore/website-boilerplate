@@ -29,8 +29,15 @@
     "url": "git+https://github.com/tuqulore/website-boilerplate.git",
     "directory": "packages/eleventy-plugin-preact-island"
   },
+  "scripts": {
+    "lint": "eslint --fix ."
+  },
   "dependencies": {
     "@11ty/is-land": "^5.0.0"
+  },
+  "devDependencies": {
+    "@tuqulore/eslint-config": "workspace:*",
+    "eslint": "9.39.2"
   },
   "peerDependencies": {
     "@11ty/eleventy": ">=3.0.0"

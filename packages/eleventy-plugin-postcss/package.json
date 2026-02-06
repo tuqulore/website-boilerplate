@@ -28,6 +28,9 @@
     "url": "git+https://github.com/tuqulore/website-boilerplate.git",
     "directory": "packages/eleventy-plugin-postcss"
   },
+  "scripts": {
+    "lint": "eslint --fix ."
+  },
   "peerDependencies": {
     "@11ty/eleventy": ">=3.0.0",
     "postcss": ">=8.0.0"
@@ -35,6 +38,10 @@
   "dependencies": {
     "fast-glob": "^3.3.3",
     "postcss-load-config": "^6.0.1"
+  },
+  "devDependencies": {
+    "@tuqulore/eslint-config": "workspace:*",
+    "eslint": "9.39.2"
   },
   "engines": {
     "node": ">=20"

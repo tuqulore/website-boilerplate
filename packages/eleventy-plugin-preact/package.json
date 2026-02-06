@@ -55,7 +55,12 @@
     "preact": ">=10.0.0"
   },
   "scripts": {
+    "lint": "eslint --fix .",
     "test": "node --test"
+  },
+  "devDependencies": {
+    "@tuqulore/eslint-config": "workspace:*",
+    "eslint": "9.39.2"
   },
   "engines": {
     "node": ">=20"
