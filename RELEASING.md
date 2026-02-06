@@ -23,11 +23,11 @@ alpha開発版 (3.0.2-alpha.1) ← 手動でpublish可能
 
 ## 操作一覧
 
-| やりたいこと | 操作 |
-|-------------|------|
-| 正式リリース | release.yaml を手動実行 → PRマージ |
+| やりたいこと          | 操作                                    |
+| --------------------- | --------------------------------------- |
+| 正式リリース          | release.yaml を手動実行 → PRマージ      |
 | alphaバージョンに更新 | alpha PRをマージ（npmには公開されない） |
-| alphaをnpmに公開 | publish.yaml を手動実行 |
+| alphaをnpmに公開      | publish.yaml を手動実行                 |
 
 ## 正式リリースの手順
 
@@ -39,6 +39,7 @@ alpha開発版 (3.0.2-alpha.1) ← 手動でpublish可能
 4. 「Run workflow」を実行
 
 これにより、以下が自動的に行われます：
+
 - releaseブランチが作成される
 - 指定したsemverでバージョンがバンプされる
 - リリースPR（`chore(release): vX.X.X`）が作成される
@@ -48,6 +49,7 @@ alpha開発版 (3.0.2-alpha.1) ← 手動でpublish可能
 PRをレビューし、マージします。
 
 マージすると、publish.yaml が自動的に実行され：
+
 - npmにパッケージが公開される
 - リリースタグ（`vX.X.X`）が作成される
 - 次のalphaバージョンにバンプされる
@@ -70,6 +72,7 @@ alpha PRをマージして、mainブランチをalphaバージョンに更新し
 3. 「Run workflow」を実行
 
 これにより、以下が自動的に行われます：
+
 - 現在のalphaバージョンがnpmに公開される
 - alphaタグ（`vX.X.X-alpha.N`）が作成される
 - 次のalphaバージョンにバンプされる
@@ -127,6 +130,7 @@ main: 3.0.0
 このリポジトリではnpmのTrusted Publishingを使用しています。npmトークンは不要で、GitHub ActionsのOIDC認証によりパッケージを公開します。
 
 npmjs.comで各パッケージにTrusted Publisherを設定する必要があります：
+
 - Organization/User: `tuqulore`
 - Repository: `website-boilerplate`
 - Workflow filename: `publish.yaml`
