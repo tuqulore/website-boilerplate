@@ -1,5 +1,5 @@
 {
-  "name": "@tuqulore/eleventy-plugin-preact-island",
+  "name": "@tuqulore-inc/eleventy-plugin-preact-island",
   "version": "3.0.0",
   "description": "Eleventy plugin for Preact partial hydration with is-land",
   "keywords": [
@@ -36,7 +36,7 @@
     "@11ty/is-land": "^5.0.0"
   },
   "devDependencies": {
-    "@tuqulore/eslint-config": "workspace:*",
+    "@tuqulore-inc/eslint-config": "workspace:*",
     "eslint": "^9.39.2"
   },
   "peerDependencies": {

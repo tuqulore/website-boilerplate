@@ -1,5 +1,5 @@
 {
-  "name": "@tuqulore/eslint-config",
+  "name": "@tuqulore-inc/eslint-config",
   "private": true,
   "description": "Shared ESLint configuration for tuqulore packages",
   "keywords": [

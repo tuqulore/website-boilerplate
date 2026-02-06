@@ -1,5 +1,5 @@
 {
-  "name": "@tuqulore/eleventy-preset",
+  "name": "@tuqulore-inc/eleventy-preset",
   "version": "3.0.0",
   "description": "Eleventy preset for building static sites with Preact JSX/MDX templates, partial hydration, and PostCSS",
   "keywords": [
@@ -39,13 +39,13 @@
   },
   "dependencies": {
     "@11ty/eleventy-img": "^6.0.4",
-    "@tuqulore/eleventy-plugin-postcss": "workspace:*",
-    "@tuqulore/eleventy-plugin-preact": "workspace:*",
-    "@tuqulore/eleventy-plugin-preact-island": "workspace:*",
+    "@tuqulore-inc/eleventy-plugin-postcss": "workspace:*",
+    "@tuqulore-inc/eleventy-plugin-preact": "workspace:*",
+    "@tuqulore-inc/eleventy-plugin-preact-island": "workspace:*",
     "fast-glob": "^3.3.3"
   },
   "devDependencies": {
-    "@tuqulore/eslint-config": "workspace:*",
+    "@tuqulore-inc/eslint-config": "workspace:*",
     "eslint": "^9.39.2"
   },
   "peerDependencies": {
