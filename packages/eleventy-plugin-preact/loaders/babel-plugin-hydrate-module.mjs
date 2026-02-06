@@ -35,8 +35,7 @@ export default function hydrateModulePlugin({ types: t }) {
 
         // Remove 'src/' prefix and change .jsx to .js
         const modulePath =
-          "/" +
-          relativePath.replace(/^src[\\/]/, "").replace(/\.jsx$/, ".js");
+          "/" + relativePath.replace(/^src[\\/]/, "").replace(/\.jsx$/, ".js");
 
         const declaration = nodePath.node.declaration;
 

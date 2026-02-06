@@ -299,12 +299,12 @@ import Navigation from "./partials/header/navigation.hydrate.jsx";
 
 #### Island Props
 
-| Prop       | Type     | Default         | Description                                                    |
-| ---------- | -------- | --------------- | -------------------------------------------------------------- |
-| `on`       | `string` | `"interaction"` | Hydration trigger (`interaction`, `visible`, etc)              |
-| `import`   | `string` | (auto-detected) | Path to the hydration script (usually not needed)              |
-| `children` | `node`   | -               | Component to hydrate (props are auto-extracted)                |
-| `...rest`  | `any`    | -               | Additional props to merge (takes precedence over child props)  |
+| Prop       | Type     | Default         | Description                                                   |
+| ---------- | -------- | --------------- | ------------------------------------------------------------- |
+| `on`       | `string` | `"interaction"` | Hydration trigger (`interaction`, `visible`, etc)             |
+| `import`   | `string` | (auto-detected) | Path to the hydration script (usually not needed)             |
+| `children` | `node`   | -               | Component to hydrate (props are auto-extracted)               |
+| `...rest`  | `any`    | -               | Additional props to merge (takes precedence over child props) |
 
 ### Using is-land Directly
 
