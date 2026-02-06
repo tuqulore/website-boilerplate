@@ -1,6 +1,6 @@
 {
   "name": "@tuqulore-inc/eleventy-preset",
-  "version": "4.0.1",
+  "version": "4.0.2-alpha.0",
   "description": "Eleventy preset for building static sites with Preact JSX/MDX templates, partial hydration, and PostCSS",
   "keywords": [
     "eleventy",
