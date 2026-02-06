@@ -5,6 +5,7 @@ on:
       - closed
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -13,7 +14,9 @@ permissions:
 
 jobs:
   publish:
-    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.title, 'chore(release):')
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.merged == true && startsWith(github.event.pull_request.title, 'chore(release):'))
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
