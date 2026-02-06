@@ -63,3 +63,7 @@ jobs:
             --body "Bump to alpha version v${VERSION}"
         env:
           GH_TOKEN: ${{ github.token }}
+
+      - name: Cleanup alpha branch on failure
+        if: failure()
+        run: git push origin :alpha
