@@ -113,7 +113,7 @@ index.mdx → post.mdx → base.mdx
 The root layout defines the complete HTML document structure:
 
 ```mdx
-import { eleventy } from "@tuqulore/eleventy-plugin-preact/eleventy";
+import { eleventy } from "@tuqulore/eleventy-preset/eleventy";
 import Header from "./partials/header.mdx";
 import Footer from "./partials/footer.mdx";
 
@@ -140,7 +140,7 @@ import Footer from "./partials/footer.mdx";
 Intermediate layouts wrap content and chain to the root layout:
 
 ```mdx
-import { eleventy } from "@tuqulore/eleventy-plugin-preact/eleventy";
+import { eleventy } from "@tuqulore/eleventy-preset/eleventy";
 
 export const data = {
   layout: "base",
@@ -157,7 +157,24 @@ export const data = {
 
 ## Data Access in Layouts
 
-This preset uses the `eleventy` singleton from `@tuqulore/eleventy-plugin-preact/eleventy` to access Eleventy data without prop drilling.
+This preset provides the `eleventy` singleton for accessing Eleventy data without prop drilling.
+
+### Usage
+
+```jsx
+import { eleventy } from "@tuqulore/eleventy-preset/eleventy";
+
+// In layout
+<title>{eleventy.title} | {eleventy.site.name}</title>
+
+// In partials (no need to pass props)
+<footer>&copy; {eleventy.site.author}</footer>
+```
+
+### Important Notes
+
+- The `eleventy` singleton is only available during SSR (server-side rendering)
+- For hydrated components (`<is-land>`), continue to pass props via `props={JSON.stringify(...)}` since client-side hydration cannot access server-side data
 
 ### Available Data
 
@@ -192,7 +209,7 @@ export default {
 Access in templates:
 
 ```jsx
-import { eleventy } from "@tuqulore/eleventy-plugin-preact/eleventy";
+import { eleventy } from "@tuqulore/eleventy-preset/eleventy";
 
 <title>{eleventy.site.name}</title>
 <nav>
@@ -218,7 +235,7 @@ src/_includes/partials/
 Import and use partials in layouts or other MDX files. Partials can access Eleventy data directly via the `eleventy` singleton:
 
 ```mdx
-import { eleventy } from "@tuqulore/eleventy-plugin-preact/eleventy";
+import { eleventy } from "@tuqulore/eleventy-preset/eleventy";
 import Header from "./partials/header.mdx";
 import Footer from "./partials/footer.mdx";
 
