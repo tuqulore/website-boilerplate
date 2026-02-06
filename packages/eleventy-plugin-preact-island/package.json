@@ -21,13 +21,19 @@
     ".": {
       "types": "./index.d.ts",
       "default": "./index.mjs"
+    },
+    "./Island": {
+      "types": "./Island.d.ts",
+      "default": "./Island.jsx"
     }
   },
   "main": "./index.mjs",
   "files": [
     "README.md",
     "index.d.ts",
-    "index.mjs"
+    "index.mjs",
+    "Island.jsx",
+    "Island.d.ts"
   ],
   "scripts": {
     "lint": "eslint --fix ."

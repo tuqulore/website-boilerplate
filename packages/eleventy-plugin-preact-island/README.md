@@ -46,7 +46,33 @@ eleventyConfig.addPlugin(preactIsland, {
 
 ## Partial Hydration
 
-To hydrate a component, use the `<is-land>` web component with `type="preact"`.
+### Using `Island` Component (Recommended)
+
+The `Island` component simplifies partial hydration by wrapping `<is-land>` and automatically handling `JSON.stringify` for props.
+
+```mdx
+import Island from "@tuqulore-inc/eleventy-plugin-preact-island/Island";
+import Component from "./component.hydrate.jsx";
+
+<Island on="visible" import="./component.hydrate.js" someProp="value">
+  <Component someProp="value" />
+</Island>
+```
+
+> **Note:** If using `@tuqulore-inc/eleventy-preset`, you can import from `@tuqulore-inc/eleventy-preset/Island` instead.
+
+#### `Island` Props
+
+| Prop       | Type     | Default         | Description                                       |
+| ---------- | -------- | --------------- | ------------------------------------------------- |
+| `on`       | `string` | `"interaction"` | Hydration trigger (`interaction`, `visible`, etc) |
+| `import`   | `string` | -               | Path to the hydration script                      |
+| `children` | `node`   | -               | Component to hydrate (SSR rendered)               |
+| `...rest`  | `any`    | -               | Props passed to the hydrated component            |
+
+### Using `<is-land>` Directly
+
+For more control, you can use the `<is-land>` web component directly with `type="preact"`.
 
 ```mdx
 import Component from "./component.hydrate.jsx";

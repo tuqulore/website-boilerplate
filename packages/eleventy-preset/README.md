@@ -268,9 +268,49 @@ export default function Clicker() {
 }
 ```
 
-### Using in MDX
+### Using the Island Component (Recommended)
 
-Import the component and wrap it with `<is-land>`:
+The `Island` component simplifies partial hydration by wrapping `<is-land>` and automatically handling `JSON.stringify` for props:
+
+```mdx
+import Island from "@tuqulore-inc/eleventy-preset/Island";
+import Clicker from "./clicker.hydrate.jsx";
+
+<Island on="interaction" import="./clicker.hydrate.js">
+  <Clicker />
+</Island>
+```
+
+#### Passing Props
+
+Props are automatically serialized:
+
+```mdx
+import Island from "@tuqulore-inc/eleventy-preset/Island";
+import Navigation from "./partials/header/navigation.hydrate.jsx";
+
+<Island
+  on="interaction"
+  import="/_includes/partials/header/navigation.hydrate.js"
+  nav={eleventy.nav}
+  class="hidden md:block"
+>
+  <Navigation nav={eleventy.nav} class="hidden md:block" />
+</Island>
+```
+
+#### Island Props
+
+| Prop       | Type     | Default         | Description                                       |
+| ---------- | -------- | --------------- | ------------------------------------------------- |
+| `on`       | `string` | `"interaction"` | Hydration trigger (`interaction`, `visible`, etc) |
+| `import`   | `string` | -               | Path to the hydration script                      |
+| `children` | `node`   | -               | Component to hydrate (SSR rendered)               |
+| `...rest`  | `any`    | -               | Props passed to the hydrated component            |
+
+### Using is-land Directly
+
+For more control, you can use the `<is-land>` web component directly:
 
 ```mdx
 import Clicker from "./clicker.hydrate.jsx";
@@ -279,8 +319,6 @@ import Clicker from "./clicker.hydrate.jsx";
   <Clicker />
 </is-land>
 ```
-
-### Passing Props
 
 For hydrated components that need props, serialize them with `JSON.stringify`:
 
