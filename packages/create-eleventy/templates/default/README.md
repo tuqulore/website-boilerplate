@@ -112,37 +112,29 @@ Eleventyテンプレートの参照先です。
 
 ## Partial Hydration
 
-JSXテンプレートの拡張子を `.hydrate.jsx` にすると、`dist/**/*.hydrate.jsx` にハイドレーション用のスクリプトが生成されます。
+JSXテンプレートの拡張子を `.hydrate.jsx` にすると、`dist/**/*.hydrate.js` にハイドレーション用のスクリプトが生成されます。
 
-次の例では、Componentコンポーネントをハイドレーションしています。
+`Island`コンポーネントを使用すると、簡潔にPartial Hydrationを記述できます。
 
 ```mdx
-import Component from "./component.hydrate.jsx"; // ./component.hydrate.jsxはJSXテンプレートとして使用できます
+import Island from "@tuqulore-inc/eleventy-preset/Island";
+import Component from "./component.hydrate.jsx";
 
-{/* ./component.hydrate.jsxはブラウザーでの読み込み時に描画されます */}
-<is-land land-on:visible type="preact" import="./component.hydrate.js" props='{ "someProp": "somePropValue" }'>
-
-  <Component someProp="somePropValue" />{/* <Component />はビルド時に描画されます */}
-</is-land>
+<Island on="visible">
+  <Component someProp="somePropValue" />
+</Island>
 ```
 
-> [!NOTE]
->
-> [\<is-land>](https://github.com/11ty/is-land?tab=readme-ov-file#usage)の初期化条件を指定する属性は、デフォルトでは`on:*`の書式で指定する必要がありますが、JSXの書式と競合するので`land-on:*`に変更しています。
+`<Component />` はビルド時にSSR、ブラウザーで読み込み時にハイドレーションされます。
 
-\<is-land>Webコンポーネントは`land-on:*`属性のほか、次の属性を受け付けます。
+### `Island` のプロパティ
 
-### `type`属性
-
-ハイドレーションに使用するランタイム。`"preact"`を指定します。
-
-### `import`属性
-
-ハイドレーションに使用する`dist/**/*.hydrate.js`のパス。
-
-### `props`属性
-
-`dist/**/*.hydrate.js`に渡すプロパティ。オブジェクトを文字列化した値を指定します。通常、オブジェクトの文字列化にJSON.stringifyを使用することができます。
+| Prop     | 型       | デフォルト      | 説明                                                       |
+| :------- | :------- | :-------------- | :--------------------------------------------------------- |
+| on       | `string` | `"interaction"` | ハイドレーションのトリガー（`interaction`, `visible`など） |
+| import   | `string` | (自動検出)      | ハイドレーション用スクリプトのパス                         |
+| children | `node`   | -               | ハイドレーションするコンポーネント                         |
+| ...rest  | `any`    | -               | 子コンポーネントのpropsにマージ（優先）                    |
 
 ## Docker
 
