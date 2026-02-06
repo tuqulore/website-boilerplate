@@ -21,8 +21,8 @@ Options:
   -h, --help             Show this help message
 
 Example:
-  pnpm create @tuqulore/eleventy my-project
-  pnpm create @tuqulore/eleventy my-project --template default
+  pnpm create @tuqulore-inc/eleventy my-project
+  pnpm create @tuqulore-inc/eleventy my-project --template default
 `);
   process.exit(0);
 }

@@ -1,4 +1,4 @@
-# @tuqulore/eleventy-plugin-preact-island
+# @tuqulore-inc/eleventy-plugin-preact-island
 
 Eleventy plugin for Preact partial hydration with is-land.
 
@@ -7,14 +7,14 @@ This plugin automatically injects the necessary scripts for Preact hydration int
 ## Installation
 
 ```bash
-npm install -D @11ty/eleventy @tuqulore/eleventy-plugin-preact-island
+npm install -D @11ty/eleventy @tuqulore-inc/eleventy-plugin-preact-island
 ```
 
 ## Usage
 
 ```javascript
 // eleventy.config.mjs
-import preactIsland from "@tuqulore/eleventy-plugin-preact-island";
+import preactIsland from "@tuqulore-inc/eleventy-plugin-preact-island";
 
 export default function (eleventyConfig) {
   eleventyConfig.addPlugin(preactIsland);

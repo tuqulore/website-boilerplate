@@ -1,4 +1,4 @@
-# @tuqulore/eleventy-plugin-preact
+# @tuqulore-inc/eleventy-plugin-preact
 
 Eleventy plugin for Preact server-side rendering with JSX/MDX support.
 
@@ -7,14 +7,14 @@ This plugin enables you to use JSX and MDX files as Eleventy templates, renderin
 ## Installation
 
 ```bash
-npm install -D @11ty/eleventy @tuqulore/eleventy-plugin-preact preact
+npm install -D @11ty/eleventy @tuqulore-inc/eleventy-plugin-preact preact
 ```
 
 ## Usage
 
 ```javascript
 // eleventy.config.mjs
-import preact from "@tuqulore/eleventy-plugin-preact";
+import preact from "@tuqulore-inc/eleventy-plugin-preact";
 
 export default function (eleventyConfig) {
   eleventyConfig.addPlugin(preact);
@@ -52,7 +52,7 @@ This plugin provides a singleton object for accessing Eleventy data from any tem
 ### Usage
 
 ```jsx
-import { eleventy } from "@tuqulore/eleventy-plugin-preact/eleventy";
+import { eleventy } from "@tuqulore-inc/eleventy-plugin-preact/eleventy";
 
 // In layout
 <title>{eleventy.title} | {eleventy.site.name}</title>
@@ -77,11 +77,11 @@ import { eleventy } from "@tuqulore/eleventy-plugin-preact/eleventy";
 
 ## With Partial Hydration
 
-For partial hydration, use this plugin together with `@tuqulore/eleventy-plugin-preact-island`:
+For partial hydration, use this plugin together with `@tuqulore-inc/eleventy-plugin-preact-island`:
 
 ```javascript
-import preact from "@tuqulore/eleventy-plugin-preact";
-import preactIsland from "@tuqulore/eleventy-plugin-preact-island";
+import preact from "@tuqulore-inc/eleventy-plugin-preact";
+import preactIsland from "@tuqulore-inc/eleventy-plugin-preact-island";
 
 export default function (eleventyConfig) {
   // Server-side rendering

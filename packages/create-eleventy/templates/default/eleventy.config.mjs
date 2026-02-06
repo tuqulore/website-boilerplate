@@ -1,3 +1,3 @@
-import preset from "@tuqulore/eleventy-preset";
+import preset from "@tuqulore-inc/eleventy-preset";
 
 export default preset();

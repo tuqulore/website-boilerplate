@@ -1,18 +1,18 @@
-# @tuqulore/eleventy-plugin-postcss
+# @tuqulore-inc/eleventy-plugin-postcss
 
 Eleventy plugin for processing CSS with PostCSS.
 
 ## Installation
 
 ```bash
-npm install -D @11ty/eleventy postcss @tuqulore/eleventy-plugin-postcss
+npm install -D @11ty/eleventy postcss @tuqulore-inc/eleventy-plugin-postcss
 ```
 
 ## Usage
 
 ```javascript
 // eleventy.config.mjs
-import postcss from "@tuqulore/eleventy-plugin-postcss";
+import postcss from "@tuqulore-inc/eleventy-plugin-postcss";
 
 export default function (eleventyConfig) {
   eleventyConfig.addPlugin(postcss, {
