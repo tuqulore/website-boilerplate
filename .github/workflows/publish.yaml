@@ -1,0 +1,63 @@
+name: Publish
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  publish:
+    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.title, 'chore(release):')
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: package.json
+          cache: pnpm
+          registry-url: "https://registry.npmjs.org"
+
+      - run: pnpm install
+
+      - name: Configure git
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
+      - name: Create release tag
+        run: |
+          VERSION=$(cat lerna.json | jq -r .version)
+          git tag "v${VERSION}"
+          git push origin "v${VERSION}"
+
+      - name: Publish to npm
+        run: pnpm -r publish --access public
+        env:
+          NPM_CONFIG_PROVENANCE: true
+
+      - name: Create alpha branch and bump version
+        run: |
+          git checkout -b alpha
+          pnpm versionup prerelease --preid alpha --yes
+          git push -f origin alpha
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Create alpha pull request
+        run: |
+          VERSION=$(cat lerna.json | jq -r .version)
+          gh pr create \
+            --title "chore(alpha): v${VERSION}" \
+            --body "Bump to alpha version v${VERSION}"
+        env:
+          GH_TOKEN: ${{ github.token }}
