@@ -63,12 +63,12 @@ import { eleventy } from "@tuqulore/eleventy-plugin-preact/eleventy";
 
 ### Available Data
 
-| Property | Description |
-|----------|-------------|
-| `eleventy.content` | Rendered HTML from child template |
+| Property                                       | Description                               |
+| ---------------------------------------------- | ----------------------------------------- |
+| `eleventy.content`                             | Rendered HTML from child template         |
 | `eleventy.title`, `eleventy.description`, etc. | Values from `data` export or front matter |
-| `eleventy.site`, `eleventy.nav`, etc. | Global data from `_data/` directory |
-| `eleventy.page` | Eleventy page data (url, date, etc.) |
+| `eleventy.site`, `eleventy.nav`, etc.          | Global data from `_data/` directory       |
+| `eleventy.page`                                | Eleventy page data (url, date, etc.)      |
 
 ### Important Notes
 
