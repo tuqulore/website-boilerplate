@@ -58,6 +58,7 @@ jobs:
         run: |
           VERSION=$(cat lerna.json | jq -r .version)
           gh pr create \
+            --base main \
             --title "chore(alpha): v${VERSION}" \
             --body "Bump to alpha version v${VERSION}"
         env:
