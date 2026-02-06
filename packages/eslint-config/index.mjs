@@ -8,16 +8,9 @@ import globals from "globals";
  */
 export const node = defineConfig([
   {
+    files: ["**/*.{mjs,js}"],
     plugins: { js },
     extends: ["js/recommended"],
-    files: ["**/*.{cjs,mjs,js}"],
-  },
-  {
-    files: ["**/*.cjs"],
-    languageOptions: { sourceType: "commonjs" },
-  },
-  {
-    files: ["**/*.{mjs,js}"],
     languageOptions: { sourceType: "module", globals: globals.node },
   },
   prettier,

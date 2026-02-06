@@ -7,9 +7,9 @@ import globals from "globals";
 
 export default defineConfig([
   {
+    files: ["**/*.{cjs,mjs,js,jsx}"],
     plugins: { js },
     extends: ["js/recommended"],
-    files: ["**/*.{cjs,mjs,js,jsx}"],
   },
   {
     files: ["**/*.cjs"],
