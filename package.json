@@ -21,10 +21,12 @@
   "scripts": {
     "format": "prettier --write .",
     "lint": "pnpm -r lint",
-    "versionup": "lerna version"
+    "packages:bump-version": "lerna version",
+    "packages:publish": "lerna publish from-package --access public"
   },
   "devDependencies": {
     "@lerna-lite/cli": "^4.0.0",
+    "@lerna-lite/publish": "^4.11.5",
     "@lerna-lite/version": "^4.0.0",
     "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2"
