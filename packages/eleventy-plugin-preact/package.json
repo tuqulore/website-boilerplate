@@ -56,7 +56,7 @@
   },
   "devDependencies": {
     "@tuqulore-inc/eslint-config": "workspace:*",
-    "eslint": "^9.39.2"
+    "eslint": "^10.0.0"
   },
   "peerDependencies": {
     "@11ty/eleventy": ">=3.0.0",

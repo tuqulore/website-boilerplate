@@ -1,4 +1,4 @@
-FROM node:24-slim@sha256:bf22df20270b654c4e9da59d8d4a3516cce6ba2852e159b27288d645b7a7eedc as build
+FROM node:24-slim@sha256:06e5c9f86bfa0aaa7163cf37a5eaa8805f16b9acb48e3f85645b09d459fc2a9f as build
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 RUN corepack enable
@@ -8,7 +8,7 @@ COPY src/ ./src
 COPY lib/ ./lib
 RUN pnpm build
 
-FROM node:24-slim@sha256:bf22df20270b654c4e9da59d8d4a3516cce6ba2852e159b27288d645b7a7eedc as install
+FROM node:24-slim@sha256:06e5c9f86bfa0aaa7163cf37a5eaa8805f16b9acb48e3f85645b09d459fc2a9f as install
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 RUN corepack enable
