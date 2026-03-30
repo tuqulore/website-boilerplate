@@ -42,7 +42,8 @@ pnpm install
 | :-------- | :------------------------------------------------------------------------------ |
 | format    | コード整形します。                                                              |
 | lint      | 静的コード検査します。                                                          |
-| versionup | @lerna-lite/versionによるバージョンアップを実施します。リリース時に使用します。 |
+| packages:bump-version | @lerna-lite/versionによるバージョンアップを実施します。リリース時に使用します。 |
+| packages:publish | @lerna-lite/publishによるnpmへのパッケージ公開を実施します。リリース時に使用します。 |
 
 ## GitHubワークフロー
 

@@ -19,19 +19,9 @@ jobs:
       (github.event.pull_request.merged == true && startsWith(github.event.pull_request.title, 'chore(release):'))
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: tuqulore/.github/setup@main
         with:
           fetch-depth: 0
-
-      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5
-
-      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
-        with:
-          node-version-file: package.json
-          cache: pnpm
-          registry-url: "https://registry.npmjs.org"
-
-      - run: pnpm install
 
       - name: Configure git
         run: |
@@ -39,7 +29,7 @@ jobs:
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
 
       - name: Publish to npm
-        run: pnpm -r publish --access public
+        run: pnpm packages:publish
         env:
           NPM_CONFIG_PROVENANCE: true
 
@@ -56,7 +46,7 @@ jobs:
           git checkout main
           git pull origin main
           git checkout -b alpha
-          pnpm versionup prerelease --preid alpha --yes --no-git-tag-version
+          pnpm packages:bump-version prerelease --preid alpha --yes --no-git-tag-version
           git commit --all --message "chore(alpha): v$(cat lerna.json | jq -r .version)"
           git push -f origin alpha
 

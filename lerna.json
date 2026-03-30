@@ -7,6 +7,9 @@
     "packages/*"
   ],
   "command": {
+    "publish": {
+      "registry": "https://registry.npmjs.org"
+    },
     "version": {
       "allowBranch": [
         "release",
