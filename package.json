@@ -22,7 +22,7 @@
     "format": "prettier --write .",
     "lint": "pnpm -r lint",
     "packages:bump-version": "lerna version",
-    "packages:publish": "lerna publish from-package --yes --access public"
+    "packages:publish": "lerna publish from-package --access public"
   },
   "devDependencies": {
     "@lerna-lite/cli": "^4.0.0",
