@@ -10,15 +10,18 @@
     "format": "prettier --write .",
     "lint": "eslint --fix ."
   },
+  "dependencies": {
+    "serve-handler": "^6.1.6"
+  },
   "devDependencies": {
     "@11ty/eleventy": "^3.1.2",
-    "@tuqulore-inc/eleventy-preset": "^4.0.3",
     "@eslint/js": "^10.0.0",
     "@iconify/json": "^2.2.90",
     "@iconify/tailwind4": "^1.0.6",
     "@jumpu-ui/tailwindcss": "2.0.0",
     "@tailwindcss/postcss": "^4.0.14",
     "@tailwindcss/typography": "0.5.19",
+    "@tuqulore-inc/eleventy-preset": "^4.0.3",
     "dotenv-cli": "^11.0.0",
     "eslint": "^10.0.0",
     "eslint-config-prettier": "^10.1.8",
@@ -34,9 +37,6 @@
     "slugify": "^1.6.6",
     "tailwind-merge": "^3.0.2",
     "tailwindcss": "^4.1.18"
-  },
-  "dependencies": {
-    "serve-handler": "^6.1.6"
   },
   "engines": {
     "node": ">=20"
