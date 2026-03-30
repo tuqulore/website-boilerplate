@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@tuqulore-inc/eslint-config": "workspace:*",
-    "eslint": "^9.39.2"
+    "eslint": "^10.0.0"
   },
   "engines": {
     "node": ">=20"
