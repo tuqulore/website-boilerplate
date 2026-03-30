@@ -1,6 +1,6 @@
 {
   "name": "@tuqulore-inc/eleventy-plugin-postcss",
-  "version": "4.0.3-alpha.0",
+  "version": "4.0.3",
   "description": "Eleventy plugin for processing CSS with PostCSS",
   "keywords": [
     "eleventy",
