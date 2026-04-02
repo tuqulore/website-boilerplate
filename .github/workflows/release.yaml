@@ -55,7 +55,7 @@ jobs:
       - name: Cleanup on failure or cancellation
         if: failure() || cancelled()
         run: |
-          EXISTING_PR=$(gh pr list --base main --head release --json number --jq '.[0].number' 2>/dev/null)
+          EXISTING_PR=$(gh pr list --base main --head release --json number --jq '.[0].number // empty' 2>/dev/null)
           if [ -n "$EXISTING_PR" ]; then
             gh pr close "$EXISTING_PR"
           fi
