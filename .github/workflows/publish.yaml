@@ -17,10 +17,31 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  publish:
+  check:
     if: >-
       github.event_name == 'workflow_dispatch' ||
       (github.event.pull_request.merged == true && startsWith(github.event.pull_request.title, 'chore(release):'))
+    runs-on: ubuntu-24.04
+    outputs:
+      tag-exists: ${{ steps.check-tag.outputs.tag-exists }}
+    steps:
+      - uses: tuqulore/.github/setup@main
+        with:
+          fetch-depth: 0
+
+      - name: Check if tag already exists
+        id: check-tag
+        run: |
+          VERSION=$(cat lerna.json | jq -r .version)
+          if git ls-remote --exit-code --tags origin "refs/tags/v${VERSION}"; then
+            echo "tag-exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag-exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  publish:
+    needs: check
+    if: needs.check.outputs.tag-exists == 'false'
     runs-on: ubuntu-24.04
     steps:
       - uses: tuqulore/.github/setup@main
@@ -31,14 +52,6 @@ jobs:
         run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-
-      - name: Check if tag already exists
-        run: |
-          VERSION=$(cat lerna.json | jq -r .version)
-          if git ls-remote --exit-code --tags origin "refs/tags/v${VERSION}"; then
-            echo "Tag v${VERSION} already exists. Skipping publish."
-            exit 0
-          fi
 
       - name: Publish to npm
         run: pnpm packages:publish --yes
