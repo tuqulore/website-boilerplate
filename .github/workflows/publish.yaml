@@ -54,7 +54,14 @@ jobs:
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
 
       - name: Publish to npm
-        run: pnpm packages:publish --yes
+        run: |
+          VERSION=$(cat lerna.json | jq -r .version)
+          if [[ "$VERSION" == *"-alpha."* ]]; then
+            DIST_TAG="alpha"
+          else
+            DIST_TAG="latest"
+          fi
+          pnpm packages:publish --yes --dist-tag "${DIST_TAG}"
         env:
           NPM_CONFIG_PROVENANCE: true
 
