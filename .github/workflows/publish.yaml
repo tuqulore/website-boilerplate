@@ -12,6 +12,10 @@ permissions:
   id-token: write
   pull-requests: write
 
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
 jobs:
   publish:
     if: >-
@@ -27,6 +31,14 @@ jobs:
         run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
+      - name: Check if tag already exists
+        run: |
+          VERSION=$(cat lerna.json | jq -r .version)
+          if git ls-remote --exit-code --tags origin "refs/tags/v${VERSION}"; then
+            echo "Tag v${VERSION} already exists. Skipping publish."
+            exit 0
+          fi
 
       - name: Publish to npm
         run: pnpm packages:publish --yes
@@ -55,11 +67,8 @@ jobs:
           VERSION=$(cat lerna.json | jq -r .version)
           gh pr create \
             --base main \
+            --head alpha \
             --title "chore(alpha): v${VERSION}" \
             --body "Bump to alpha version v${VERSION}"
         env:
           GH_TOKEN: ${{ github.token }}
-
-      - name: Cleanup alpha branch on failure
-        if: failure()
-        run: git push origin :alpha
