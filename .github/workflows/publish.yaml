@@ -12,11 +12,36 @@ permissions:
   id-token: write
   pull-requests: write
 
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
 jobs:
-  publish:
+  check:
     if: >-
       github.event_name == 'workflow_dispatch' ||
       (github.event.pull_request.merged == true && startsWith(github.event.pull_request.title, 'chore(release):'))
+    runs-on: ubuntu-24.04
+    outputs:
+      tag-exists: ${{ steps.check-tag.outputs.tag-exists }}
+    steps:
+      - uses: tuqulore/.github/setup@main
+        with:
+          fetch-depth: 0
+
+      - name: Check if tag already exists
+        id: check-tag
+        run: |
+          VERSION=$(cat lerna.json | jq -r .version)
+          if git ls-remote --exit-code --tags origin "refs/tags/v${VERSION}"; then
+            echo "tag-exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag-exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  publish:
+    needs: check
+    if: needs.check.outputs.tag-exists == 'false'
     runs-on: ubuntu-24.04
     steps:
       - uses: tuqulore/.github/setup@main
@@ -45,7 +70,7 @@ jobs:
         run: |
           git checkout main
           git pull origin main
-          git checkout -b alpha
+          git checkout -B alpha
           pnpm packages:bump-version prerelease --preid alpha --yes --no-git-tag-version
           git commit --all --message "chore(alpha): v$(cat lerna.json | jq -r .version)"
           git push -f origin alpha
@@ -55,11 +80,8 @@ jobs:
           VERSION=$(cat lerna.json | jq -r .version)
           gh pr create \
             --base main \
+            --head alpha \
             --title "chore(alpha): v${VERSION}" \
             --body "Bump to alpha version v${VERSION}"
         env:
           GH_TOKEN: ${{ github.token }}
-
-      - name: Cleanup alpha branch on failure
-        if: failure()
-        run: git push origin :alpha
