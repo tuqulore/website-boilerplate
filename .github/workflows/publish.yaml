@@ -70,7 +70,7 @@ jobs:
         run: |
           git checkout main
           git pull origin main
-          git checkout -b alpha
+          git checkout -B alpha
           pnpm packages:bump-version prerelease --preid alpha --yes --no-git-tag-version
           git commit --all --message "chore(alpha): v$(cat lerna.json | jq -r .version)"
           git push -f origin alpha
