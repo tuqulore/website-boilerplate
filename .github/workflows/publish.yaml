@@ -25,7 +25,7 @@ jobs:
     outputs:
       tag-exists: ${{ steps.check-tag.outputs.tag-exists }}
     steps:
-      - uses: tuqulore/.github/setup@main
+      - uses: tuqulore/.github/setup@bfc3a44941a6d4499735fa48c913b51c15f9ca7b # main
         with:
           fetch-depth: 0
 
@@ -44,7 +44,7 @@ jobs:
     if: needs.check.outputs.tag-exists == 'false'
     runs-on: ubuntu-24.04
     steps:
-      - uses: tuqulore/.github/setup@main
+      - uses: tuqulore/.github/setup@bfc3a44941a6d4499735fa48c913b51c15f9ca7b # main
         with:
           fetch-depth: 0
 
