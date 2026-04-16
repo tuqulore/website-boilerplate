@@ -7,6 +7,7 @@ import postcssrc from "postcss-load-config";
  * @param {import("@11ty/eleventy").UserConfig} eleventyConfig - Eleventy configuration object
  * @param {Object} pluginOptions - Plugin options
  * @param {string|string[]} [pluginOptions.contentGlob] - Glob patterns for dependency tracking
+ * @param {(inputPath: string) => boolean} [pluginOptions.skip] - Predicate to skip processing for matched CSS templates
  */
 export default function (eleventyConfig, pluginOptions = {}) {
   try {
@@ -15,7 +16,7 @@ export default function (eleventyConfig, pluginOptions = {}) {
     console.log(`[eleventy-plugin-postcss] WARN: ${e.message}`);
   }
 
-  const { contentGlob = [] } = pluginOptions;
+  const { contentGlob = [], skip } = pluginOptions;
   const contentPatterns = Array.isArray(contentGlob)
     ? contentGlob
     : [contentGlob];
@@ -24,6 +25,9 @@ export default function (eleventyConfig, pluginOptions = {}) {
   eleventyConfig.addExtension("css", {
     outputFileExtension: "css",
     compile: async function (content, inputPath) {
+      if (typeof skip === "function" && skip(inputPath)) {
+        return;
+      }
       if (contentPatterns.length > 0) {
         const deps = await fg(contentPatterns);
         this.addDependencies(inputPath, deps);

@@ -52,6 +52,19 @@ eleventyConfig.setServerOptions({
 });
 ```
 
+### `skip`
+
+- Type: `(inputPath: string) => boolean`
+- Default: `undefined`
+
+Predicate invoked for each CSS template file. When it returns `true`, processing and output of that file are skipped. Useful for excluding partials or files handled by another pipeline (e.g., `@import`ed fragments).
+
+```javascript
+eleventyConfig.addPlugin(postcss, {
+  skip: (inputPath) => inputPath.includes("/_partials/"),
+});
+```
+
 ## Requirements
 
 - Eleventy 3.0 or higher
