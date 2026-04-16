@@ -7,6 +7,11 @@ export interface PluginOptions {
    * Useful for TailwindCSS which scans content files for class names.
    */
   contentGlob?: string | string[];
+  /**
+   * Predicate invoked for each CSS template file.
+   * When it returns `true`, processing (and output) of that file is skipped.
+   */
+  skip?: (inputPath: string) => boolean;
 }
 
 /**
