@@ -48,10 +48,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Configure git
-        run: |
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+      # 試験運用: tuqulore/.github#15 のブランチを参照
+      - uses: tuqulore/.github/configure-git@add-releasing-composite-action
 
       - name: Publish to npm
         run: |
@@ -73,22 +71,17 @@ jobs:
           git tag "v${VERSION}"
           git push origin "v${VERSION}"
 
-      - name: Create alpha branch and bump version
-        run: |
-          git checkout main
-          git pull origin main
-          git checkout -B alpha
-          pnpm packages:bump-version prerelease --preid alpha --yes --no-git-tag-version
-          git commit --all --message "chore(alpha): v$(cat lerna.json | jq -r .version)"
-          git push -f origin alpha
+      # 試験運用: tuqulore/.github#15 のブランチを参照
+      # 直前の "Create release tag" が main を checkout 済みのため、そこから alpha ブランチを作成する
+      - uses: tuqulore/.github/bump-and-pr@add-releasing-composite-action
+        with:
+          branch: alpha
+          bump-command: pnpm packages:bump-version prerelease --preid alpha --yes --no-git-tag-version
+          version-command: jq -r .version lerna.json
+          commit-prefix: chore(alpha)
+          pr-body: Bump to alpha version v${VERSION}
+          github-token: ${{ github.token }}
 
-      - name: Create alpha pull request
-        run: |
-          VERSION=$(cat lerna.json | jq -r .version)
-          gh pr create \
-            --base main \
-            --head alpha \
-            --title "chore(alpha): v${VERSION}" \
-            --body "Bump to alpha version v${VERSION}"
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Cleanup alpha branch on failure or cancellation
+        if: failure() || cancelled()
+        run: git push origin :alpha || true
