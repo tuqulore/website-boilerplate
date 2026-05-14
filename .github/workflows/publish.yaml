@@ -48,8 +48,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      # 試験運用: tuqulore/.github#15 のブランチを参照
-      - uses: tuqulore/.github/configure-git@add-releasing-composite-action
+      - uses: tuqulore/.github/configure-git@main
 
       - name: Publish to npm
         run: |
@@ -71,9 +70,8 @@ jobs:
           git tag "v${VERSION}"
           git push origin "v${VERSION}"
 
-      # 試験運用: tuqulore/.github#15 のブランチを参照
       # 直前の "Create release tag" が main を checkout 済みのため、そこから alpha ブランチを作成する
-      - uses: tuqulore/.github/bump-and-pr@add-releasing-composite-action
+      - uses: tuqulore/.github/bump-and-pr@main
         with:
           branch: alpha
           bump-command: pnpm packages:bump-version prerelease --preid alpha --yes --no-git-tag-version
