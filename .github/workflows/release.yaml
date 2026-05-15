@@ -24,8 +24,16 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: tuqulore/.github/setup@bfc3a44941a6d4499735fa48c913b51c15f9ca7b # main
+        with:
+          fetch-depth: 0
 
       - uses: tuqulore/.github/configure-git@main
+
+      - name: Find previous release tag
+        id: previous-tag
+        run: |
+          PREVIOUS_TAG=$(git tag -l 'v*' --sort=-v:refname | grep -v -- '-alpha\.' | head -n 1)
+          echo "tag=${PREVIOUS_TAG}" >> "$GITHUB_OUTPUT"
 
       - uses: tuqulore/.github/bump-and-pr@main
         with:
@@ -33,7 +41,10 @@ jobs:
           bump-command: pnpm packages:bump-version ${{ inputs.semver }} --yes --no-git-tag-version
           version-command: jq -r .version lerna.json
           commit-prefix: chore(release)
-          pr-body: Release v${VERSION}
+          pr-body: |
+            Release v${VERSION}
+
+            **Full Changelog**: https://github.com/${{ github.repository }}/compare/${{ steps.previous-tag.outputs.tag }}...release
           # テンプレート内の@tuqulore-inc/eleventy-presetのバージョンを更新
           pre-commit-command: |
             VERSION=$(jq -r .version lerna.json)
