@@ -7,10 +7,7 @@ on:
       - main
   workflow_dispatch:
 
-permissions:
-  contents: write
-  id-token: write
-  pull-requests: write
+permissions: {}
 
 concurrency:
   group: publish
@@ -20,19 +17,32 @@ jobs:
   check:
     if: >-
       github.event_name == 'workflow_dispatch' ||
-      (github.event.pull_request.merged == true && startsWith(github.event.pull_request.title, 'chore(release):'))
+      (
+        github.event.pull_request.merged == true &&
+        github.event.pull_request.head.ref == 'release' &&
+        github.event.pull_request.head.repo.full_name == github.repository &&
+        startsWith(github.event.pull_request.title, 'chore(release):')
+      )
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     outputs:
       tag-exists: ${{ steps.check-tag.outputs.tag-exists }}
+      sha: ${{ steps.target.outputs.sha }}
     steps:
-      - uses: tuqulore/.github/setup@bfc3a44941a6d4499735fa48c913b51c15f9ca7b # main
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - uses: tuqulore/.github/resolve-target-sha@main
+        id: target
         with:
-          fetch-depth: 0
+          default-branch: main
 
       - name: Check if tag already exists
         id: check-tag
+        env:
+          SHA: ${{ steps.target.outputs.sha }}
         run: |
-          VERSION=$(cat lerna.json | jq -r .version)
+          VERSION=$(git show "${SHA}:lerna.json" | jq -r .version)
           if git ls-remote --exit-code --tags origin "refs/tags/v${VERSION}"; then
             echo "tag-exists=true" >> "$GITHUB_OUTPUT"
           else
@@ -43,16 +53,27 @@ jobs:
     needs: check
     if: needs.check.outputs.tag-exists == 'false'
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      id-token: write
+      pull-requests: write
     steps:
-      - uses: tuqulore/.github/setup@bfc3a44941a6d4499735fa48c913b51c15f9ca7b # main
+      - uses: tuqulore/.github/setup@main
         with:
           fetch-depth: 0
 
       - uses: tuqulore/.github/configure-git@main
 
+      # 公開物とタグの指すコミットを一致させるため、check で解決した SHA を detached HEAD で checkout する。
+      - name: Checkout target sha for publishing
+        env:
+          SHA: ${{ needs.check.outputs.sha }}
+        run: git checkout "${SHA}"
+
+      # npm 公開は Trusted Publishing (OIDC) 前提。
       - name: Publish to npm
         run: |
-          VERSION=$(cat lerna.json | jq -r .version)
+          VERSION=$(jq -r .version lerna.json)
           if [[ "$VERSION" == *"-alpha."* ]]; then
             DIST_TAG="alpha"
           else
@@ -64,19 +85,22 @@ jobs:
 
       - name: Create release tag
         run: |
-          git checkout main
-          git pull origin main
-          VERSION=$(cat lerna.json | jq -r .version)
+          VERSION=$(jq -r .version lerna.json)
           git tag "v${VERSION}"
           git push origin "v${VERSION}"
 
-      # 直前の "Create release tag" が main を checkout 済みのため、そこから alpha ブランチを作成する
+      # alpha ブランチは main の最新から派生させたいので checkout し直す
+      - name: Checkout default branch for alpha bump
+        run: |
+          git checkout -B main origin/main
+
       - uses: tuqulore/.github/bump-and-pr@main
         with:
           branch: alpha
           bump-command: pnpm packages:bump-version prerelease --preid alpha --yes --no-git-tag-version
           version-command: jq -r .version lerna.json
           commit-prefix: chore(alpha)
+          pr-base: main
           pr-body: Bump to alpha version v${VERSION}
           github-token: ${{ github.token }}
 
