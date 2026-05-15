@@ -21,7 +21,7 @@ jobs:
         github.event.pull_request.merged == true &&
         github.event.pull_request.head.ref == 'release' &&
         github.event.pull_request.head.repo.full_name == github.repository &&
-        startsWith(github.event.pull_request.title, env.RELEASE_COMMIT_PREFIX))
+        startsWith(github.event.pull_request.title, 'chore(release):')
       )
     runs-on: ubuntu-24.04
     permissions:
