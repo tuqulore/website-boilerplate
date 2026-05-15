@@ -11,6 +11,10 @@ on:
           - minor
           - major
 
+env:
+  RELEASE_BRANCH: release
+  RELEASE_COMMIT_PREFIX: chore(release)
+
 permissions:
   contents: write
   pull-requests: write
@@ -23,7 +27,7 @@ jobs:
   release:
     runs-on: ubuntu-24.04
     steps:
-      - uses: tuqulore/.github/setup@bfc3a44941a6d4499735fa48c913b51c15f9ca7b # main
+      - uses: tuqulore/.github/setup@main
         with:
           fetch-depth: 0
 
@@ -32,19 +36,32 @@ jobs:
       - name: Find previous release tag
         id: previous-tag
         run: |
-          PREVIOUS_TAG=$(git tag -l 'v*' --sort=-v:refname | grep -v -- '-alpha\.' | head -n 1)
+          PREVIOUS_TAG=$(git tag -l 'v*' --sort=-v:refname | { grep -v -- '-' || true; } | sed -n '1p')
           echo "tag=${PREVIOUS_TAG}" >> "$GITHUB_OUTPUT"
+
+      - name: Build changelog URL
+        id: changelog
+        env:
+          PREVIOUS_TAG: ${{ steps.previous-tag.outputs.tag }}
+        run: |
+          if [ -n "${PREVIOUS_TAG}" ]; then
+            URL="https://github.com/${{ github.repository }}/compare/${PREVIOUS_TAG}...${RELEASE_BRANCH}"
+          else
+            URL="https://github.com/${{ github.repository }}/commits/${RELEASE_BRANCH}"
+          fi
+          echo "url=${URL}" >> "$GITHUB_OUTPUT"
 
       - uses: tuqulore/.github/bump-and-pr@main
         with:
-          branch: release
+          branch: ${{ env.RELEASE_BRANCH }}
           bump-command: pnpm packages:bump-version ${{ inputs.semver }} --yes --no-git-tag-version
           version-command: jq -r .version lerna.json
-          commit-prefix: chore(release)
+          commit-prefix: ${{ env.RELEASE_COMMIT_PREFIX }}
+          pr-base: main
           pr-body: |
             Release v${VERSION}
 
-            **Full Changelog**: https://github.com/${{ github.repository }}/compare/${{ steps.previous-tag.outputs.tag }}...release
+            **Full Changelog**: ${{ steps.changelog.outputs.url }}
           # テンプレート内の@tuqulore-inc/eleventy-presetのバージョンを更新
           pre-commit-command: |
             VERSION=$(jq -r .version lerna.json)
@@ -55,11 +72,11 @@ jobs:
 
       - name: Cleanup on failure or cancellation
         if: failure() || cancelled()
-        run: |
-          EXISTING_PR=$(gh pr list --base main --head release --json number --jq '.[0].number // empty' 2>/dev/null)
-          if [ -n "$EXISTING_PR" ]; then
-            gh pr close "$EXISTING_PR"
-          fi
-          git push origin :release || true
         env:
           GH_TOKEN: ${{ github.token }}
+        run: |
+          EXISTING_PR=$(gh pr list --base main --head "$RELEASE_BRANCH" --json number --jq '.[0].number // empty' 2>/dev/null || true)
+          if [ -n "$EXISTING_PR" ]; then
+            gh pr close "$EXISTING_PR" || true
+          fi
+          git push origin ":$RELEASE_BRANCH" || true
