@@ -10,13 +10,54 @@ import { fileURLToPath } from "node:url";
 const here = path.dirname(fileURLToPath(import.meta.url));
 const cli = path.join(here, "index.mjs");
 const templatesDir = path.join(here, "templates");
+const workspaceRoot = path.resolve(here, "..", "..");
 
 const templates = fs
   .readdirSync(templatesDir, { withFileTypes: true })
   .filter((entry) => entry.isDirectory())
   .map((entry) => entry.name);
 
+// テンプレートが直接/間接に依存する workspace 内パッケージ。
+// eleventy-preset が workspace:* で 3 プラグインを引くため一括で差し込む。
+const workspacePackageNames = [
+  "@tuqulore-inc/eleventy-preset",
+  "@tuqulore-inc/eleventy-plugin-preact",
+  "@tuqulore-inc/eleventy-plugin-preact-island",
+  "@tuqulore-inc/eleventy-plugin-postcss",
+];
+
 describe("create-eleventy templates", { concurrency: true }, () => {
+  let packDir;
+  const overrides = {};
+
+  before(async () => {
+    packDir = await fsp.mkdtemp(
+      path.join(os.tmpdir(), "create-eleventy-pack-"),
+    );
+    for (const name of workspacePackageNames) {
+      const result = spawnSync(
+        "pnpm",
+        ["--filter", name, "pack", "--pack-destination", packDir],
+        { cwd: workspaceRoot, encoding: "utf8" },
+      );
+      assert.strictEqual(
+        result.status,
+        0,
+        describeChild(`pnpm pack ${name}`, result),
+      );
+      const shortName = name.replace("@tuqulore-inc/", "tuqulore-inc-");
+      const tarball = fs
+        .readdirSync(packDir)
+        .find((f) => f.startsWith(`${shortName}-`) && f.endsWith(".tgz"));
+      assert.ok(tarball, `tarball not found for ${name} in ${packDir}`);
+      overrides[name] = `file:${path.join(packDir, tarball)}`;
+    }
+  });
+
+  after(async () => {
+    if (packDir) await fsp.rm(packDir, { recursive: true, force: true });
+  });
+
   it("templates ディレクトリが1つ以上ある", () => {
     assert.ok(templates.length > 0, `templates が空: ${templatesDir}`);
   });
@@ -67,29 +108,48 @@ describe("create-eleventy templates", { concurrency: true }, () => {
         );
       });
 
-      it("pnpm i && pnpm build が成功する", { timeout: 300_000 }, () => {
-        const install = spawnSync(
-          "pnpm",
-          ["install", "--ignore-workspace", "--prefer-offline"],
-          { cwd: projectDir, encoding: "utf8" },
-        );
-        assert.strictEqual(
-          install.status,
-          0,
-          describeChild("pnpm install", install),
-        );
+      it(
+        "現ソースの workspace パッケージで pnpm i && pnpm build が成功する",
+        { timeout: 300_000 },
+        () => {
+          // scaffold 済み package.json に pnpm.overrides を差し込み、
+          // 公開済みバージョンではなく現ブランチの workspace パッケージを
+          // pack した tarball を install に流す。
+          const pkgPath = path.join(projectDir, "package.json");
+          const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
+          pkg.pnpm = {
+            ...pkg.pnpm,
+            overrides: { ...pkg.pnpm?.overrides, ...overrides },
+          };
+          fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + "\n");
 
-        const build = spawnSync("pnpm", ["run", "build"], {
-          cwd: projectDir,
-          encoding: "utf8",
-        });
-        assert.strictEqual(build.status, 0, describeChild("pnpm build", build));
+          const install = spawnSync(
+            "pnpm",
+            ["install", "--ignore-workspace", "--prefer-offline"],
+            { cwd: projectDir, encoding: "utf8" },
+          );
+          assert.strictEqual(
+            install.status,
+            0,
+            describeChild("pnpm install", install),
+          );
 
-        assert.ok(
-          fs.existsSync(path.join(projectDir, "dist", "index.html")),
-          "build 後に dist/index.html が生成されていない",
-        );
-      });
+          const build = spawnSync("pnpm", ["run", "build"], {
+            cwd: projectDir,
+            encoding: "utf8",
+          });
+          assert.strictEqual(
+            build.status,
+            0,
+            describeChild("pnpm build", build),
+          );
+
+          assert.ok(
+            fs.existsSync(path.join(projectDir, "dist", "index.html")),
+            "build 後に dist/index.html が生成されていない",
+          );
+        },
+      );
     });
   }
 });
