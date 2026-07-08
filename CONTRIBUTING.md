@@ -113,7 +113,7 @@ pnpm install --prefer-offline
 
 echo
 echo "準備完了: $WORK/my-app に移動して pnpm dev / pnpm build を回してください。"
-echo "後片付け: rm -r $WORK $PACK"
+echo "後片付け: rm -r \"$WORK\" \"$PACK\""
 ```
 
 ### 触って確認するポイント
