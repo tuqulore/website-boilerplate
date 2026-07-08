@@ -24,7 +24,8 @@
     "templates"
   ],
   "scripts": {
-    "lint": "eslint --fix ."
+    "lint": "eslint --fix .",
+    "test": "node --test"
   },
   "devDependencies": {
     "@tuqulore-inc/eslint-config": "workspace:*",
