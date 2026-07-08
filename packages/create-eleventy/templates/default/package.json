@@ -20,7 +20,7 @@
     "@iconify/tailwind4": "^1.0.6",
     "@jumpu-ui/tailwindcss": "3.0.1",
     "@tailwindcss/postcss": "^4.0.14",
-    "@tailwindcss/typography": "0.5.19",
+    "@tailwindcss/typography": "0.5.20",
     "@tuqulore-inc/eleventy-preset": "^4.1.0",
     "dotenv-cli": "^11.0.0",
     "eslint": "^10.0.0",
