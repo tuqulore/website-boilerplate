@@ -46,6 +46,11 @@ export function hydratable(Component, moduleUrl) {
  *   name (e.g. `"interaction"`, `"visible"`, `"idle"`).
  */
 export function Island({ component, on = "interaction", ...props }) {
+  // Drop children explicitly. Preact folds JSX children into props.children,
+  // and Island's contract is that SSR content comes from `component`; letting
+  // children fall through would leak Preact VNodes into the JSON-serialized
+  // `props` attribute on <is-land> and into the client hydration payload.
+  delete props.children;
   if (typeof component !== "function") {
     throw new TypeError(
       "Island: `component` prop must be a Preact component wrapped with `hydratable()`",
@@ -63,13 +68,22 @@ export function Island({ component, on = "interaction", ...props }) {
     );
   }
   const importUrl = currentResolver(moduleUrl);
+  let serializedProps;
+  try {
+    serializedProps = JSON.stringify(props);
+  } catch (cause) {
+    throw new Error(
+      `Island: failed to JSON.stringify props for hydration of ${component.name || "anonymous component"} (${importUrl}). Ensure all Island props are JSON-serializable.`,
+      { cause },
+    );
+  }
   return h(
     "is-land",
     {
       [`land-on:${on}`]: true,
       type: "preact",
       import: importUrl,
-      props: JSON.stringify(props),
+      props: serializedProps,
     },
     h(component, props),
   );

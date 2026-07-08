@@ -101,4 +101,46 @@ describe("Island", () => {
     assert.match(html, /<i>x-auto<\/i>/);
     assert.doesNotMatch(html, /<b>ignored<\/b>/);
   });
+
+  it("children は props シリアライズにもコンポーネント SSR にも漏れない", () => {
+    _setHydrateModuleResolver(() => "/x.hydrate.js");
+    const receivedProps = [];
+    const X = hydratable(function X(props) {
+      receivedProps.push(props);
+      return h("i", null, `x-${props.tag}`);
+    }, "file:///proj/src/x.hydrate.jsx");
+
+    const html = render(
+      h(Island, { component: X, tag: "auto" }, h("b", null, "ignored")),
+    );
+
+    // <is-land props="..."> 属性に children/VNode が混入していないことを確認
+    // (props 属性値は tag のみで完結)
+    assert.match(html, /props="\{&quot;tag&quot;:&quot;auto&quot;\}"/);
+    // component 側にも children は渡らない
+    assert.deepStrictEqual(receivedProps, [{ tag: "auto" }]);
+  });
+
+  it("JSON.stringify に失敗する props (循環参照など) は Island 文脈のエラーで包む", () => {
+    _setHydrateModuleResolver(() => "/x.hydrate.js");
+    const X = hydratable(function X() {
+      return null;
+    }, "file:///proj/src/x.hydrate.jsx");
+
+    const circular = {};
+    circular.self = circular;
+
+    assert.throws(
+      () => render(h(Island, { component: X, data: circular })),
+      (err) => {
+        assert.match(err.message, /Island: failed to JSON\.stringify props/);
+        assert.match(err.message, /\/x\.hydrate\.js/);
+        assert.ok(
+          err.cause instanceof TypeError,
+          "元の TypeError が cause に保持されている",
+        );
+        return true;
+      },
+    );
+  });
 });
