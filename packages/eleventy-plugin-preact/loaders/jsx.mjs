@@ -6,6 +6,7 @@
 
 import { transformAsync } from "@babel/core";
 import fs from "node:fs/promises";
+import { fileURLToPath } from "node:url";
 
 /**
  * Load `file:` URLs to JSX files.
@@ -26,7 +27,7 @@ export async function load(href, context, nextLoad) {
   if (url.protocol === "file:" && /\.jsx$/.test(url.pathname)) {
     const value = await fs.readFile(url, "utf8");
     const file = await transformAsync(value, {
-      filename: url.pathname,
+      filename: fileURLToPath(url),
       presets: [
         [
           "@babel/preset-react",

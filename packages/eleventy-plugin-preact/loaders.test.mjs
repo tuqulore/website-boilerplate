@@ -59,6 +59,25 @@ describe("jsx loader", () => {
       assert.ok(Array.isArray(map.sources));
     });
 
+    it("スペースを含むパスでもソースマップのパスがエンコードされない", async () => {
+      const file = path.join(dir, "with space.jsx");
+      await fs.writeFile(file, "export const A = () => <div>hi</div>;\n");
+
+      const result = await load(pathToFileURL(file).href, {}, () => {
+        assert.fail("nextLoad should not be called for .jsx files");
+      });
+
+      const base64 = String(result.source).match(
+        /sourceMappingURL=data:application\/json;base64,(\S+)/,
+      )?.[1];
+      const map = JSON.parse(Buffer.from(base64, "base64").toString());
+
+      assert.ok(
+        map.sources.some((source) => source.includes("with space.jsx")),
+        `sources should contain the decoded path: ${JSON.stringify(map.sources)}`,
+      );
+    });
+
     it("変換結果をimportしてレンダリングできる", async () => {
       const file = path.join(dir, "renderable.jsx");
       await fs.writeFile(
