@@ -4,8 +4,9 @@
  * @typedef {import('node:module').LoadHook} LoadHookType
  */
 
-import babel from "@babel/core";
+import { transformAsync } from "@babel/core";
 import fs from "node:fs/promises";
+import { fileURLToPath } from "node:url";
 
 /**
  * Load `file:` URLs to JSX files.
@@ -24,8 +25,9 @@ export async function load(href, context, nextLoad) {
   const url = new URL(href);
 
   if (url.protocol === "file:" && /\.jsx$/.test(url.pathname)) {
-    const value = await fs.readFile(url);
-    const file = babel.transform(value, {
+    const value = await fs.readFile(url, "utf8");
+    const file = await transformAsync(value, {
+      filename: fileURLToPath(url),
       presets: [
         [
           "@babel/preset-react",
@@ -35,6 +37,7 @@ export async function load(href, context, nextLoad) {
           },
         ],
       ],
+      sourceMaps: true,
     });
 
     return {
