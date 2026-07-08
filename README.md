@@ -26,6 +26,8 @@ pnpm dev
 
 ## 開発
 
+開発フロー・コード整形・静的検査・パッケージの手動テスト手順は[コントリビューションガイド](./CONTRIBUTING.md)を参照してください。
+
 ### 動作環境
 
 - [Active LTS](https://github.com/nodejs/release#release-schedule)
