@@ -15,14 +15,14 @@ pnpm install
 
 ## リポジトリ構成
 
-| ディレクトリ                          | 役割                                                                       |
-| :------------------------------------ | :------------------------------------------------------------------------- |
-| `packages/create-eleventy`            | `pnpm create @tuqulore-inc/eleventy` の CLI およびテンプレート             |
-| `packages/eleventy-preset`            | Eleventy 設定のプリセット（他プラグインを `workspace:*` で束ねる）         |
-| `packages/eleventy-plugin-preact`     | Preact による JSX テンプレート対応                                         |
-| `packages/eleventy-plugin-preact-island` | Partial Hydration                                                       |
-| `packages/eleventy-plugin-postcss`    | PostCSS 対応                                                               |
-| `packages/eslint-config`              | 共有 ESLint 設定                                                           |
+| ディレクトリ                             | 役割                                                               |
+| :--------------------------------------- | :----------------------------------------------------------------- |
+| `packages/create-eleventy`               | `pnpm create @tuqulore-inc/eleventy` の CLI およびテンプレート     |
+| `packages/eleventy-preset`               | Eleventy 設定のプリセット（他プラグインを `workspace:*` で束ねる） |
+| `packages/eleventy-plugin-preact`        | Preact による JSX テンプレート対応                                 |
+| `packages/eleventy-plugin-preact-island` | Partial Hydration                                                  |
+| `packages/eleventy-plugin-postcss`       | PostCSS 対応                                                       |
+| `packages/eslint-config`                 | 共有 ESLint 設定                                                   |
 
 ## 開発ワークフロー
 
