@@ -51,14 +51,28 @@ describe("createHydrateModuleResolver", () => {
         );
       }
     });
+
+    it("srcDir の前後スラッシュを正規化する", () => {
+      const cases = ["src", "/src", "src/", "/src/"];
+      for (const srcDir of cases) {
+        const resolve = createHydrateModuleResolver({ srcDir });
+        assert.strictEqual(
+          resolve("file:///proj/src/foo.hydrate.jsx"),
+          "/foo.hydrate.js",
+          `srcDir=${JSON.stringify(srcDir)} の正規化が不正`,
+        );
+      }
+    });
   });
 
   describe("URL 解釈", () => {
-    it("URL エンコードされたパス (空白など) を復元する", () => {
+    it("URL エンコードされたパス (空白など) はエンコード形のまま維持する", () => {
+      // browser の import() が specifier として直接使うため、literal space に
+      // decode してはならない
       const resolve = createHydrateModuleResolver();
       assert.strictEqual(
         resolve("file:///proj/src/with%20space/foo.hydrate.jsx"),
-        "/with space/foo.hydrate.js",
+        "/with%20space/foo.hydrate.js",
       );
     });
 

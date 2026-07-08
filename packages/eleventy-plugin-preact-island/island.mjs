@@ -56,6 +56,14 @@ export function Island({ component, on = "interaction", ...props }) {
       "Island: `component` prop must be a Preact component wrapped with `hydratable()`",
     );
   }
+  // Reject values that would produce a broken `land-on:*` attribute (whitespace,
+  // quotes, etc). is-land silently fails to fire on unknown trigger names, so
+  // catching typos at build time is the only signal the user gets.
+  if (typeof on !== "string" || !/^[A-Za-z0-9_-]+$/.test(on)) {
+    throw new TypeError(
+      `Island: \`on\` must match /^[A-Za-z0-9_-]+$/ (e.g. "interaction", "visible", "idle"), got: ${JSON.stringify(on)}`,
+    );
+  }
   const moduleUrl = component.__hydrateModuleUrl;
   if (typeof moduleUrl !== "string") {
     throw new Error(

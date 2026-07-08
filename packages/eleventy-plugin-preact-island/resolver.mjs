@@ -17,9 +17,9 @@ export function createHydrateModuleResolver({
   srcDir = "src",
   urlPrefix = "/",
 } = {}) {
-  if (typeof srcDir !== "string" || srcDir.length === 0) {
+  if (typeof srcDir !== "string") {
     throw new TypeError(
-      "createHydrateModuleResolver: `srcDir` must be a non-empty string",
+      "createHydrateModuleResolver: `srcDir` must be a string",
     );
   }
   if (typeof urlPrefix !== "string") {
@@ -28,13 +28,21 @@ export function createHydrateModuleResolver({
     );
   }
 
-  const marker = `/${srcDir}/`;
+  const normalizedSrcDir = srcDir.replace(/^\/+|\/+$/g, "");
+  if (normalizedSrcDir.length === 0) {
+    throw new TypeError(
+      "createHydrateModuleResolver: `srcDir` must contain at least one path segment",
+    );
+  }
+  const marker = `/${normalizedSrcDir}/`;
   const normalizedPrefix = normalizeUrlPrefix(urlPrefix);
 
   return function resolveHydrateModuleUrl(moduleUrl) {
     let pathname;
     try {
-      pathname = decodeURIComponent(new URL(moduleUrl).pathname);
+      // Keep the pathname URL-encoded so the resulting browser URL stays a
+      // valid module specifier (e.g. spaces remain `%20`, not literal spaces).
+      pathname = new URL(moduleUrl).pathname;
     } catch {
       throw new Error(
         `[eleventy-plugin-preact-island] Invalid module URL: ${moduleUrl}`,
@@ -44,7 +52,7 @@ export function createHydrateModuleResolver({
     const idx = pathname.lastIndexOf(marker);
     if (idx === -1) {
       throw new Error(
-        `[eleventy-plugin-preact-island] Hydrate module must live under "${srcDir}/": ${pathname}`,
+        `[eleventy-plugin-preact-island] Hydrate module must live under "${normalizedSrcDir}/": ${pathname}`,
       );
     }
 

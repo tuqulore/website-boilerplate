@@ -73,6 +73,19 @@ describe("Island", () => {
     );
   });
 
+  it("on に不正な値 (空白 / 空文字 / 非文字列) を渡すと TypeError", () => {
+    _setHydrateModuleResolver(() => "/x.hydrate.js");
+    const X = hydratable(() => null, "file:///proj/src/x.hydrate.jsx");
+    for (const on of ["foo bar", "", 'bad"quote', 123, null]) {
+      assert.throws(
+        () => render(h(Island, { component: X, on })),
+        (err) =>
+          err instanceof TypeError && /`on` must match/.test(err.message),
+        `on=${JSON.stringify(on)} が TypeError にならなかった`,
+      );
+    }
+  });
+
   it("component が hydratable でラップされていない場合は明示エラー", () => {
     _setHydrateModuleResolver(() => "/x.hydrate.js");
     const Bare = () => null;
