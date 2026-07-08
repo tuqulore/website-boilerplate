@@ -10,11 +10,19 @@ import { fileURLToPath } from "node:url";
 const here = path.dirname(fileURLToPath(import.meta.url));
 const cli = path.join(here, "index.mjs");
 
+// spawnSync は同期呼び出しなので node:test の timeout では中断できない。
+// プロンプト待ち等でハングしないよう明示的に上限を設ける。
+const SPAWN_OPTS = {
+  encoding: "utf8",
+  timeout: 30_000,
+  maxBuffer: 5 * 1024 * 1024,
+};
+
 function runCli(args, cwd) {
   return spawnSync(process.execPath, [cli, ...args], {
     cwd,
     stdio: ["ignore", "pipe", "pipe"],
-    encoding: "utf8",
+    ...SPAWN_OPTS,
   });
 }
 
@@ -26,7 +34,7 @@ describe("create-eleventy CLI", () => {
   });
 
   after(async () => {
-    await fsp.rm(workDir, { recursive: true, force: true });
+    if (workDir) await fsp.rm(workDir, { recursive: true, force: true });
   });
 
   it("--help はUsageを出力してexit 0", () => {
@@ -53,7 +61,7 @@ describe("create-eleventy CLI", () => {
     const result = spawnSync(process.execPath, [cli], {
       cwd: workDir,
       input: "\n",
-      encoding: "utf8",
+      ...SPAWN_OPTS,
     });
     assert.notStrictEqual(result.status, 0);
     assert.match(result.stderr, /Project name is required/);

@@ -26,6 +26,14 @@ const workspacePackageNames = [
   "@tuqulore-inc/eleventy-plugin-postcss",
 ];
 
+// spawnSync は同期呼び出しなので node:test の timeout では中断できない。
+// 個別に timeout / maxBuffer を渡してハングと ENOBUFS を防ぐ。
+const MAX_BUFFER = 20 * 1024 * 1024;
+const TIMEOUT_FAST = 30_000;
+const TIMEOUT_PACK = 120_000;
+const TIMEOUT_INSTALL = 240_000;
+const TIMEOUT_BUILD = 60_000;
+
 describe("create-eleventy templates", { concurrency: true }, () => {
   let packDir;
   const overrides = {};
@@ -38,7 +46,12 @@ describe("create-eleventy templates", { concurrency: true }, () => {
       const result = spawnSync(
         "pnpm",
         ["--filter", name, "pack", "--pack-destination", packDir],
-        { cwd: workspaceRoot, encoding: "utf8" },
+        {
+          cwd: workspaceRoot,
+          encoding: "utf8",
+          timeout: TIMEOUT_PACK,
+          maxBuffer: MAX_BUFFER,
+        },
       );
       assert.strictEqual(
         result.status,
@@ -75,7 +88,7 @@ describe("create-eleventy templates", { concurrency: true }, () => {
       });
 
       after(async () => {
-        await fsp.rm(workDir, { recursive: true, force: true });
+        if (workDir) await fsp.rm(workDir, { recursive: true, force: true });
       });
 
       it("CLI で scaffold できる", () => {
@@ -86,6 +99,8 @@ describe("create-eleventy templates", { concurrency: true }, () => {
             cwd: workDir,
             stdio: ["ignore", "pipe", "pipe"],
             encoding: "utf8",
+            timeout: TIMEOUT_FAST,
+            maxBuffer: MAX_BUFFER,
           },
         );
         assert.strictEqual(result.status, 0, describeChild("scaffold", result));
@@ -106,7 +121,7 @@ describe("create-eleventy templates", { concurrency: true }, () => {
 
       it(
         "現ソースの workspace パッケージで pnpm i && pnpm build が成功する",
-        { timeout: 300_000 },
+        { timeout: TIMEOUT_INSTALL + TIMEOUT_BUILD + 30_000 },
         () => {
           // pnpm 11 以降 package.json の "pnpm" フィールドは読まれないため、
           // workDir を workspace 化して pnpm-workspace.yaml に overrides を書く。
@@ -127,6 +142,8 @@ describe("create-eleventy templates", { concurrency: true }, () => {
           const install = spawnSync("pnpm", ["install", "--prefer-offline"], {
             cwd: projectDir,
             encoding: "utf8",
+            timeout: TIMEOUT_INSTALL,
+            maxBuffer: MAX_BUFFER,
           });
           assert.strictEqual(
             install.status,
@@ -137,6 +154,8 @@ describe("create-eleventy templates", { concurrency: true }, () => {
           const build = spawnSync("pnpm", ["run", "build"], {
             cwd: projectDir,
             encoding: "utf8",
+            timeout: TIMEOUT_BUILD,
+            maxBuffer: MAX_BUFFER,
           });
           assert.strictEqual(
             build.status,
