@@ -93,6 +93,8 @@ done
 # WORK を単独ワークスペース化して pnpm-workspace.yaml に overrides を書き出す。
 # - overrides は transitive にも効くので、テンプレートが直接依存していないプラグイン群も一括で差し替わる。
 # - file: は具体名を渡す必要があり glob (*.tgz) は解決されないため、pack で生成された tarball 名をシェル側で解決する。
+# - glob は SHORT の直後を [0-9] に固定する。preact / preact-island のように片方が
+#   他方の prefix になる名前で `${SHORT}-*` を使うと両 tarball にマッチしてしまうため。
 # - allowBuilds はリポジトリルート pnpm-workspace.yaml の設定を踏襲する。
 {
   echo "packages:"
@@ -100,7 +102,7 @@ done
   echo "overrides:"
   for NAME in "${PKGS[@]}"; do
     SHORT=${NAME/@tuqulore-inc\//tuqulore-inc-}
-    TARBALL=$(ls "$PACK/$SHORT"-*.tgz)
+    TARBALL=$(ls "$PACK/${SHORT}-"[0-9]*.tgz)
     echo "  \"$NAME\": \"file:$TARBALL\""
   done
   echo "allowBuilds:"
