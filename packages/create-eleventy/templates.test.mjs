@@ -112,20 +112,25 @@ describe("create-eleventy templates", { concurrency: true }, () => {
         "現ソースの workspace パッケージで pnpm i && pnpm build が成功する",
         { timeout: 300_000 },
         () => {
-          // scaffold 済み package.json に pnpm.overrides を差し込み、
-          // 公開済みバージョンではなく現ブランチの workspace パッケージを
-          // pack した tarball を install に流す。
-          const pkgPath = path.join(projectDir, "package.json");
-          const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
-          pkg.pnpm = {
-            ...pkg.pnpm,
-            overrides: { ...pkg.pnpm?.overrides, ...overrides },
-          };
-          fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + "\n");
+          // pnpm 11 以降 package.json の "pnpm" フィールドは読まれないため、
+          // workDir を workspace 化して pnpm-workspace.yaml に overrides を書く。
+          // allowBuilds はリポジトリルートの workspace 設定を踏襲し、
+          // esbuild / sharp の build script 未実行によるハードエラーを抑制する。
+          const overridesYaml = Object.entries(overrides)
+            .map(([name, target]) => `  "${name}": "${target}"`)
+            .join("\n");
+          const workspaceYaml =
+            `packages:\n  - my-app\n` +
+            `overrides:\n${overridesYaml}\n` +
+            `allowBuilds:\n  esbuild: false\n  sharp: false\n`;
+          fs.writeFileSync(
+            path.join(workDir, "pnpm-workspace.yaml"),
+            workspaceYaml,
+          );
 
           const install = spawnSync(
             "pnpm",
-            ["install", "--ignore-workspace", "--prefer-offline"],
+            ["install", "--prefer-offline"],
             { cwd: projectDir, encoding: "utf8" },
           );
           assert.strictEqual(
