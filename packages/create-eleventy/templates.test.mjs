@@ -88,11 +88,7 @@ describe("create-eleventy templates", { concurrency: true }, () => {
             encoding: "utf8",
           },
         );
-        assert.strictEqual(
-          result.status,
-          0,
-          describeChild("scaffold", result),
-        );
+        assert.strictEqual(result.status, 0, describeChild("scaffold", result));
 
         const pkg = JSON.parse(
           fs.readFileSync(path.join(projectDir, "package.json"), "utf8"),
@@ -128,11 +124,10 @@ describe("create-eleventy templates", { concurrency: true }, () => {
             workspaceYaml,
           );
 
-          const install = spawnSync(
-            "pnpm",
-            ["install", "--prefer-offline"],
-            { cwd: projectDir, encoding: "utf8" },
-          );
+          const install = spawnSync("pnpm", ["install", "--prefer-offline"], {
+            cwd: projectDir,
+            encoding: "utf8",
+          });
           assert.strictEqual(
             install.status,
             0,
