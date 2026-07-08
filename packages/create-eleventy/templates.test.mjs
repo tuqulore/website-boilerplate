@@ -76,7 +76,10 @@ describe("create-eleventy templates", { concurrency: true }, () => {
   });
 
   for (const template of templates) {
-    describe(template, () => {
+    // 外側 describe の concurrency: true は子孫にも継承されるため、
+    // ここで false を明示して scaffold → install+build を逐次に固定する。
+    // テンプレート間の並列性（外側 describe の直下）は維持したい。
+    describe(template, { concurrency: false }, () => {
       let workDir;
       let projectDir;
 
