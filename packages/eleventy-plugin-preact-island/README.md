@@ -2,12 +2,15 @@
 
 Eleventy plugin for Preact partial hydration with is-land.
 
-This plugin automatically injects the necessary scripts for Preact hydration into all HTML pages.
+This plugin:
+
+1. Injects the browser-side setup for [`@11ty/is-land`](https://github.com/11ty/is-land) + Preact into every HTML page.
+2. Ships an `<Island>` wrapper component that eliminates the `<is-land>` boilerplate (`type="preact"`, hardcoded `import` URL, `JSON.stringify(props)`, duplicate SSR children).
 
 ## Installation
 
 ```bash
-npm install -D @11ty/eleventy @tuqulore-inc/eleventy-plugin-preact-island
+npm install -D @11ty/eleventy preact @tuqulore-inc/eleventy-plugin-preact-island
 ```
 
 ## Usage
@@ -28,6 +31,7 @@ export default function (eleventyConfig) {
    - Import map for is-land and Preact (from esm.sh CDN)
    - Development-only WebSocket hook for rehydration after hot reload
    - is-land setup script with `Island.addInitType("preact", mount)`
+3. **Registers a hydrate module URL resolver** used by the `<Island>` component (see below).
 
 ## Options
 
@@ -44,42 +48,96 @@ eleventyConfig.addPlugin(preactIsland, {
 });
 ```
 
+### `resolveHydrateUrl`
+
+- Type: `(moduleUrl: string) => string`
+- Default: `createHydrateModuleResolver()` (`srcDir: "src"`, `urlPrefix: "/"`)
+
+Convert an SSR-side hydrate module URL (e.g. `import.meta.url` inside `foo.hydrate.jsx`) into the browser URL where the compiled bundle is served. When using this plugin outside `@tuqulore-inc/eleventy-preset`, pass a resolver that matches your build convention.
+
+```javascript
+import preactIsland from "@tuqulore-inc/eleventy-plugin-preact-island";
+import { createHydrateModuleResolver } from "@tuqulore-inc/eleventy-plugin-preact-island/resolver";
+
+eleventyConfig.addPlugin(preactIsland, {
+  resolveHydrateUrl: createHydrateModuleResolver({
+    srcDir: "content",
+    urlPrefix: "/assets",
+  }),
+});
+```
+
+Or supply an arbitrary function:
+
+```javascript
+eleventyConfig.addPlugin(preactIsland, {
+  resolveHydrateUrl: (moduleUrl) =>
+    moduleUrl.replace(/^.*\/pages\//, "/build/").replace(/\.jsx$/, ".js"),
+});
+```
+
 ## Partial Hydration
 
-To hydrate a component, use the `<is-land>` web component with `type="preact"`.
+### `hydratable(Component, moduleUrl)`
 
-```mdx
-import Component from "./component.hydrate.jsx";
+Marks a component as hydratable by attaching its SSR-side module URL. Call once in each `*.hydrate.jsx` file:
 
+```jsx
+// src/counter.hydrate.jsx
+import { hydratable } from "@tuqulore-inc/eleventy-plugin-preact-island/island";
+import { useState } from "preact/hooks";
+
+function Counter() {
+  const [n, setN] = useState(0);
+  return <button onClick={() => setN(n + 1)}>{n}</button>;
+}
+
+export default hydratable(Counter, import.meta.url);
+```
+
+### `<Island>`
+
+Wrap a hydratable component in `<is-land>`. Extra props are forwarded to both the SSR render and the client hydration.
+
+```jsx
+import { Island } from "@tuqulore-inc/eleventy-plugin-preact-island/island";
+import Counter from "./counter.hydrate.jsx";
+
+<Island component={Counter} on="interaction" label="click me" />;
+```
+
+The example renders (after resolving the import URL):
+
+```html
 <is-land
-land-on:visible
-type="preact"
-import="./component.hydrate.js"
-props='{ "someProp": "value" }'
-
+  land-on:interaction
+  type="preact"
+  import="/counter.hydrate.js"
+  props='{"label":"click me"}'
 >
-
-  <Component someProp="value" />
+  <button>0</button>
 </is-land>
 ```
 
-- The inner `<Component />` is rendered at build time (SSR)
-- The component is hydrated in the browser when the `<is-land>` becomes visible
+#### Props
 
-> **Note:** The `on:*` attribute prefix is changed to `land-on:*` to avoid conflicts with JSX syntax.
+| Prop        | Type                              | Description                                                                             |
+| ----------- | --------------------------------- | --------------------------------------------------------------------------------------- |
+| `component` | `HydratableComponent`             | Component wrapped with `hydratable()` in its `*.hydrate.jsx` file.                      |
+| `on`        | `string` (default: `interaction`) | is-land initialization trigger. Rendered as the boolean attribute `land-on:<on>`.       |
+| ...rest     | any                               | Serialized as `props` on `<is-land>` and forwarded to the component's SSR render as-is. |
 
-### `<is-land>` Attributes
+For parameterized triggers such as `on:media("(min-width: ...)")`, use the raw `<is-land>` element directly; the injected setup script still handles it.
 
-| Attribute   | Description                                                                                                                      |
-| ----------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `type`      | Hydration runtime. Set to `"preact"`.                                                                                            |
-| `import`    | Path to the hydration script (e.g., `./component.hydrate.js`).                                                                   |
-| `props`     | JSON-stringified props to pass to the component.                                                                                 |
-| `land-on:*` | [Initialization conditions](https://github.com/11ty/is-land?tab=readme-ov-file#usage) (e.g., `land-on:visible`, `land-on:idle`). |
+### Backward compatibility
+
+The raw `<is-land>` element remains fully supported — this plugin's script injection is unchanged. `<Island>` is a strict addition; existing partial hydration code continues to work.
 
 ## Requirements
 
+- Node.js 20 or higher
 - Eleventy 3.0 or higher
+- Preact 10 or higher
 
 ## License
 

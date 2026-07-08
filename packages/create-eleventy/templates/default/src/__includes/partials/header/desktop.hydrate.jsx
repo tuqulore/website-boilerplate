@@ -1,3 +1,4 @@
+import { hydratable } from "@tuqulore-inc/eleventy-preset/island";
 import { useState, useRef, useEffect } from "preact/hooks";
 import slugify from "slugify";
 import { twMerge } from "tailwind-merge";
@@ -47,7 +48,7 @@ function MenuList(props) {
   );
 }
 
-export default function Desktop(props) {
+function Desktop(props) {
   return (
     <nav class={props.class}>
       <ul class="flex items-center">
@@ -79,3 +80,5 @@ export default function Desktop(props) {
     </nav>
   );
 }
+
+export default hydratable(Desktop, import.meta.url);

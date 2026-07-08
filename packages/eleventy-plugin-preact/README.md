@@ -45,6 +45,30 @@ eleventyConfig.addPlugin(preact, {
 });
 ```
 
+### `outbase`
+
+- Type: `string`
+- Default: `"src"`
+
+esbuild `outbase` used when bundling hydration entry points. Should match the directory prefix you want stripped from output paths (usually the Eleventy input directory).
+
+### `outdir`
+
+- Type: `string`
+- Default: `"dist"`
+
+esbuild `outdir` used when bundling hydration entry points. Usually the Eleventy output directory.
+
+```javascript
+eleventyConfig.addPlugin(preact, {
+  hydrateGlob: "./content/**/*.hydrate.jsx",
+  outbase: "content",
+  outdir: "_site",
+});
+```
+
+When you customize these, remember to also pass a matching `resolveHydrateUrl` to `@tuqulore-inc/eleventy-plugin-preact-island` so the browser URLs stay in sync.
+
 ## Eleventy Data Access
 
 This plugin provides a singleton object for accessing Eleventy data from any template or component during SSR, without prop drilling.
@@ -73,7 +97,7 @@ import { eleventy } from "@tuqulore-inc/eleventy-plugin-preact/eleventy";
 ### Important Notes
 
 - The `eleventy` singleton is only available during SSR. Accessing it outside of SSR context will throw an error.
-- For hydrated components (`<is-land>`), continue to pass props via `props={JSON.stringify(...)}` since client-side hydration cannot access server-side data.
+- For hydrated components, use `<Island>` from `@tuqulore-inc/eleventy-plugin-preact-island/island`, which forwards the passed props to both the SSR render and the client hydration; the `eleventy` singleton itself is not available on the client.
 
 ## With Partial Hydration
 

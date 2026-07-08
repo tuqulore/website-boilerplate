@@ -1,7 +1,8 @@
+import { hydratable } from "@tuqulore-inc/eleventy-preset/island";
 import { useState } from "preact/hooks";
 import { twMerge } from "tailwind-merge";
 
-export default function Mobile(props) {
+function Mobile(props) {
   const [open, setOpen] = useState(false);
   return (
     <div class={props.class}>
@@ -74,3 +75,5 @@ export default function Mobile(props) {
     </div>
   );
 }
+
+export default hydratable(Mobile, import.meta.url);

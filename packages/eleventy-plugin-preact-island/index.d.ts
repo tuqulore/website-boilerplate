@@ -1,4 +1,5 @@
 import type { UserConfig } from "@11ty/eleventy";
+import type { HydrateModuleResolver } from "./resolver.js";
 
 export interface PluginOptions {
   /**
@@ -6,6 +7,13 @@ export interface PluginOptions {
    * If not specified, the latest version will be used.
    */
   preactVersion?: string;
+  /**
+   * Convert an SSR-side hydrate module URL (e.g. `import.meta.url` inside a
+   * `*.hydrate.jsx` file) into the browser URL where the compiled bundle is
+   * served. Defaults to `createHydrateModuleResolver()` which assumes `src/**`
+   * sources served under `/`.
+   */
+  resolveHydrateUrl?: HydrateModuleResolver;
 }
 
 /**

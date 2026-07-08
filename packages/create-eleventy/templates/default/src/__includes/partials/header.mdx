@@ -1,3 +1,4 @@
+import { Island } from "@tuqulore-inc/eleventy-preset/island";
 import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
 import Desktop from "./header/desktop.hydrate.jsx";
 import Mobile from "./header/mobile.hydrate.jsx";
@@ -7,24 +8,17 @@ import Mobile from "./header/mobile.hydrate.jsx";
     <a class="flex-shrink-0" href="/">
       {eleventy.site.name}
     </a>
-    <is-land
-      land-on:interaction
-      type="preact"
-      import="/_includes/partials/header/desktop.hydrate.js"
-      props={JSON.stringify({ class: "hidden md:block", nav: eleventy.nav })}
-    >
-      <Desktop class="hidden md:block" nav={eleventy.nav} />
-    </is-land>
-    <is-land
-      land-on:interaction
-      type="preact"
-      import="/_includes/partials/header/mobile.hydrate.js"
-      props={JSON.stringify({
-        class: "ml-auto flex items-center md:hidden",
-        nav: eleventy.nav,
-      })}
-    >
-      <Mobile class="ml-auto flex items-center md:hidden" nav={eleventy.nav} />
-    </is-land>
+    <Island
+      component={Desktop}
+      on="interaction"
+      class="hidden md:block"
+      nav={eleventy.nav}
+    />
+    <Island
+      component={Mobile}
+      on="interaction"
+      class="ml-auto flex items-center md:hidden"
+      nav={eleventy.nav}
+    />
   </div>
 </header>

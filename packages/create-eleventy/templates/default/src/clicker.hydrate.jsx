@@ -1,6 +1,7 @@
+import { hydratable } from "@tuqulore-inc/eleventy-preset/island";
 import { useState } from "preact/hooks";
 
-export default function Clicker() {
+function Clicker() {
   const [counter, setCounter] = useState(0);
 
   return (
@@ -12,3 +13,5 @@ export default function Clicker() {
     </div>
   );
 }
+
+export default hydratable(Clicker, import.meta.url);

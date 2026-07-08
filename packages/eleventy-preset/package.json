@@ -24,6 +24,10 @@
     "./eleventy": {
       "types": "./eleventy.d.ts",
       "default": "./eleventy.mjs"
+    },
+    "./island": {
+      "types": "./island.d.ts",
+      "default": "./island.mjs"
     }
   },
   "main": "./index.mjs",
@@ -32,7 +36,9 @@
     "index.d.ts",
     "index.mjs",
     "eleventy.d.ts",
-    "eleventy.mjs"
+    "eleventy.mjs",
+    "island.d.ts",
+    "island.mjs"
   ],
   "scripts": {
     "lint": "eslint --fix ."
