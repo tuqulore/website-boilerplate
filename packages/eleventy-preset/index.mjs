@@ -5,10 +5,10 @@ import preactIsland from "@tuqulore-inc/eleventy-plugin-preact-island";
 import fg from "fast-glob";
 import path from "node:path";
 
-// This preset's directory / URL convention.
+// This preset's directory convention. The URL prefix follows Eleventy's own
+// `pathPrefix`, so it is not duplicated here.
 const SRC_DIR = "src";
 const OUT_DIR = "dist";
-const URL_PREFIX = "/";
 
 /**
  * Optimize images under SRC_DIR and output the same tree under OUT_DIR
@@ -55,7 +55,6 @@ export default function preset(extend = () => {}) {
       entries: `./${SRC_DIR}/**/*.client.jsx`,
       srcDir: SRC_DIR,
       outDir: OUT_DIR,
-      urlPrefix: URL_PREFIX,
     });
 
     // PostCSS processing

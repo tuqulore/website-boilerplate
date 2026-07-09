@@ -28,11 +28,6 @@ export interface PluginOptions {
    * @default "dist"
    */
   outDir?: string;
-  /**
-   * URL path prefix where the compiled client module bundles are served.
-   * @default "/"
-   */
-  urlPrefix?: string;
 }
 
 /**

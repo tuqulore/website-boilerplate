@@ -9,7 +9,7 @@ An Island is the SSR-rendered HTML with client-side JavaScript layered on top; t
 3. Injects the browser-side [`@11ty/is-land`](https://github.com/11ty/is-land) + Preact setup into every HTML page.
 4. Provides an `<Island>` wrapper that renders SSR content and emits the matching `<is-land>` element with the correct `import` URL for hydration.
 
-All four are wired from a single source of truth (`srcDir` / `outDir` / `urlPrefix`), so the bundle output layout and the hydration import URL cannot drift.
+The bundle output layout (`srcDir` / `outDir`) and the hydration import URL are wired from the same options, so they cannot drift. The URL prefix follows Eleventy's own `pathPrefix`, so sub-directory deployments (e.g. GitHub Pages under `/repo/`) work without a second knob.
 
 ## Installation
 
@@ -70,12 +70,14 @@ Source directory that contains the client entry points. Used both as esbuild's `
 
 esbuild `outdir` for client entry bundles. Usually matches your Eleventy output directory so bundled `.client.js` files land next to their siblings.
 
-### `urlPrefix`
+### URL prefix (follows Eleventy `pathPrefix`)
 
-- Type: `string`
-- Default: `"/"`
+There is no separate `urlPrefix` option. The plugin reads Eleventy's own [`pathPrefix`](https://www.11ty.dev/docs/config/#deploy-to-a-subdirectory-with-a-path-prefix) at plugin-registration time and uses that as the URL prefix for `<is-land import="...">`.
 
-URL path prefix under which the compiled client module bundles are served.
+- Default deployment (site served at `/`): `pathPrefix: "/"` → `<is-land import="/foo.client.js">`
+- Sub-directory deployment (e.g. GitHub Pages at `https://user.github.io/my-site/`): `pathPrefix: "/my-site/"` → `<is-land import="/my-site/foo.client.js">`
+
+Deployments that serve bundles from a completely different origin or path (e.g. a CDN mounted at `/cdn/` while the site itself is at `/`) fall outside this convention. Use the [`setClientModuleResolver` escape hatch](#escape-hatch-setclientmoduleresolver-for-non-conforming-builds) below.
 
 Combined example:
 
@@ -84,11 +86,10 @@ eleventyConfig.addPlugin(preactIsland, {
   entries: "./content/**/*.client.jsx",
   srcDir: "content",
   outDir: "_site",
-  urlPrefix: "/assets",
 });
 ```
 
-With this config, `content/foo.client.jsx` is bundled to `_site/foo.client.js` and rendered as `<is-land ... import="/assets/foo.client.js">`.
+With this config, `content/foo.client.jsx` is bundled to `_site/foo.client.js`. If Eleventy's `pathPrefix` is `/`, the rendered element is `<is-land ... import="/foo.client.js">`.
 
 ### `preactVersion`
 
@@ -165,9 +166,9 @@ The raw `<is-land>` element remains fully supported — the script injection is 
 The plugin's convention is:
 
 - Client entries live under `<srcDir>/**/*.client.{js,jsx,ts,tsx}`
-- Bundles are served at `<urlPrefix>**/*.client.js`
+- Bundles are served at `<eleventyPathPrefix>**/*.client.js`
 
-If your build doesn't fit this convention — for example, you bundle client code with Vite and it lands at a hashed URL like `/assets/foo-abc123.js`, or you use a different sub-extension like `.island.jsx` — use `<Island>` outside this plugin by installing a custom resolver from the `./island` subpath:
+If your build doesn't fit this convention — for example, you bundle client code with Vite and it lands at a hashed URL like `/assets/foo-abc123.js`, you use a different sub-extension like `.island.jsx`, or your bundles are served from a different origin than the site itself — use `<Island>` outside this plugin by installing a custom resolver from the `./island` subpath:
 
 ```javascript
 // eleventy.config.mjs (no Island plugin needed for the resolver, but you still need it for is-land script injection)
@@ -176,7 +177,7 @@ import { setClientModuleResolver } from "@tuqulore-inc/eleventy-plugin-preact-is
 setClientModuleResolver((moduleUrl) => myBuild.urlFor(moduleUrl));
 ```
 
-- The plugin's `srcDir` / `urlPrefix` options exist so you don't have to write a resolver at all when your build layout is a simple prefix rewrite.
+- The plugin's `srcDir` option (plus Eleventy's `pathPrefix`) exists so you don't have to write a resolver at all when your build layout is a simple prefix rewrite.
 - `setClientModuleResolver` is the low-level extension point that keeps the `<Island>` / `clientComponent` primitives usable across arbitrary conventions.
 
 ## Requirements

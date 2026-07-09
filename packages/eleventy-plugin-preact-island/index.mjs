@@ -10,7 +10,8 @@ import { createClientModuleResolver } from "./resolver.mjs";
  * - Bundles `*.client.jsx` entries with esbuild
  * - Excludes them from Eleventy template processing (`ignores.add`)
  * - Wires the SSR-side `<Island>` component's URL resolver to match the bundle
- *   output layout, from a single source of truth (`srcDir` / `outDir` / `urlPrefix`)
+ *   output layout (`srcDir` / `outDir`), automatically following Eleventy's
+ *   own `pathPrefix` for the URL side
  * - Injects the browser-side is-land + Preact setup into every HTML page
  *
  * @param {import("@11ty/eleventy").UserConfig} eleventyConfig
@@ -25,8 +26,6 @@ import { createClientModuleResolver } from "./resolver.mjs";
  *   in the SSR module URL → browser URL conversion.
  * @param {string} [pluginOptions.outDir="dist"] - esbuild `outdir` for client
  *   entry bundles. Usually matches the Eleventy output directory.
- * @param {string} [pluginOptions.urlPrefix="/"] - URL path prefix where the
- *   compiled client module bundles are served.
  */
 export default function (eleventyConfig, pluginOptions = {}) {
   try {
@@ -40,13 +39,19 @@ export default function (eleventyConfig, pluginOptions = {}) {
     entries,
     srcDir = "src",
     outDir = "dist",
-    urlPrefix = "/",
   } = pluginOptions;
 
-  // SSR-side URL resolver: single source of truth is (srcDir, urlPrefix).
+  // SSR-side URL resolver: srcDir is our own convention; the URL prefix
+  // follows Eleventy's own pathPrefix so that sub-directory deployments
+  // (e.g. GitHub Pages under `/repo/`) work without a second knob.
   // Non-conforming builds can call `setClientModuleResolver` from the
   // `./island` subpath instead of going through this plugin.
-  setClientModuleResolver(createClientModuleResolver({ srcDir, urlPrefix }));
+  setClientModuleResolver(
+    createClientModuleResolver({
+      srcDir,
+      urlPrefix: eleventyConfig.pathPrefix ?? "/",
+    }),
+  );
 
   // Client entry bundling (opt-in via `entries`).
   if (entries) {

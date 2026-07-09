@@ -71,12 +71,12 @@ export default function (eleventyConfig) {
   // Server-side rendering (no options)
   eleventyConfig.addPlugin(preact);
 
-  // Partial hydration + client bundle + URL resolver (single source of truth)
+  // Partial hydration + client bundle + URL resolver (single source of truth).
+  // The URL prefix follows Eleventy's own `pathPrefix`, so it is not set here.
   eleventyConfig.addPlugin(preactIsland, {
     entries: "./src/**/*.client.jsx",
     srcDir: "src",
     outDir: "dist",
-    urlPrefix: "/",
   });
 }
 ```
