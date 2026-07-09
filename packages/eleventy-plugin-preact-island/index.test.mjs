@@ -9,16 +9,26 @@ import { Island, clientComponent } from "./island.mjs";
  * Minimal UserConfig stub carrying only what the plugin actually reads.
  * `versionCheck` is called defensively; `addPassthroughCopy` / `addTransform`
  * are called unconditionally in the plugin body. `pathPrefix` is the input
- * under test.
+ * under test. `on` records event handlers so tests can invoke `eleventy.before`
+ * directly to exercise watch/build branches without spinning up Eleventy.
  */
 function makeEleventyConfigStub({ pathPrefix } = {}) {
+  const eventHandlers = new Map();
   return {
     pathPrefix,
     versionCheck() {},
     addPassthroughCopy() {},
     addTransform() {},
     ignores: { add() {} },
-    on() {},
+    on(event, handler) {
+      if (!eventHandlers.has(event)) eventHandlers.set(event, []);
+      eventHandlers.get(event).push(handler);
+    },
+    async _emit(event, arg) {
+      for (const handler of eventHandlers.get(event) ?? []) {
+        await handler(arg);
+      }
+    },
   };
 }
 

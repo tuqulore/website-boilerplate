@@ -37,7 +37,10 @@ export function Island<P = Record<string, unknown>>(
  * Install the client module URL resolver. Called by the Eleventy plugin during
  * config setup. Also part of the public API for users who want to use `<Island>`
  * without adopting this package's file naming / URL convention.
+ *
+ * Pass `null` to explicitly clear the currently installed resolver.
+ * Anything else throws `TypeError`.
  */
 export function setClientModuleResolver(
-  resolver: (moduleUrl: string) => string,
+  resolver: ((moduleUrl: string) => string) | null,
 ): void;

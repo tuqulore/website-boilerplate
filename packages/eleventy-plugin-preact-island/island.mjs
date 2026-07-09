@@ -7,9 +7,17 @@ let currentResolver = null;
  * config setup. Also part of the public API for users who want to use `<Island>`
  * without adopting this package's file naming / URL convention.
  *
- * @param {(moduleUrl: string) => string} resolver
+ * Pass `null` to explicitly clear the currently installed resolver (used by
+ * tests to reset state between cases).
+ *
+ * @param {((moduleUrl: string) => string) | null} resolver
  */
 export function setClientModuleResolver(resolver) {
+  if (resolver !== null && typeof resolver !== "function") {
+    throw new TypeError(
+      `setClientModuleResolver: \`resolver\` must be a function or null, got ${typeof resolver}`,
+    );
+  }
   currentResolver = resolver;
 }
 

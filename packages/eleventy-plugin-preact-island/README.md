@@ -168,17 +168,28 @@ The plugin's convention is:
 - Client entries live under `<srcDir>/**/*.client.{js,jsx,ts,tsx}`
 - Bundles are served at `<eleventyPathPrefix>**/*.client.js`
 
-If your build doesn't fit this convention — for example, you bundle client code with Vite and it lands at a hashed URL like `/assets/foo-abc123.js`, you use a different sub-extension like `.island.jsx`, or your bundles are served from a different origin than the site itself — use `<Island>` outside this plugin by installing a custom resolver from the `./island` subpath:
+If your build doesn't fit this convention — for example, you bundle client code with Vite and it lands at a hashed URL like `/assets/foo-abc123.js`, you use a different sub-extension like `.island.jsx`, or your bundles are served from a different origin than the site itself — you can override just the URL resolver while keeping the plugin's browser-side setup (importmap, is-land script injection, dev rehydration hook).
+
+Do so by registering the plugin normally (without `entries`, so it won't try to bundle for you) and then installing a custom resolver from the `./island` subpath. **Order matters**: the plugin installs its default resolver when it runs, so `setClientModuleResolver` must be called _after_ `addPlugin(preactIsland)` to take effect.
 
 ```javascript
-// eleventy.config.mjs (no Island plugin needed for the resolver, but you still need it for is-land script injection)
+// eleventy.config.mjs
+import preactIsland from "@tuqulore-inc/eleventy-plugin-preact-island";
 import { setClientModuleResolver } from "@tuqulore-inc/eleventy-plugin-preact-island/island";
 
-setClientModuleResolver((moduleUrl) => myBuild.urlFor(moduleUrl));
+export default function (eleventyConfig) {
+  // Registers is-land + Preact browser setup. Skip `entries` because you're
+  // bundling the client code yourself.
+  eleventyConfig.addPlugin(preactIsland);
+
+  // Override the URL resolver installed by the plugin above.
+  setClientModuleResolver((moduleUrl) => myBuild.urlFor(moduleUrl));
+}
 ```
 
 - The plugin's `srcDir` option (plus Eleventy's `pathPrefix`) exists so you don't have to write a resolver at all when your build layout is a simple prefix rewrite.
 - `setClientModuleResolver` is the low-level extension point that keeps the `<Island>` / `clientComponent` primitives usable across arbitrary conventions.
+- Pass `null` to `setClientModuleResolver` to explicitly clear the resolver; anything other than a function or `null` throws `TypeError`.
 
 ## Requirements
 

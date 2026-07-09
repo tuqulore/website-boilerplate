@@ -4,6 +4,31 @@ import { h } from "preact";
 import { render } from "preact-render-to-string";
 import { Island, clientComponent, setClientModuleResolver } from "./island.mjs";
 
+describe("setClientModuleResolver", () => {
+  it("関数を渡せる", () => {
+    assert.doesNotThrow(() => setClientModuleResolver(() => "/x.js"));
+    // 状態を残さない: 後続テストの beforeEach で null リセットされるが念のため
+    setClientModuleResolver(null);
+  });
+
+  it("null で明示的にクリアできる", () => {
+    setClientModuleResolver(() => "/x.js");
+    assert.doesNotThrow(() => setClientModuleResolver(null));
+  });
+
+  it("関数でも null でもない値は TypeError で拒否する", () => {
+    for (const bad of [undefined, 0, "string", {}, [], true]) {
+      assert.throws(
+        () => setClientModuleResolver(bad),
+        (err) =>
+          err instanceof TypeError &&
+          /`resolver` must be a function or null/.test(err.message),
+        `setClientModuleResolver(${JSON.stringify(bad)}) が TypeError にならなかった`,
+      );
+    }
+  });
+});
+
 describe("clientComponent", () => {
   it("Component に __clientModuleUrl を付与して同じ関数を返す", () => {
     const Comp = () => null;

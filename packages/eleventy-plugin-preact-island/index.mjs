@@ -59,6 +59,11 @@ export default function (eleventyConfig, pluginOptions = {}) {
     const ignorePattern = entries.replace(/^\.\//, "");
     eleventyConfig.ignores.add(ignorePattern);
 
+    // watch/serve モードでは Eleventy の再ビルド毎に `eleventy.before` が発火する。
+    // esbuild.context()+ctx.watch() を毎回作ると watcher/ファイルハンドルが
+    // 増殖してリークするため、context は初回のみ作って再利用する。
+    // build モードは 1 回きりなのでその都度 esbuild.build() で完結する。
+    let watchCtx = null;
     eleventyConfig.on("eleventy.before", async ({ runMode }) => {
       /** @type {import("esbuild").BuildOptions} */
       const options = {
@@ -73,10 +78,11 @@ export default function (eleventyConfig, pluginOptions = {}) {
       };
       if (runMode === "build") {
         await esbuild.build(options);
-      } else {
-        const ctx = await esbuild.context(options);
-        await ctx.watch();
+        return;
       }
+      if (watchCtx) return;
+      watchCtx = await esbuild.context(options);
+      await watchCtx.watch();
     });
   }
 
