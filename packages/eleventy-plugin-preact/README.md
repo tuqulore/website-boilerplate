@@ -25,49 +25,9 @@ export default function (eleventyConfig) {
 
 1. **Adds JSX/MDX template formats** - Use `.jsx` and `.mdx` files as Eleventy templates
 2. **Server-side rendering** - Renders Preact components to HTML using `preact-render-to-string`
-3. **Hydration bundles** - Optionally bundles `*.hydrate.jsx` files with esbuild for client-side hydration
+3. **Registers Node.js loaders** for JSX/MDX at module load time
 
-## Options
-
-### `hydrateGlob`
-
-- Type: `string`
-- Default: `undefined`
-
-Glob pattern for hydration entry points. Files matching this pattern will be:
-
-- Ignored by Eleventy (not processed as templates)
-- Bundled with esbuild for client-side use
-
-```javascript
-eleventyConfig.addPlugin(preact, {
-  hydrateGlob: "./src/**/*.hydrate.jsx",
-});
-```
-
-### `outbase`
-
-- Type: `string`
-- Default: `"src"`
-
-esbuild `outbase` used when bundling hydration entry points. Should match the directory prefix you want stripped from output paths (usually the Eleventy input directory).
-
-### `outdir`
-
-- Type: `string`
-- Default: `"dist"`
-
-esbuild `outdir` used when bundling hydration entry points. Usually the Eleventy output directory.
-
-```javascript
-eleventyConfig.addPlugin(preact, {
-  hydrateGlob: "./content/**/*.hydrate.jsx",
-  outbase: "content",
-  outdir: "_site",
-});
-```
-
-When you customize these, remember to also pass a matching `resolveHydrateUrl` to `@tuqulore-inc/eleventy-plugin-preact-island` so the browser URLs stay in sync.
+Client-side bundling and partial hydration are the responsibility of a companion package — see [With Partial Hydration](#with-partial-hydration) below.
 
 ## Eleventy Data Access
 
@@ -101,20 +61,23 @@ import { eleventy } from "@tuqulore-inc/eleventy-plugin-preact/eleventy";
 
 ## With Partial Hydration
 
-For partial hydration, use this plugin together with `@tuqulore-inc/eleventy-plugin-preact-island`:
+For partial hydration, use this plugin together with `@tuqulore-inc/eleventy-plugin-preact-island`. The Island plugin owns client-side bundling (`*.client.jsx`), the Eleventy ignore rule, and the SSR-to-browser URL resolver — this plugin only does SSR.
 
 ```javascript
 import preact from "@tuqulore-inc/eleventy-plugin-preact";
 import preactIsland from "@tuqulore-inc/eleventy-plugin-preact-island";
 
 export default function (eleventyConfig) {
-  // Server-side rendering
-  eleventyConfig.addPlugin(preact, {
-    hydrateGlob: "./src/**/*.hydrate.jsx",
-  });
+  // Server-side rendering (no options)
+  eleventyConfig.addPlugin(preact);
 
-  // Partial hydration
-  eleventyConfig.addPlugin(preactIsland);
+  // Partial hydration + client bundle + URL resolver (single source of truth)
+  eleventyConfig.addPlugin(preactIsland, {
+    entries: "./src/**/*.client.jsx",
+    srcDir: "src",
+    outDir: "dist",
+    urlPrefix: "/",
+  });
 }
 ```
 

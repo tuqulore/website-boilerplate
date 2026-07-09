@@ -2,12 +2,10 @@ import Image from "@11ty/eleventy-img";
 import postcss from "@tuqulore-inc/eleventy-plugin-postcss";
 import preact from "@tuqulore-inc/eleventy-plugin-preact";
 import preactIsland from "@tuqulore-inc/eleventy-plugin-preact-island";
-import { createHydrateModuleResolver } from "@tuqulore-inc/eleventy-plugin-preact-island/resolver";
 import fg from "fast-glob";
 import path from "node:path";
 
-// This preset's directory / URL convention. Both the SSR bundler and the Island
-// URL resolver are wired from these values so the two stay in sync.
+// This preset's directory / URL convention.
 const SRC_DIR = "src";
 const OUT_DIR = "dist";
 const URL_PREFIX = "/";
@@ -49,19 +47,15 @@ export default function preset(extend = () => {}) {
     eleventyConfig.setInputDirectory(SRC_DIR);
     eleventyConfig.setOutputDirectory(OUT_DIR);
 
-    // Preact SSR + hydration
-    eleventyConfig.addPlugin(preact, {
-      hydrateGlob: `./${SRC_DIR}/**/*.hydrate.jsx`,
-      outbase: SRC_DIR,
-      outdir: OUT_DIR,
-    });
+    // Preact SSR
+    eleventyConfig.addPlugin(preact);
 
-    // Preact partial hydration with is-land
+    // Preact partial hydration with is-land (owns client bundle + URL resolver)
     eleventyConfig.addPlugin(preactIsland, {
-      resolveHydrateUrl: createHydrateModuleResolver({
-        srcDir: SRC_DIR,
-        urlPrefix: URL_PREFIX,
-      }),
+      entries: `./${SRC_DIR}/**/*.client.jsx`,
+      srcDir: SRC_DIR,
+      outDir: OUT_DIR,
+      urlPrefix: URL_PREFIX,
     });
 
     // PostCSS processing

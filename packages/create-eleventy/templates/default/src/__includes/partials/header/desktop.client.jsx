@@ -1,4 +1,4 @@
-import { hydratable } from "@tuqulore-inc/eleventy-preset/island";
+import { clientComponent } from "@tuqulore-inc/eleventy-preset/island";
 import { useState, useRef, useEffect } from "preact/hooks";
 import slugify from "slugify";
 import { twMerge } from "tailwind-merge";
@@ -81,4 +81,4 @@ function Desktop(props) {
   );
 }
 
-export default hydratable(Desktop, import.meta.url);
+export default clientComponent(Desktop, import.meta.url);

@@ -1,4 +1,4 @@
 export {
   Island,
-  hydratable,
+  clientComponent,
 } from "@tuqulore-inc/eleventy-plugin-preact-island/island";

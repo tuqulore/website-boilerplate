@@ -46,7 +46,8 @@
     "test": "node --test"
   },
   "dependencies": {
-    "@11ty/is-land": "^5.0.0"
+    "@11ty/is-land": "^5.0.0",
+    "esbuild": "^0.28.0"
   },
   "devDependencies": {
     "@tuqulore-inc/eslint-config": "workspace:*",

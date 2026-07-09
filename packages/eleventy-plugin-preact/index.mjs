@@ -2,7 +2,6 @@ import module from "node:module";
 import url from "node:url";
 import render from "preact-render-to-string";
 import { jsx } from "preact/jsx-runtime";
-import * as esbuild from "esbuild";
 import { _runWithEleventyData } from "./eleventy.mjs";
 
 // Register Node.js loaders for JSX/MDX support
@@ -16,31 +15,23 @@ module.register(
 );
 
 /**
- * Eleventy plugin for Preact server-side rendering with JSX/MDX support
+ * Eleventy plugin for Preact server-side rendering with JSX/MDX support.
+ *
+ * SSR only: registers `.jsx` / `.mdx` template formats and renders Preact
+ * components to HTML using preact-render-to-string. Client-side bundling and
+ * partial hydration are handled by `@tuqulore-inc/eleventy-plugin-preact-island`.
+ *
  * @param {import("@11ty/eleventy").UserConfig} eleventyConfig
- * @param {Object} pluginOptions
- * @param {string} [pluginOptions.hydrateGlob] - Glob pattern for hydration entry points
- * @param {string} [pluginOptions.outbase="src"] - esbuild `outbase` for hydration bundles
- * @param {string} [pluginOptions.outdir="dist"] - esbuild `outdir` for hydration bundles
  */
-export default function (eleventyConfig, pluginOptions = {}) {
+export default function (eleventyConfig) {
   try {
     eleventyConfig.versionCheck(">=3.0");
   } catch (e) {
     console.log(`[eleventy-plugin-preact] WARN: ${e.message}`);
   }
 
-  const { hydrateGlob, outbase = "src", outdir = "dist" } = pluginOptions;
-
   // Add JSX and MDX as template formats
   eleventyConfig.addTemplateFormats(["jsx", "mdx"]);
-
-  // Ignore hydration entry points (they are bundled separately)
-  if (hydrateGlob) {
-    // Convert glob to ignore pattern (remove leading ./)
-    const ignorePattern = hydrateGlob.replace(/^\.\//, "");
-    eleventyConfig.ignores.add(ignorePattern);
-  }
 
   // Add extension handler for JSX and MDX
   eleventyConfig.addExtension(["jsx", "mdx"], {
@@ -54,30 +45,4 @@ export default function (eleventyConfig, pluginOptions = {}) {
       };
     },
   });
-
-  // Setup esbuild for hydration bundles
-  if (hydrateGlob) {
-    const transformJsx = async ({ runMode }) => {
-      /** @type {import("esbuild").BuildOptions} */
-      const options = {
-        bundle: true,
-        entryPoints: [hydrateGlob],
-        external: ["preact"],
-        format: "esm",
-        jsx: "automatic",
-        jsxImportSource: "preact",
-        outbase,
-        outdir,
-      };
-      const ctx = await esbuild.context(options);
-      if (runMode === "build") {
-        await esbuild.build(options);
-        await esbuild.stop();
-      } else {
-        ctx.watch();
-      }
-    };
-
-    eleventyConfig.on("eleventy.before", transformJsx);
-  }
 }

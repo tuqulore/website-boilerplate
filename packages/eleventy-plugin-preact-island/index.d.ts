@@ -1,5 +1,4 @@
 import type { UserConfig } from "@11ty/eleventy";
-import type { HydrateModuleResolver } from "./resolver.js";
 
 export interface PluginOptions {
   /**
@@ -8,12 +7,32 @@ export interface PluginOptions {
    */
   preactVersion?: string;
   /**
-   * Convert an SSR-side hydrate module URL (e.g. `import.meta.url` inside a
-   * `*.hydrate.jsx` file) into the browser URL where the compiled bundle is
-   * served. Defaults to `createHydrateModuleResolver()` which assumes `src/**`
-   * sources served under `/`.
+   * Glob pattern for client entry points (e.g., `"./src/**\/*.client.jsx"`).
+   * When provided, matching files are:
+   * - Bundled with esbuild
+   * - Ignored by Eleventy (not processed as templates)
+   * When omitted, no bundling happens and no ignore rule is added.
    */
-  resolveHydrateUrl?: HydrateModuleResolver;
+  entries?: string;
+  /**
+   * Source directory that contains client entry points. Used as esbuild
+   * `outbase` and as the marker segment when converting SSR-side client module
+   * URLs (e.g. `import.meta.url` inside a `*.client.jsx` file) to browser URLs.
+   * Should match your Eleventy input directory.
+   * @default "src"
+   */
+  srcDir?: string;
+  /**
+   * esbuild `outdir` for client entry bundles. Usually matches the Eleventy
+   * output directory so bundled `.client.js` files land next to their siblings.
+   * @default "dist"
+   */
+  outDir?: string;
+  /**
+   * URL path prefix where the compiled client module bundles are served.
+   * @default "/"
+   */
+  urlPrefix?: string;
 }
 
 /**

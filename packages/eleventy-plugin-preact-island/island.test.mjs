@@ -2,55 +2,55 @@ import { describe, it, beforeEach } from "node:test";
 import assert from "node:assert";
 import { h } from "preact";
 import { render } from "preact-render-to-string";
-import { Island, hydratable, _setHydrateModuleResolver } from "./island.mjs";
+import { Island, clientComponent, setClientModuleResolver } from "./island.mjs";
 
-describe("hydratable", () => {
-  it("Component に __hydrateModuleUrl を付与して同じ関数を返す", () => {
+describe("clientComponent", () => {
+  it("Component に __clientModuleUrl を付与して同じ関数を返す", () => {
     const Comp = () => null;
-    const returned = hydratable(Comp, "file:///proj/src/foo.hydrate.jsx");
+    const returned = clientComponent(Comp, "file:///proj/src/foo.client.jsx");
     assert.strictEqual(returned, Comp);
     assert.strictEqual(
-      Comp.__hydrateModuleUrl,
-      "file:///proj/src/foo.hydrate.jsx",
+      Comp.__clientModuleUrl,
+      "file:///proj/src/foo.client.jsx",
     );
   });
 
   it("Component が関数でない場合は TypeError", () => {
-    assert.throws(() => hydratable(null, "file:///x"), TypeError);
-    assert.throws(() => hydratable("Comp", "file:///x"), TypeError);
+    assert.throws(() => clientComponent(null, "file:///x"), TypeError);
+    assert.throws(() => clientComponent("Comp", "file:///x"), TypeError);
   });
 
   it("moduleUrl が文字列でない場合は TypeError", () => {
-    assert.throws(() => hydratable(() => null, undefined), TypeError);
-    assert.throws(() => hydratable(() => null, 123), TypeError);
+    assert.throws(() => clientComponent(() => null, undefined), TypeError);
+    assert.throws(() => clientComponent(() => null, 123), TypeError);
   });
 });
 
 describe("Island", () => {
   beforeEach(() => {
     // 各テストで resolver をリセットし、テスト間の状態漏れを防ぐ
-    _setHydrateModuleResolver(null);
+    setClientModuleResolver(null);
   });
 
-  it("hydratable 済み component を <is-land> でラップし、resolver 経由の import URL と JSON props を出力する", () => {
+  it("clientComponent 済み component を <is-land> でラップし、resolver 経由の import URL と JSON props を出力する", () => {
     const receivedUrls = [];
-    _setHydrateModuleResolver((moduleUrl) => {
+    setClientModuleResolver((moduleUrl) => {
       receivedUrls.push(moduleUrl);
-      return "/foo.hydrate.js";
+      return "/foo.client.js";
     });
-    const Foo = hydratable(function Foo(props) {
+    const Foo = clientComponent(function Foo(props) {
       return h("span", null, props.name);
-    }, "file:///proj/src/foo.hydrate.jsx");
+    }, "file:///proj/src/foo.client.jsx");
 
     const html = render(
       h(Island, { component: Foo, on: "visible", name: "alice" }),
     );
 
-    assert.deepStrictEqual(receivedUrls, ["file:///proj/src/foo.hydrate.jsx"]);
+    assert.deepStrictEqual(receivedUrls, ["file:///proj/src/foo.client.jsx"]);
     assert.match(html, /^<is-land/);
     assert.match(html, /land-on:visible/);
     assert.match(html, /type="preact"/);
-    assert.match(html, /import="\/foo\.hydrate\.js"/);
+    assert.match(html, /import="\/foo\.client\.js"/);
     // JSON.stringify({ name: "alice" }) が HTML エスケープされて属性値に入る
     assert.match(html, /props="\{&quot;name&quot;:&quot;alice&quot;\}"/);
     // SSR 内容として component が同じ props でレンダリングされている
@@ -59,14 +59,14 @@ describe("Island", () => {
   });
 
   it("on prop のデフォルトは interaction", () => {
-    _setHydrateModuleResolver(() => "/x.hydrate.js");
-    const X = hydratable(() => null, "file:///proj/src/x.hydrate.jsx");
+    setClientModuleResolver(() => "/x.client.js");
+    const X = clientComponent(() => null, "file:///proj/src/x.client.jsx");
     const html = render(h(Island, { component: X }));
     assert.match(html, /land-on:interaction/);
   });
 
   it("component が渡されていない (または関数でない) 場合は TypeError", () => {
-    _setHydrateModuleResolver(() => "/x.hydrate.js");
+    setClientModuleResolver(() => "/x.client.js");
     assert.throws(
       () => render(h(Island, { component: "not-a-fn" })),
       TypeError,
@@ -74,8 +74,8 @@ describe("Island", () => {
   });
 
   it("on に不正な値 (空白 / 空文字 / 非文字列) を渡すと TypeError", () => {
-    _setHydrateModuleResolver(() => "/x.hydrate.js");
-    const X = hydratable(() => null, "file:///proj/src/x.hydrate.jsx");
+    setClientModuleResolver(() => "/x.client.js");
+    const X = clientComponent(() => null, "file:///proj/src/x.client.jsx");
     for (const on of ["foo bar", "", 'bad"quote', 123, null]) {
       assert.throws(
         () => render(h(Island, { component: X, on })),
@@ -86,28 +86,28 @@ describe("Island", () => {
     }
   });
 
-  it("component が hydratable でラップされていない場合は明示エラー", () => {
-    _setHydrateModuleResolver(() => "/x.hydrate.js");
+  it("component が clientComponent でラップされていない場合は明示エラー", () => {
+    setClientModuleResolver(() => "/x.client.js");
     const Bare = () => null;
     assert.throws(
       () => render(h(Island, { component: Bare })),
-      /not marked as hydratable/,
+      /not marked as a client component/,
     );
   });
 
   it("resolver が未設定の場合は明示エラー", () => {
-    const X = hydratable(() => null, "file:///proj/src/x.hydrate.jsx");
+    const X = clientComponent(() => null, "file:///proj/src/x.client.jsx");
     assert.throws(
       () => render(h(Island, { component: X })),
-      /no hydrate module URL resolver is configured/,
+      /no client module URL resolver is configured/,
     );
   });
 
   it("children を渡しても component の SSR 出力が優先される (呼び出し側は component だけ渡せば済む)", () => {
-    _setHydrateModuleResolver(() => "/x.hydrate.js");
-    const X = hydratable(function X(props) {
+    setClientModuleResolver(() => "/x.client.js");
+    const X = clientComponent(function X(props) {
       return h("i", null, `x-${props.tag}`);
-    }, "file:///proj/src/x.hydrate.jsx");
+    }, "file:///proj/src/x.client.jsx");
     const html = render(
       h(Island, { component: X, tag: "auto" }, h("b", null, "ignored")),
     );
@@ -116,12 +116,12 @@ describe("Island", () => {
   });
 
   it("children は props シリアライズにもコンポーネント SSR にも漏れない", () => {
-    _setHydrateModuleResolver(() => "/x.hydrate.js");
+    setClientModuleResolver(() => "/x.client.js");
     const receivedProps = [];
-    const X = hydratable(function X(props) {
+    const X = clientComponent(function X(props) {
       receivedProps.push(props);
       return h("i", null, `x-${props.tag}`);
-    }, "file:///proj/src/x.hydrate.jsx");
+    }, "file:///proj/src/x.client.jsx");
 
     const html = render(
       h(Island, { component: X, tag: "auto" }, h("b", null, "ignored")),
@@ -135,10 +135,10 @@ describe("Island", () => {
   });
 
   it("JSON.stringify に失敗する props (循環参照など) は Island 文脈のエラーで包む", () => {
-    _setHydrateModuleResolver(() => "/x.hydrate.js");
-    const X = hydratable(function X() {
+    setClientModuleResolver(() => "/x.client.js");
+    const X = clientComponent(function X() {
       return null;
-    }, "file:///proj/src/x.hydrate.jsx");
+    }, "file:///proj/src/x.client.jsx");
 
     const circular = {};
     circular.self = circular;
@@ -147,7 +147,7 @@ describe("Island", () => {
       () => render(h(Island, { component: X, data: circular })),
       (err) => {
         assert.match(err.message, /Island: failed to JSON\.stringify props/);
-        assert.match(err.message, /\/x\.hydrate\.js/);
+        assert.match(err.message, /\/x\.client\.js/);
         assert.ok(
           err.cause instanceof TypeError,
           "元の TypeError が cause に保持されている",

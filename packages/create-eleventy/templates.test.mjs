@@ -170,6 +170,36 @@ describe("create-eleventy templates", { concurrency: true }, () => {
             fs.existsSync(path.join(projectDir, "dist", "index.html")),
             "build 後に dist/index.html が生成されていない",
           );
+
+          // default テンプレートは 3 つの *.client.jsx を持ち、Island プラグイン
+          // によって esbuild で bundle され、index.mdx から <Island component={Clicker}>
+          // として参照される。responsibility split と命名変更で URL 経路が壊れて
+          // も回帰検知できるよう、生成物の実在と HTML 内の import URL を検証する。
+          if (template === "default") {
+            // CLI が `__prefix` を `_prefix` にリネームするため、build 出力上は
+            // `_includes/**` に落ちる (index.mjs L84-89 を参照)。
+            const expectedBundles = [
+              "clicker.client.js",
+              "_includes/partials/header/desktop.client.js",
+              "_includes/partials/header/mobile.client.js",
+            ];
+            for (const rel of expectedBundles) {
+              assert.ok(
+                fs.existsSync(path.join(projectDir, "dist", rel)),
+                `build 後に dist/${rel} が生成されていない (esbuild bundle が動いていない可能性)`,
+              );
+            }
+
+            const indexHtml = fs.readFileSync(
+              path.join(projectDir, "dist", "index.html"),
+              "utf8",
+            );
+            assert.match(
+              indexHtml,
+              /<is-land[^>]*\bimport="\/clicker\.client\.js"/,
+              'dist/index.html に <is-land import="/clicker.client.js"> が含まれていない (Island の URL 解決経路が壊れている可能性)',
+            );
+          }
         },
       );
     });

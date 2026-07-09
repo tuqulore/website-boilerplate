@@ -1,17 +1,32 @@
 import url from "node:url";
-import { _setHydrateModuleResolver } from "./island.mjs";
-import { createHydrateModuleResolver } from "./resolver.mjs";
+import * as esbuild from "esbuild";
+import { setClientModuleResolver } from "./island.mjs";
+import { createClientModuleResolver } from "./resolver.mjs";
 
 /**
- * Eleventy plugin for Preact partial hydration with is-land
+ * Eleventy plugin for Preact partial hydration with is-land.
+ *
+ * Owns the entire client boundary:
+ * - Bundles `*.client.jsx` entries with esbuild
+ * - Excludes them from Eleventy template processing (`ignores.add`)
+ * - Wires the SSR-side `<Island>` component's URL resolver to match the bundle
+ *   output layout, from a single source of truth (`srcDir` / `outDir` / `urlPrefix`)
+ * - Injects the browser-side is-land + Preact setup into every HTML page
+ *
  * @param {import("@11ty/eleventy").UserConfig} eleventyConfig
- * @param {Object} pluginOptions
+ * @param {Object} [pluginOptions]
  * @param {string} [pluginOptions.preactVersion] - Preact version for esm.sh CDN
- * @param {(moduleUrl: string) => string} [pluginOptions.resolveHydrateUrl] -
- *   Convert an SSR-side hydrate module URL (e.g. `import.meta.url` inside a
- *   `*.hydrate.jsx` file) into the browser URL of the compiled bundle. Defaults
- *   to `createHydrateModuleResolver()` which assumes `src/**` sources served
- *   under `/`.
+ * @param {string} [pluginOptions.entries] - Glob pattern for client entry
+ *   points (e.g. `"./src/**\/*.client.jsx"`). When provided, matching files are
+ *   bundled by esbuild and ignored by Eleventy as templates. When omitted, no
+ *   bundling happens and no ignore rule is added.
+ * @param {string} [pluginOptions.srcDir="src"] - Source directory that contains
+ *   client entry points. Used as esbuild `outbase` and as the marker segment
+ *   in the SSR module URL → browser URL conversion.
+ * @param {string} [pluginOptions.outDir="dist"] - esbuild `outdir` for client
+ *   entry bundles. Usually matches the Eleventy output directory.
+ * @param {string} [pluginOptions.urlPrefix="/"] - URL path prefix where the
+ *   compiled client module bundles are served.
  */
 export default function (eleventyConfig, pluginOptions = {}) {
   try {
@@ -22,10 +37,43 @@ export default function (eleventyConfig, pluginOptions = {}) {
 
   const {
     preactVersion = "",
-    resolveHydrateUrl = createHydrateModuleResolver(),
+    entries,
+    srcDir = "src",
+    outDir = "dist",
+    urlPrefix = "/",
   } = pluginOptions;
 
-  _setHydrateModuleResolver(resolveHydrateUrl);
+  // SSR-side URL resolver: single source of truth is (srcDir, urlPrefix).
+  // Non-conforming builds can call `setClientModuleResolver` from the
+  // `./island` subpath instead of going through this plugin.
+  setClientModuleResolver(createClientModuleResolver({ srcDir, urlPrefix }));
+
+  // Client entry bundling (opt-in via `entries`).
+  if (entries) {
+    // Convert glob to ignore pattern (remove leading ./)
+    const ignorePattern = entries.replace(/^\.\//, "");
+    eleventyConfig.ignores.add(ignorePattern);
+
+    eleventyConfig.on("eleventy.before", async ({ runMode }) => {
+      /** @type {import("esbuild").BuildOptions} */
+      const options = {
+        bundle: true,
+        entryPoints: [entries],
+        external: ["preact"],
+        format: "esm",
+        jsx: "automatic",
+        jsxImportSource: "preact",
+        outbase: srcDir,
+        outdir: outDir,
+      };
+      if (runMode === "build") {
+        await esbuild.build(options);
+      } else {
+        const ctx = await esbuild.context(options);
+        await ctx.watch();
+      }
+    });
+  }
 
   // Copy is-land.js to output directory
   eleventyConfig.addPassthroughCopy({

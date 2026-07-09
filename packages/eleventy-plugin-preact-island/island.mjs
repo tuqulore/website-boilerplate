@@ -3,45 +3,46 @@ import { h } from "preact";
 let currentResolver = null;
 
 /**
- * Install the hydrate module URL resolver. Called by the Eleventy plugin during
- * config setup; not part of the public API.
- * @internal
+ * Install the client module URL resolver. Called by the Eleventy plugin during
+ * config setup. Also part of the public API for users who want to use `<Island>`
+ * without adopting this package's file naming / URL convention.
+ *
  * @param {(moduleUrl: string) => string} resolver
  */
-export function _setHydrateModuleResolver(resolver) {
+export function setClientModuleResolver(resolver) {
   currentResolver = resolver;
 }
 
 /**
- * Attach the SSR-side module URL as metadata to a hydration component.
- * Call this once in each `*.hydrate.jsx` file's default export.
+ * Attach the SSR-side module URL as metadata to a client component.
+ * Call this once in each `*.client.jsx` file's default export.
  *
  * @template {import("preact").ComponentType<any>} C
  * @param {C} Component
- * @param {string} moduleUrl Usually `import.meta.url` from the hydrate file.
+ * @param {string} moduleUrl Usually `import.meta.url` from the client file.
  * @returns {C}
  */
-export function hydratable(Component, moduleUrl) {
+export function clientComponent(Component, moduleUrl) {
   if (typeof Component !== "function") {
-    throw new TypeError("hydratable: `Component` must be a function");
+    throw new TypeError("clientComponent: `Component` must be a function");
   }
   if (typeof moduleUrl !== "string") {
     throw new TypeError(
-      "hydratable: `moduleUrl` must be a string (usually `import.meta.url`)",
+      "clientComponent: `moduleUrl` must be a string (usually `import.meta.url`)",
     );
   }
-  Component.__hydrateModuleUrl = moduleUrl;
+  Component.__clientModuleUrl = moduleUrl;
   return Component;
 }
 
 /**
  * Wrap a Preact component for Partial Hydration via is-land. The SSR output is
  * the component rendered with the same `props`, wrapped in `<is-land>` with the
- * hydration import URL derived from the injected resolver.
+ * client module import URL derived from the injected resolver.
  *
  * @param {Object} attrs
  * @param {import("preact").ComponentType<any>} attrs.component - Component
- *   wrapped with `hydratable()` in its `*.hydrate.jsx` file.
+ *   wrapped with `clientComponent()` in its `*.client.jsx` file.
  * @param {string} [attrs.on="interaction"] - is-land initialization trigger
  *   name (e.g. `"interaction"`, `"visible"`, `"idle"`).
  */
@@ -53,7 +54,7 @@ export function Island({ component, on = "interaction", ...props }) {
   delete props.children;
   if (typeof component !== "function") {
     throw new TypeError(
-      "Island: `component` prop must be a Preact component wrapped with `hydratable()`",
+      "Island: `component` prop must be a Preact component wrapped with `clientComponent()`",
     );
   }
   // Reject values that would produce a broken `land-on:*` attribute (whitespace,
@@ -64,15 +65,15 @@ export function Island({ component, on = "interaction", ...props }) {
       `Island: \`on\` must match /^[A-Za-z0-9_-]+$/ (e.g. "interaction", "visible", "idle"), got: ${JSON.stringify(on)}`,
     );
   }
-  const moduleUrl = component.__hydrateModuleUrl;
+  const moduleUrl = component.__clientModuleUrl;
   if (typeof moduleUrl !== "string") {
     throw new Error(
-      "Island: `component` is not marked as hydratable. Wrap the default export of your *.hydrate.jsx file with `hydratable(Component, import.meta.url)`.",
+      "Island: `component` is not marked as a client component. Wrap the default export of your *.client.jsx file with `clientComponent(Component, import.meta.url)`.",
     );
   }
   if (typeof currentResolver !== "function") {
     throw new Error(
-      "Island: no hydrate module URL resolver is configured. Ensure `@tuqulore-inc/eleventy-plugin-preact-island` is registered via `eleventyConfig.addPlugin`.",
+      "Island: no client module URL resolver is configured. Ensure `@tuqulore-inc/eleventy-plugin-preact-island` is registered via `eleventyConfig.addPlugin`, or call `setClientModuleResolver` directly.",
     );
   }
   const importUrl = currentResolver(moduleUrl);
