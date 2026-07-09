@@ -7,6 +7,18 @@ export interface PluginOptions {
    * Example: "./src/**\/*.hydrate.jsx"
    */
   hydrateGlob?: string;
+  /**
+   * esbuild `outbase` used when bundling hydration entry points.
+   * Should match the directory prefix you want stripped from output paths
+   * (usually the Eleventy input directory).
+   * @default "src"
+   */
+  outbase?: string;
+  /**
+   * esbuild `outdir` used when bundling hydration entry points.
+   * @default "dist"
+   */
+  outdir?: string;
 }
 
 /**

@@ -1,3 +1,4 @@
+import { Island } from "@tuqulore-inc/eleventy-preset/island";
 import Clicker from "./clicker.hydrate.jsx";
 
 export const data = {
@@ -15,6 +16,4 @@ export const data = {
 
 Hello World
 
-<is-land land-on:interaction type="preact" import="./clicker.hydrate.js">
-  <Clicker />
-</is-land>
+<Island component={Clicker} on="interaction" />

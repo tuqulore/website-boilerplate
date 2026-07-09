@@ -20,6 +20,8 @@ module.register(
  * @param {import("@11ty/eleventy").UserConfig} eleventyConfig
  * @param {Object} pluginOptions
  * @param {string} [pluginOptions.hydrateGlob] - Glob pattern for hydration entry points
+ * @param {string} [pluginOptions.outbase="src"] - esbuild `outbase` for hydration bundles
+ * @param {string} [pluginOptions.outdir="dist"] - esbuild `outdir` for hydration bundles
  */
 export default function (eleventyConfig, pluginOptions = {}) {
   try {
@@ -28,7 +30,7 @@ export default function (eleventyConfig, pluginOptions = {}) {
     console.log(`[eleventy-plugin-preact] WARN: ${e.message}`);
   }
 
-  const { hydrateGlob } = pluginOptions;
+  const { hydrateGlob, outbase = "src", outdir = "dist" } = pluginOptions;
 
   // Add JSX and MDX as template formats
   eleventyConfig.addTemplateFormats(["jsx", "mdx"]);
@@ -64,8 +66,8 @@ export default function (eleventyConfig, pluginOptions = {}) {
         format: "esm",
         jsx: "automatic",
         jsxImportSource: "preact",
-        outbase: "src",
-        outdir: "dist",
+        outbase,
+        outdir,
       };
       const ctx = await esbuild.context(options);
       if (runMode === "build") {

@@ -2,16 +2,26 @@ import Image from "@11ty/eleventy-img";
 import postcss from "@tuqulore-inc/eleventy-plugin-postcss";
 import preact from "@tuqulore-inc/eleventy-plugin-preact";
 import preactIsland from "@tuqulore-inc/eleventy-plugin-preact-island";
+import { createHydrateModuleResolver } from "@tuqulore-inc/eleventy-plugin-preact-island/resolver";
 import fg from "fast-glob";
 import path from "node:path";
 
+// This preset's directory / URL convention. Both the SSR bundler and the Island
+// URL resolver are wired from these values so the two stay in sync.
+const SRC_DIR = "src";
+const OUT_DIR = "dist";
+const URL_PREFIX = "/";
+
 /**
- * Optimize images in src directory and output to dist
+ * Optimize images under SRC_DIR and output the same tree under OUT_DIR
  */
 const optimizeImages = async () => {
-  const images = await fg(["src/**/*.{jpeg,jpg,png,webp,gif,tiff,avif,svg}"], {
-    ignore: ["dist", "**/node_modules", "src/public"],
-  });
+  const images = await fg(
+    [`${SRC_DIR}/**/*.{jpeg,jpg,png,webp,gif,tiff,avif,svg}`],
+    {
+      ignore: [OUT_DIR, "**/node_modules", `${SRC_DIR}/public`],
+    },
+  );
   for (const image of images) {
     await Image(image, {
       filenameFormat: () => path.basename(image),
@@ -19,7 +29,9 @@ const optimizeImages = async () => {
       sharpOptions: {
         animated: true,
       },
-      outputDir: path.dirname(image).replace(/^src/, "dist"),
+      outputDir: path
+        .dirname(image)
+        .replace(new RegExp(`^${SRC_DIR}`), OUT_DIR),
     });
   }
 };
@@ -34,25 +46,32 @@ export default function preset(extend = () => {}) {
     eleventyConfig.versionCheck(">=3.0");
 
     // Input & Output Directories
-    eleventyConfig.setInputDirectory("src");
-    eleventyConfig.setOutputDirectory("dist");
+    eleventyConfig.setInputDirectory(SRC_DIR);
+    eleventyConfig.setOutputDirectory(OUT_DIR);
 
     // Preact SSR + hydration
     eleventyConfig.addPlugin(preact, {
-      hydrateGlob: "./src/**/*.hydrate.jsx",
+      hydrateGlob: `./${SRC_DIR}/**/*.hydrate.jsx`,
+      outbase: SRC_DIR,
+      outdir: OUT_DIR,
     });
 
     // Preact partial hydration with is-land
-    eleventyConfig.addPlugin(preactIsland);
+    eleventyConfig.addPlugin(preactIsland, {
+      resolveHydrateUrl: createHydrateModuleResolver({
+        srcDir: SRC_DIR,
+        urlPrefix: URL_PREFIX,
+      }),
+    });
 
     // PostCSS processing
     eleventyConfig.addPlugin(postcss, {
-      contentGlob: ["src/**/*.{md,mdx,jsx}"],
+      contentGlob: [`${SRC_DIR}/**/*.{md,mdx,jsx}`],
     });
 
     // Watch generated CSS for dev server reload
     eleventyConfig.setServerOptions({
-      watch: ["dist/**/*.css"],
+      watch: [`${OUT_DIR}/**/*.css`],
     });
 
     // Markdown settings
@@ -60,8 +79,8 @@ export default function preset(extend = () => {}) {
       md.set({ breaks: true, linkify: true }),
     );
 
-    // Copy static assets from src/public to root
-    eleventyConfig.addPassthroughCopy({ "src/public/**": "/" });
+    // Copy static assets from SRC_DIR/public to root
+    eleventyConfig.addPassthroughCopy({ [`${SRC_DIR}/public/**`]: "/" });
 
     // Optimize images before build
     eleventyConfig.on("eleventy.before", optimizeImages);

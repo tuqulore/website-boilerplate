@@ -68,6 +68,7 @@ This preset supports JSX and MDX as template languages via `@tuqulore-inc/eleven
 ### Basic MDX Example
 
 ```mdx
+import { Island } from "@tuqulore-inc/eleventy-preset/island";
 import Clicker from "./clicker.hydrate.jsx";
 
 export const data = {
@@ -79,9 +80,7 @@ export const data = {
 
 Content goes here.
 
-<is-land land-on:interaction type="preact" import="./clicker.hydrate.js">
-  <Clicker />
-</is-land>
+<Island component={Clicker} on="interaction" />
 ```
 
 ## Data Export
@@ -174,7 +173,7 @@ import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
 ### Important Notes
 
 - The `eleventy` singleton is only available during SSR (server-side rendering)
-- For hydrated components (`<is-land>`), continue to pass props via `props={JSON.stringify(...)}` since client-side hydration cannot access server-side data
+- For hydrated components, use `<Island>` which automatically forwards the passed props to both the SSR render and the client hydration; the raw `eleventy` singleton is not available on the client
 
 ### Available Data
 
@@ -246,17 +245,18 @@ import Footer from "./partials/footer.mdx";
 
 ## Partial Hydration
 
-This preset supports partial hydration using `@tuqulore-inc/eleventy-plugin-preact-island` and `<is-land>`.
+This preset supports partial hydration using `@tuqulore-inc/eleventy-plugin-preact-island`. Author hydration components under `src/**/*.hydrate.jsx`, mark the default export with `hydratable()`, and render them from any JSX/MDX template through the `<Island>` wrapper.
 
 ### Creating a Hydrated Component
 
-Name your component with the `.hydrate.jsx` suffix:
+Name your component with the `.hydrate.jsx` suffix and mark the default export with `hydratable`:
 
 ```jsx
 // src/clicker.hydrate.jsx
+import { hydratable } from "@tuqulore-inc/eleventy-preset/island";
 import { useState } from "preact/hooks";
 
-export default function Clicker() {
+function Clicker() {
   const [counter, setCounter] = useState(0);
 
   return (
@@ -266,49 +266,48 @@ export default function Clicker() {
     </div>
   );
 }
+
+export default hydratable(Clicker, import.meta.url);
 ```
+
+`hydratable(Component, import.meta.url)` attaches the SSR-side module URL as metadata; the preset's URL resolver converts it to the browser URL (`src/foo.hydrate.jsx` → `/foo.hydrate.js`).
 
 ### Using in MDX
 
-Import the component and wrap it with `<is-land>`:
+Import the component and wrap with `<Island>`. Extra props are forwarded to both the SSR render and the client hydration:
 
 ```mdx
+import { Island } from "@tuqulore-inc/eleventy-preset/island";
 import Clicker from "./clicker.hydrate.jsx";
 
-<is-land land-on:interaction type="preact" import="./clicker.hydrate.js">
-  <Clicker />
-</is-land>
+<Island component={Clicker} on="interaction" />
 ```
 
-### Passing Props
-
-For hydrated components that need props, serialize them with `JSON.stringify`:
-
 ```mdx
+import { Island } from "@tuqulore-inc/eleventy-preset/island";
 import Navigation from "./partials/header/navigation.hydrate.jsx";
 
-<is-land
-land-on:interaction
-type="preact"
-import="/\_includes/partials/header/navigation.hydrate.js"
-props={JSON.stringify({ nav: props.nav, class: "hidden md:block" })}
-
->
-
-  <Navigation nav={props.nav} class="hidden md:block" />
-</is-land>
+<Island
+  component={Navigation}
+  on="interaction"
+  class="hidden md:block"
+  nav={props.nav}
+/>
 ```
 
 ### Hydration Triggers
 
-| Attribute             | Description                                      |
-| --------------------- | ------------------------------------------------ |
-| `land-on:interaction` | Hydrate on user interaction (click, focus, etc.) |
-| `land-on:visible`     | Hydrate when element becomes visible             |
-| `land-on:idle`        | Hydrate when browser is idle                     |
-| `land-on:media`       | Hydrate based on media query                     |
+The `on` prop maps to the `land-on:<value>` attribute on the underlying `<is-land>`:
 
-See [@tuqulore-inc/eleventy-plugin-preact-island](../eleventy-plugin-preact-island/README.md) for more details.
+| `on` value    | Description                                      |
+| ------------- | ------------------------------------------------ |
+| `interaction` | Hydrate on user interaction (click, focus, etc.) |
+| `visible`     | Hydrate when element becomes visible             |
+| `idle`        | Hydrate when browser is idle                     |
+
+For parameterized triggers such as `on:media("(min-width: ...)")`, drop down to the raw `<is-land>` element (still supported); the injected setup script keeps working.
+
+See [@tuqulore-inc/eleventy-plugin-preact-island](../eleventy-plugin-preact-island/README.md) for the underlying plugin, including how to swap the URL resolver when using it outside this preset.
 
 ## Requirements
 

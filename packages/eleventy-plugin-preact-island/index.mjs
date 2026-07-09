@@ -1,10 +1,17 @@
 import url from "node:url";
+import { _setHydrateModuleResolver } from "./island.mjs";
+import { createHydrateModuleResolver } from "./resolver.mjs";
 
 /**
  * Eleventy plugin for Preact partial hydration with is-land
  * @param {import("@11ty/eleventy").UserConfig} eleventyConfig
  * @param {Object} pluginOptions
  * @param {string} [pluginOptions.preactVersion] - Preact version for esm.sh CDN
+ * @param {(moduleUrl: string) => string} [pluginOptions.resolveHydrateUrl] -
+ *   Convert an SSR-side hydrate module URL (e.g. `import.meta.url` inside a
+ *   `*.hydrate.jsx` file) into the browser URL of the compiled bundle. Defaults
+ *   to `createHydrateModuleResolver()` which assumes `src/**` sources served
+ *   under `/`.
  */
 export default function (eleventyConfig, pluginOptions = {}) {
   try {
@@ -13,7 +20,12 @@ export default function (eleventyConfig, pluginOptions = {}) {
     console.log(`[eleventy-plugin-preact-island] WARN: ${e.message}`);
   }
 
-  const { preactVersion = "" } = pluginOptions;
+  const {
+    preactVersion = "",
+    resolveHydrateUrl = createHydrateModuleResolver(),
+  } = pluginOptions;
+
+  _setHydrateModuleResolver(resolveHydrateUrl);
 
   // Copy is-land.js to output directory
   eleventyConfig.addPassthroughCopy({
