@@ -4,12 +4,17 @@ Eleventy plugin for Preact partial hydration with is-land.
 
 An Island is the SSR-rendered HTML with client-side JavaScript layered on top; this package handles both sides in one plugin. It:
 
-1. Bundles `*.client.jsx` entry points with esbuild for the browser.
+1. Bundles the client entry points you pass via `entries` with esbuild (opt-in).
 2. Excludes those files from Eleventy template processing.
 3. Injects the browser-side [`@11ty/is-land`](https://github.com/11ty/is-land) + Preact setup into every HTML page.
 4. Provides an `<Island>` wrapper that renders SSR content and emits the matching `<is-land>` element with the correct `import` URL for hydration.
 
-The bundle output layout (`srcDir` / `outDir`) and the hydration import URL are wired from the same options, so they cannot drift. The URL prefix follows Eleventy's own `pathPrefix`, so sub-directory deployments (e.g. GitHub Pages under `/repo/`) work without a second knob.
+Two constants shape the wiring:
+
+- **`srcDir` / `outDir`**: the bundle layout you can customize per project (defaults `"src"` / `"dist"`).
+- **The `.client.{js,jsx,ts,tsx}` sub-extension**: hard-coded in the URL resolver. Files it converts must end with this suffix and are rewritten to `.client.js`. `entries` itself is a free-form glob, but only files matching this suffix will resolve at SSR time.
+
+The URL prefix follows Eleventy's own `pathPrefix`, so sub-directory deployments (e.g. GitHub Pages under `/repo/`) work without a second knob.
 
 ## Installation
 
@@ -32,23 +37,25 @@ export default function (eleventyConfig) {
 
 ## What it does
 
-1. **Bundles `*.client.jsx` files** with esbuild (opt-in via `entries`)
+1. **Bundles client entries** with esbuild — the glob you pass via `entries` (opt-in; if you omit it, no bundling happens and you're expected to produce the `.client.js` bundles yourself, see [Escape hatch](#escape-hatch-setclientmoduleresolver-for-non-conforming-builds))
 2. **Ignores** matching files as Eleventy templates (they're client entries, not pages)
 3. **Copies `is-land.js`** from `@11ty/is-land` to the output directory
 4. **Injects scripts** before `</head>`:
    - Import map for is-land and Preact (from esm.sh CDN)
    - Development-only WebSocket hook for rehydration after hot reload
    - is-land setup script with `Island.addInitType("preact", mount)`
-5. **Wires the URL resolver** so `<Island>` on the SSR side emits the same URL that the bundler produced
+5. **Wires the URL resolver** so `<Island>` on the SSR side emits the same URL that the bundler produced. The resolver requires the `.client.{js,jsx,ts,tsx}` sub-extension.
 
 ## Options
 
 ### `entries`
 
 - Type: `string`
-- Default: `undefined`
+- Default: `undefined` (no bundling)
 
-Glob pattern for client entry points. Files matching this pattern are bundled with esbuild and excluded from Eleventy's template pipeline. When omitted, no bundling happens and no ignore rule is added.
+Glob pattern for client entry points. Files matching this pattern are bundled with esbuild and excluded from Eleventy's template pipeline. When omitted, no bundling happens and no ignore rule is added — this mode is for users who already produce `.client.js` bundles some other way (see [Escape hatch](#escape-hatch-setclientmoduleresolver-for-non-conforming-builds)).
+
+The glob itself is free-form, but the SSR-side URL resolver only accepts source files ending in `.client.{js,jsx,ts,tsx}` (see below). Practically that means you'll want a glob like `./src/**/*.client.jsx`.
 
 ```javascript
 eleventyConfig.addPlugin(preactIsland, {
@@ -62,6 +69,8 @@ eleventyConfig.addPlugin(preactIsland, {
 - Default: `"src"`
 
 Source directory that contains the client entry points. Used both as esbuild's `outbase` (to preserve the source directory structure under `outDir`) and as the marker segment when converting SSR-side client module URLs (e.g. `import.meta.url` inside `foo.client.jsx`) into browser URLs. Should match your Eleventy input directory.
+
+The `.client.{js,jsx,ts,tsx}` sub-extension is not an option — it is hard-coded in the URL resolver, so `<Island component={...}>` will throw at SSR time if the module's file doesn't end in one of those. If you need a different sub-extension (e.g. `.island.jsx`), replace the resolver via [`setClientModuleResolver`](#escape-hatch-setclientmoduleresolver-for-non-conforming-builds).
 
 ### `outDir`
 
