@@ -27,6 +27,7 @@ function Mobile(props) {
       </button>
       <nav
         id="nav-menu-mobile"
+        inert={!open}
         class={twMerge(
           "fixed top-0 left-0 h-screen w-screen overflow-y-auto bg-white",
           "transition duration-150 ease-in-out",
@@ -35,9 +36,7 @@ function Mobile(props) {
       >
         <button
           class="jumpu-icon-button group fixed top-2 right-4 h-12 w-12 text-2xl"
-          aria-controls="nav-menu-mobile"
           aria-describedby="nav-tooltip-close"
-          aria-expanded={open}
           aria-label="Close"
           type="button"
           onClick={() => setOpen(false)}
