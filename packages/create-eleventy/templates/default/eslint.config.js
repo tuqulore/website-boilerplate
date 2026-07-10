@@ -7,7 +7,7 @@ import globals from "globals";
 
 export default defineConfig([
   {
-    files: ["**/*.{cjs,mjs,js,jsx}"],
+    files: ["**/*.{cjs,js,jsx}"],
     plugins: { js },
     extends: ["js/recommended"],
   },
@@ -16,11 +16,11 @@ export default defineConfig([
     languageOptions: { sourceType: "commonjs" },
   },
   {
-    files: ["**/*.{mjs,js,jsx}"],
+    files: ["**/*.{js,jsx}"],
     languageOptions: { sourceType: "module" },
   },
   {
-    files: ["**/*.cjs", "*.mjs", "src/_data/**/*.{mjs,js}"],
+    files: ["**/*.cjs", "*.js", "src/_data/**/*.js"],
     languageOptions: { globals: globals.node },
   },
   react.configs.flat.recommended,

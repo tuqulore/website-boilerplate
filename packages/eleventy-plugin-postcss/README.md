@@ -11,7 +11,7 @@ npm install -D @11ty/eleventy postcss @tuqulore-inc/eleventy-plugin-postcss
 ## Usage
 
 ```javascript
-// eleventy.config.mjs
+// eleventy.config.js
 import postcss from "@tuqulore-inc/eleventy-plugin-postcss";
 
 export default function (eleventyConfig) {
@@ -21,10 +21,10 @@ export default function (eleventyConfig) {
 }
 ```
 
-This plugin requires a PostCSS configuration file (`postcss.config.mjs` or `postcss.config.js`) in your project root:
+This plugin requires a PostCSS configuration file (`postcss.config.js`) in your project root:
 
 ```javascript
-// postcss.config.mjs
+// postcss.config.js
 export default {
   plugins: {
     "@tailwindcss/postcss": {},

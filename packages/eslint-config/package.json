@@ -18,12 +18,12 @@
   "exports": {
     ".": {
       "types": "./index.d.ts",
-      "default": "./index.mjs"
+      "default": "./index.js"
     }
   },
-  "main": "./index.mjs",
+  "main": "./index.js",
   "files": [
-    "index.mjs"
+    "index.js"
   ],
   "dependencies": {
     "@eslint/js": "^10.0.0",

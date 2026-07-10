@@ -8,7 +8,7 @@ import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const cli = path.join(here, "index.mjs");
+const cli = path.join(here, "index.js");
 
 // spawnSync は同期呼び出しなので node:test の timeout では中断できない。
 // プロンプト待ち等でハングしないよう明示的に上限を設ける。

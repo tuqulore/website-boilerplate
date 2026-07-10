@@ -4,7 +4,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { render } from "preact-render-to-string";
-import { load } from "./loaders/jsx.mjs";
+import { load } from "./loaders/jsx.js";
 
 describe("jsx loader", () => {
   // bare specifier（preact/jsx-runtime）を解決できるよう
@@ -89,7 +89,7 @@ describe("jsx loader", () => {
         assert.fail("nextLoad should not be called for .jsx files");
       });
 
-      const compiled = path.join(dir, "renderable.compiled.mjs");
+      const compiled = path.join(dir, "renderable.compiled.js");
       await fs.writeFile(compiled, result.source);
       const { Page } = await import(pathToFileURL(compiled).href);
 
@@ -103,7 +103,7 @@ describe("jsx loader", () => {
   describe("JSX以外のファイル", () => {
     it(".jsx以外のfile: URLはnextLoadに委譲される", async () => {
       const sentinel = { format: "module", source: "" };
-      const href = pathToFileURL(path.join(dir, "plain.mjs")).href;
+      const href = pathToFileURL(path.join(dir, "plain.js")).href;
       const context = {};
 
       const result = await load(href, context, (nextHref, nextContext) => {

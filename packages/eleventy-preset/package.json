@@ -19,26 +19,26 @@
   "exports": {
     ".": {
       "types": "./index.d.ts",
-      "default": "./index.mjs"
+      "default": "./index.js"
     },
     "./eleventy": {
       "types": "./eleventy.d.ts",
-      "default": "./eleventy.mjs"
+      "default": "./eleventy.js"
     },
     "./island": {
       "types": "./island.d.ts",
-      "default": "./island.mjs"
+      "default": "./island.js"
     }
   },
-  "main": "./index.mjs",
+  "main": "./index.js",
   "files": [
     "README.md",
     "index.d.ts",
-    "index.mjs",
+    "index.js",
     "eleventy.d.ts",
-    "eleventy.mjs",
+    "eleventy.js",
     "island.d.ts",
-    "island.mjs"
+    "island.js"
   ],
   "scripts": {
     "lint": "eslint --fix ."
