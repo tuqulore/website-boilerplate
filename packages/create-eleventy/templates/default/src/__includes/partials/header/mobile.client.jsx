@@ -5,8 +5,10 @@ import { twMerge } from "tailwind-merge";
 function Mobile(props) {
   const [open, setOpen] = useState(false);
   const openButtonRef = useRef(null);
+  const closeButtonRef = useRef(null);
   useEffect(() => {
     if (!open) return;
+    closeButtonRef.current?.focus();
     const handler = (e) => {
       if (e.key !== "Escape") return;
       setOpen(false);
@@ -26,7 +28,7 @@ function Mobile(props) {
         aria-label="Menu"
         class="jumpu-icon-button group h-12 w-12 text-2xl"
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={() => setOpen((v) => !v)}
       >
         <span class="icon-[material-symbols--menu]"></span>
         <span
@@ -37,8 +39,11 @@ function Mobile(props) {
           Menu
         </span>
       </button>
-      <nav
+      <div
         id="nav-menu-mobile"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Global navigation"
         inert={!open}
         class={twMerge(
           "fixed top-0 left-0 h-screen w-screen overflow-y-auto bg-white",
@@ -47,11 +52,15 @@ function Mobile(props) {
         )}
       >
         <button
+          ref={closeButtonRef}
           class="jumpu-icon-button group fixed top-2 right-4 h-12 w-12 text-2xl"
           aria-describedby="nav-tooltip-close"
           aria-label="Close"
           type="button"
-          onClick={() => setOpen(false)}
+          onClick={() => {
+            setOpen(false);
+            openButtonRef.current?.focus();
+          }}
         >
           <span class="icon-[material-symbols--close]"></span>
           <span
@@ -62,32 +71,34 @@ function Mobile(props) {
             Close
           </span>
         </button>
-        <ul class="flex flex-col px-4 py-16">
-          {props.nav.map((item, itemIndex) => (
-            <li key={`${item.name}-${itemIndex}`}>
-              {item.children && (
-                <section class="mb-6">
-                  <h2 class="mb-2 ml-4 text-lg">{item.name}</h2>
-                  <ul>
-                    {item.children.map((child, childIndex) => (
-                      <li key={`${child.name}-${childIndex}`}>
-                        <a class="jumpu-text-button block" href={child.path}>
-                          {child.name}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              )}
-              {item.path && (
-                <a class="jumpu-text-button block" href={item.path}>
-                  {item.name}
-                </a>
-              )}
-            </li>
-          ))}
-        </ul>
-      </nav>
+        <nav>
+          <ul class="flex flex-col px-4 py-16">
+            {props.nav.map((item, itemIndex) => (
+              <li key={`${item.name}-${itemIndex}`}>
+                {item.children && (
+                  <section class="mb-6">
+                    <h2 class="mb-2 ml-4 text-lg">{item.name}</h2>
+                    <ul>
+                      {item.children.map((child, childIndex) => (
+                        <li key={`${child.name}-${childIndex}`}>
+                          <a class="jumpu-text-button block" href={child.path}>
+                            {child.name}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                )}
+                {item.path && (
+                  <a class="jumpu-text-button block" href={item.path}>
+                    {item.name}
+                  </a>
+                )}
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
     </div>
   );
 }
