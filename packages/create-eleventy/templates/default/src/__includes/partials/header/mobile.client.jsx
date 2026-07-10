@@ -10,6 +10,8 @@ function Mobile(props) {
         id="nav-button-mobile"
         aria-controls="nav-menu-mobile"
         aria-describedby="nav-tooltip-mobile"
+        aria-expanded={open}
+        aria-label="Menu"
         class="jumpu-icon-button group h-12 w-12 text-2xl"
         type="button"
         onClick={() => setOpen(true)}
@@ -33,7 +35,10 @@ function Mobile(props) {
       >
         <button
           class="jumpu-icon-button group fixed top-2 right-4 h-12 w-12 text-2xl"
+          aria-controls="nav-menu-mobile"
           aria-describedby="nav-tooltip-close"
+          aria-expanded={open}
+          aria-label="Close"
           type="button"
           onClick={() => setOpen(false)}
         >

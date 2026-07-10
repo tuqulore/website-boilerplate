@@ -16,13 +16,14 @@ function MenuList(props) {
     };
     document.addEventListener("click", handler);
     return () => document.removeEventListener("click", handler);
-  }, [ref.current, setOpen]);
+  }, []);
   return (
     <div role="presentation" ref={ref}>
       <button
         id={`nav-button-${slugify(props.item.name)}`}
         aria-haspopup="menu"
         aria-controls={`nav-menu-${slugify(props.item.name)}`}
+        aria-expanded={open}
         class="jumpu-text-button"
         type="button"
         onClick={() => setOpen(!open)}
