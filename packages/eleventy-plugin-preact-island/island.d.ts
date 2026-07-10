@@ -1,21 +1,20 @@
 import type { ComponentType, VNode } from "preact";
 
-export type HydratableComponent<P = Record<string, unknown>> =
-  ComponentType<P> & {
-    __hydrateModuleUrl: string;
-  };
+export type ClientComponent<P = Record<string, unknown>> = ComponentType<P> & {
+  __clientModuleUrl: string;
+};
 
 /**
- * Attach the SSR-side module URL as metadata to a hydration component.
- * Call in each `*.hydrate.jsx` file: `export default hydratable(Component, import.meta.url);`
+ * Attach the SSR-side module URL as metadata to a client component.
+ * Call in each `*.client.jsx` file: `export default clientComponent(Component, import.meta.url);`
  */
-export function hydratable<P = Record<string, unknown>>(
+export function clientComponent<P = Record<string, unknown>>(
   Component: ComponentType<P>,
   moduleUrl: string,
-): HydratableComponent<P>;
+): ClientComponent<P>;
 
 export interface IslandProps<P = Record<string, unknown>> {
-  component: HydratableComponent<P>;
+  component: ClientComponent<P>;
   /**
    * is-land initialization trigger. Common values: `"interaction"`, `"visible"`,
    * `"idle"`. Rendered as the boolean attribute `land-on:<on>` on the underlying
@@ -33,8 +32,3 @@ export interface IslandProps<P = Record<string, unknown>> {
 export function Island<P = Record<string, unknown>>(
   props: IslandProps<P>,
 ): VNode;
-
-/** @internal used by the plugin to install the URL resolver */
-export function _setHydrateModuleResolver(
-  resolver: (moduleUrl: string) => string,
-): void;

@@ -69,9 +69,6 @@ importers:
       '@mdx-js/node-loader':
         specifier: ^3.1.0
         version: 3.1.1
-      esbuild:
-        specifier: ^0.28.0
-        version: 0.28.1
       preact:
         specifier: '>=10.0.0'
         version: 10.29.4
@@ -94,6 +91,12 @@ importers:
       '@11ty/is-land':
         specifier: ^5.0.0
         version: 5.0.1
+      esbuild:
+        specifier: ^0.28.0
+        version: 0.28.1
+      fast-glob:
+        specifier: ^3.3.3
+        version: 3.3.3
     devDependencies:
       '@tuqulore-inc/eslint-config':
         specifier: workspace:*

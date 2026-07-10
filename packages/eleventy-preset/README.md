@@ -43,7 +43,7 @@ export default preset((eleventyConfig) => {
 | -------------------- | ------------------------------------------------- |
 | Input directory      | `src`                                             |
 | Output directory     | `dist`                                            |
-| Hydration glob       | `./src/**/*.hydrate.jsx`                          |
+| Client entries       | `src/**/*.client.{js,jsx,ts,tsx}`                 |
 | PostCSS content glob | `src/**/*.{md,mdx,jsx}`                           |
 | Server watches       | `dist/**/*.css`                                   |
 | Markdown             | `breaks: true`, `linkify: true`                   |
@@ -69,7 +69,7 @@ This preset supports JSX and MDX as template languages via `@tuqulore-inc/eleven
 
 ```mdx
 import { Island } from "@tuqulore-inc/eleventy-preset/island";
-import Clicker from "./clicker.hydrate.jsx";
+import Clicker from "./clicker.client.jsx";
 
 export const data = {
   layout: "post",
@@ -245,15 +245,15 @@ import Footer from "./partials/footer.mdx";
 
 ## Partial Hydration
 
-This preset supports partial hydration using `@tuqulore-inc/eleventy-plugin-preact-island`. Author hydration components under `src/**/*.hydrate.jsx`, mark the default export with `hydratable()`, and render them from any JSX/MDX template through the `<Island>` wrapper.
+This preset supports partial hydration using `@tuqulore-inc/eleventy-plugin-preact-island`. Author client components under `src/**/*.client.{js,jsx,ts,tsx}`, mark the default export with `clientComponent()`, and render them from any JSX/MDX template through the `<Island>` wrapper. No configuration is needed — the plugin picks them up by convention.
 
-### Creating a Hydrated Component
+### Creating a Client Component
 
-Name your component with the `.hydrate.jsx` suffix and mark the default export with `hydratable`:
+Name your component with the `.client.jsx` suffix and mark the default export with `clientComponent`:
 
 ```jsx
-// src/clicker.hydrate.jsx
-import { hydratable } from "@tuqulore-inc/eleventy-preset/island";
+// src/clicker.client.jsx
+import { clientComponent } from "@tuqulore-inc/eleventy-preset/island";
 import { useState } from "preact/hooks";
 
 function Clicker() {
@@ -267,10 +267,10 @@ function Clicker() {
   );
 }
 
-export default hydratable(Clicker, import.meta.url);
+export default clientComponent(Clicker, import.meta.url);
 ```
 
-`hydratable(Component, import.meta.url)` attaches the SSR-side module URL as metadata; the preset's URL resolver converts it to the browser URL (`src/foo.hydrate.jsx` → `/foo.hydrate.js`).
+`clientComponent(Component, import.meta.url)` attaches the SSR-side module URL as metadata; the preset's URL resolver converts it to the browser URL (`src/foo.client.jsx` → `/foo.client.js`).
 
 ### Using in MDX
 
@@ -278,14 +278,14 @@ Import the component and wrap with `<Island>`. Extra props are forwarded to both
 
 ```mdx
 import { Island } from "@tuqulore-inc/eleventy-preset/island";
-import Clicker from "./clicker.hydrate.jsx";
+import Clicker from "./clicker.client.jsx";
 
 <Island component={Clicker} on="interaction" />
 ```
 
 ```mdx
 import { Island } from "@tuqulore-inc/eleventy-preset/island";
-import Navigation from "./partials/header/navigation.hydrate.jsx";
+import Navigation from "./partials/header/navigation.client.jsx";
 
 <Island
   component={Navigation}
@@ -307,7 +307,7 @@ The `on` prop maps to the `land-on:<value>` attribute on the underlying `<is-lan
 
 For parameterized triggers such as `on:media("(min-width: ...)")`, drop down to the raw `<is-land>` element (still supported); the injected setup script keeps working.
 
-See [@tuqulore-inc/eleventy-plugin-preact-island](../eleventy-plugin-preact-island/README.md) for the underlying plugin, including how to swap the URL resolver when using it outside this preset.
+See [@tuqulore-inc/eleventy-plugin-preact-island](../eleventy-plugin-preact-island/README.md) for the underlying plugin, including the `bundle: false` option for bringing your own bundler.
 
 ## Requirements
 

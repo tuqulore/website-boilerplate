@@ -1,4 +1,4 @@
-import { hydratable } from "@tuqulore-inc/eleventy-preset/island";
+import { clientComponent } from "@tuqulore-inc/eleventy-preset/island";
 import { useState } from "preact/hooks";
 import { twMerge } from "tailwind-merge";
 
@@ -76,4 +76,4 @@ function Mobile(props) {
   );
 }
 
-export default hydratable(Mobile, import.meta.url);
+export default clientComponent(Mobile, import.meta.url);

@@ -1,4 +1,4 @@
-import { hydratable } from "@tuqulore-inc/eleventy-preset/island";
+import { clientComponent } from "@tuqulore-inc/eleventy-preset/island";
 import { useState } from "preact/hooks";
 
 function Clicker() {
@@ -14,4 +14,4 @@ function Clicker() {
   );
 }
 
-export default hydratable(Clicker, import.meta.url);
+export default clientComponent(Clicker, import.meta.url);

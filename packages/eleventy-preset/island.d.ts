@@ -1,6 +1,6 @@
 export {
   Island,
-  hydratable,
-  type HydratableComponent,
+  clientComponent,
+  type ClientComponent,
   type IslandProps,
 } from "@tuqulore-inc/eleventy-plugin-preact-island/island";

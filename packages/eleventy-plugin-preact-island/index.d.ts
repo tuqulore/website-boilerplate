@@ -1,5 +1,4 @@
 import type { UserConfig } from "@11ty/eleventy";
-import type { HydrateModuleResolver } from "./resolver.js";
 
 export interface PluginOptions {
   /**
@@ -8,12 +7,13 @@ export interface PluginOptions {
    */
   preactVersion?: string;
   /**
-   * Convert an SSR-side hydrate module URL (e.g. `import.meta.url` inside a
-   * `*.hydrate.jsx` file) into the browser URL where the compiled bundle is
-   * served. Defaults to `createHydrateModuleResolver()` which assumes `src/**`
-   * sources served under `/`.
+   * Bundle `*.client.{js,jsx,ts,tsx}` entries with esbuild. Set to `false` to
+   * bring your own bundler; the plugin still adds the Eleventy ignore rule,
+   * wires the SSR URL resolver, copies `is-land.js`, and injects the browser
+   * setup.
+   * @default true
    */
-  resolveHydrateUrl?: HydrateModuleResolver;
+  bundle?: boolean;
 }
 
 /**

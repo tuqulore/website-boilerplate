@@ -112,37 +112,49 @@ Eleventyテンプレートの参照先です。
 
 ## Partial Hydration
 
-JSXテンプレートの拡張子を `.hydrate.jsx` にすると、`dist/**/*.hydrate.jsx` にハイドレーション用のスクリプトが生成されます。
+`.client.{js,jsx,ts,tsx}` という拡張子のファイルを `src` 配下に置くだけで、設定不要でパーシャルハイドレーションが有効になります。そのファイルは esbuild でバンドルされて `dist/**/*.client.js` に出力され、`<Island>` コンポーネントを通じて \<is-land> のクライアント側スクリプトとして読み込まれます。
 
-次の例では、Componentコンポーネントをハイドレーションしています。
+`clientComponent()` でマークしたコンポーネントを `<Island>` に渡すと、SSR 側の描画と、クライアント側のハイドレーションの両方に同じ props が流れます。
+
+```jsx
+// src/counter.client.jsx
+import { clientComponent } from "@tuqulore-inc/eleventy-preset/island";
+import { useState } from "preact/hooks";
+
+function Counter(props) {
+  const [n, setN] = useState(props.initial ?? 0);
+  return <button onClick={() => setN(n + 1)}>{n}</button>;
+}
+
+export default clientComponent(Counter, import.meta.url);
+```
 
 ```mdx
-import Component from "./component.hydrate.jsx"; // ./component.hydrate.jsxはJSXテンプレートとして使用できます
+// src/index.mdx
+import { Island } from "@tuqulore-inc/eleventy-preset/island";
+import Counter from "./counter.client.jsx";
 
-{/* ./component.hydrate.jsxはブラウザーでの読み込み時に描画されます */}
-<is-land land-on:visible type="preact" import="./component.hydrate.js" props='{ "someProp": "somePropValue" }'>
+<Island component={Counter} on="interaction" initial={5} />
+```
 
-  <Component someProp="somePropValue" />{/* <Component />はビルド時に描画されます */}
+上の例では、`<Island>` が次のような \<is-land> 要素を SSR 出力します。
+
+```html
+<is-land
+  land-on:interaction
+  type="preact"
+  import="/counter.client.js"
+  props='{"initial":5}'
+>
+  <button>5</button>
 </is-land>
 ```
 
+`on` prop は \<is-land> の初期化トリガー (`interaction` / `visible` / `idle`) に対応します。
+
 > [!NOTE]
 >
-> [\<is-land>](https://github.com/11ty/is-land?tab=readme-ov-file#usage)の初期化条件を指定する属性は、デフォルトでは`on:*`の書式で指定する必要がありますが、JSXの書式と競合するので`land-on:*`に変更しています。
-
-\<is-land>Webコンポーネントは`land-on:*`属性のほか、次の属性を受け付けます。
-
-### `type`属性
-
-ハイドレーションに使用するランタイム。`"preact"`を指定します。
-
-### `import`属性
-
-ハイドレーションに使用する`dist/**/*.hydrate.js`のパス。
-
-### `props`属性
-
-`dist/**/*.hydrate.js`に渡すプロパティ。オブジェクトを文字列化した値を指定します。通常、オブジェクトの文字列化にJSON.stringifyを使用することができます。
+> [\<is-land>](https://github.com/11ty/is-land?tab=readme-ov-file#usage)の初期化条件を指定する属性は、デフォルトでは `on:*` の書式で指定する必要がありますが、JSX の書式と競合するので `land-on:*` に変更しています。パラメータ付きトリガー (例: `on:media("(min-width: ...)")`) を使う場合は `<Island>` ではなく素の \<is-land> を直接書いてください。
 
 ## Docker
 
