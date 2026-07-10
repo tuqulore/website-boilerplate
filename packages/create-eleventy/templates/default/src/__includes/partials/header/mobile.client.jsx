@@ -23,21 +23,13 @@ function Mobile(props) {
         id="nav-button-mobile"
         ref={openButtonRef}
         aria-controls="nav-menu-mobile"
-        aria-describedby="nav-tooltip-mobile"
         aria-expanded={open}
-        aria-label="Menu"
-        class="jumpu-icon-button group h-12 w-12 text-2xl"
+        aria-label="Open navigation menu"
+        class="jumpu-icon-button h-12 w-12 text-2xl"
         type="button"
         onClick={() => setOpen((v) => !v)}
       >
         <span class="icon-[material-symbols--menu]"></span>
-        <span
-          id="nav-tooltip-mobile"
-          role="tooltip"
-          class="![transform:translate(-50%,_225%)_scale(0)] group-hover:![transform:translate(-50%,_225%)_scale(1)]"
-        >
-          Menu
-        </span>
       </button>
       <div
         id="nav-menu-mobile"
@@ -53,9 +45,8 @@ function Mobile(props) {
       >
         <button
           ref={closeButtonRef}
-          class="jumpu-icon-button group fixed top-2 right-4 h-12 w-12 text-2xl"
-          aria-describedby="nav-tooltip-close"
-          aria-label="Close"
+          class="jumpu-icon-button fixed top-2 right-4 h-12 w-12 text-2xl"
+          aria-label="Close navigation menu"
           type="button"
           onClick={() => {
             setOpen(false);
@@ -63,13 +54,6 @@ function Mobile(props) {
           }}
         >
           <span class="icon-[material-symbols--close]"></span>
-          <span
-            id="nav-tooltip-close"
-            role="tooltip"
-            class="![transform:translate(-50%,_225%)_scale(0)] group-hover:![transform:translate(-50%,_225%)_scale(1)]"
-          >
-            Close
-          </span>
         </button>
         <nav>
           <ul class="flex flex-col px-4 py-16">
