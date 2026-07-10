@@ -29,7 +29,14 @@ function MenuList(props) {
     };
   }, []);
   return (
-    <div role="presentation" ref={ref}>
+    <div
+      role="presentation"
+      ref={ref}
+      onFocusOut={(e) => {
+        if (ref.current?.contains(e.relatedTarget)) return;
+        setOpen(false);
+      }}
+    >
       <button
         id={`nav-button-${slugify(props.item.name)}`}
         ref={buttonRef}
