@@ -9,13 +9,19 @@ function Mobile(props) {
   useEffect(() => {
     if (!open) return;
     closeButtonRef.current?.focus();
+    // NOTE: メニュー表示中は背景 (html) のスクロールを止め、モバイルで
+    // メニューをスクロールしたつもりが背後のページも動く事故を防ぐ。
+    document.documentElement.classList.add("overflow-hidden");
     const handler = (e) => {
       if (e.key !== "Escape") return;
       setOpen(false);
       openButtonRef.current?.focus();
     };
     document.addEventListener("keydown", handler);
-    return () => document.removeEventListener("keydown", handler);
+    return () => {
+      document.removeEventListener("keydown", handler);
+      document.documentElement.classList.remove("overflow-hidden");
+    };
   }, [open]);
   return (
     <div class={props.class}>
@@ -36,7 +42,7 @@ function Mobile(props) {
         aria-label="Global navigation"
         inert={!open}
         class={twMerge(
-          "fixed top-0 left-0 h-screen w-screen overflow-y-auto bg-white",
+          "fixed top-0 left-0 h-screen w-screen overflow-y-auto overscroll-contain bg-white",
           "transition duration-150 ease-in-out",
           open ? "translate-x-0" : "translate-x-full",
         )}
