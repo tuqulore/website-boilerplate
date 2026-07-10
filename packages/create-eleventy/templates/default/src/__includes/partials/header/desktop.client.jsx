@@ -10,6 +10,7 @@ function MenuList(props) {
   const handleTransitionEnd = () => !open && setVisible(false);
   const ref = useRef(null);
   const buttonRef = useRef(null);
+  const slug = `${slugify(props.item.name)}-${props.index}`;
   useEffect(() => {
     const clickHandler = (e) => {
       if (!ref.current || ref.current.contains(e.target)) return;
@@ -30,7 +31,6 @@ function MenuList(props) {
   }, []);
   return (
     <div
-      role="presentation"
       ref={ref}
       onFocusOut={(e) => {
         if (ref.current?.contains(e.relatedTarget)) return;
@@ -38,9 +38,9 @@ function MenuList(props) {
       }}
     >
       <button
-        id={`nav-button-${slugify(props.item.name)}`}
+        id={`nav-button-${slug}`}
         ref={buttonRef}
-        aria-controls={`nav-menu-${slugify(props.item.name)}`}
+        aria-controls={`nav-menu-${slug}`}
         aria-expanded={open}
         class="jumpu-text-button"
         type="button"
@@ -49,8 +49,8 @@ function MenuList(props) {
         {props.item.name}
       </button>
       <ul
-        id={`nav-menu-${slugify(props.item.name)}`}
-        aria-labelledby={`nav-button-${slugify(props.item.name)}`}
+        id={`nav-menu-${slug}`}
+        aria-labelledby={`nav-button-${slug}`}
         class={twMerge(
           "jumpu-card absolute top-full left-1/2 max-h-[50vh] -translate-x-1/2 overflow-y-auto p-2",
           "translate-y-2 transition duration-75 ease-in-out",
@@ -73,7 +73,7 @@ function Desktop(props) {
         {props.nav.map((item, itemIndex) =>
           "children" in item ? (
             <li key={`${item.name}-${itemIndex}`} class="relative">
-              <MenuList item={item}>
+              <MenuList item={item} index={itemIndex}>
                 {item.children.map((child, childIndex) => (
                   <li key={`${child.name}-${childIndex}`}>
                     <a
