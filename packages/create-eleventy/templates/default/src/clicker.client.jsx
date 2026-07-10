@@ -9,7 +9,7 @@ function Clicker() {
       <button class="jumpu-button" onClick={() => setCounter(counter + 1)}>
         Count
       </button>
-      <p>{counter}</p>
+      <output>{counter}</output>
     </div>
   );
 }
