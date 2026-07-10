@@ -1,6 +1,6 @@
 {
   "name": "@tuqulore-inc/eleventy-plugin-preact-island",
-  "version": "5.0.1-alpha.0",
+  "version": "5.0.1",
   "description": "Eleventy plugin for Preact partial hydration with is-land",
   "keywords": [
     "eleventy",
