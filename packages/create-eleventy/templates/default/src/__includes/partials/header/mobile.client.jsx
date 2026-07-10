@@ -24,9 +24,7 @@ function Mobile(props) {
         ref={openButtonRef}
         aria-controls="nav-menu-mobile"
         aria-expanded={open}
-        aria-label={
-          open ? "Close navigation menu" : "Open navigation menu"
-        }
+        aria-label={open ? "Close navigation menu" : "Open navigation menu"}
         class="jumpu-icon-button h-12 w-12 text-2xl"
         type="button"
         onClick={() => setOpen((v) => !v)}
