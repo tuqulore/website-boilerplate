@@ -9,18 +9,30 @@ function MenuList(props) {
   const handleTransitionStart = () => open && setVisible(true);
   const handleTransitionEnd = () => !open && setVisible(false);
   const ref = useRef(null);
+  const buttonRef = useRef(null);
   useEffect(() => {
-    const handler = (e) => {
+    const clickHandler = (e) => {
       if (!ref.current || ref.current.contains(e.target)) return;
       setOpen(false);
     };
-    document.addEventListener("click", handler);
-    return () => document.removeEventListener("click", handler);
+    const keyHandler = (e) => {
+      if (e.key !== "Escape") return;
+      if (!ref.current?.contains(e.target)) return;
+      setOpen(false);
+      buttonRef.current?.focus();
+    };
+    document.addEventListener("click", clickHandler);
+    document.addEventListener("keydown", keyHandler);
+    return () => {
+      document.removeEventListener("click", clickHandler);
+      document.removeEventListener("keydown", keyHandler);
+    };
   }, []);
   return (
     <div role="presentation" ref={ref}>
       <button
         id={`nav-button-${slugify(props.item.name)}`}
+        ref={buttonRef}
         aria-controls={`nav-menu-${slugify(props.item.name)}`}
         aria-expanded={open}
         class="jumpu-text-button"

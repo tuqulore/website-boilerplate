@@ -1,13 +1,25 @@
 import { clientComponent } from "@tuqulore-inc/eleventy-preset/island";
-import { useState } from "preact/hooks";
+import { useEffect, useRef, useState } from "preact/hooks";
 import { twMerge } from "tailwind-merge";
 
 function Mobile(props) {
   const [open, setOpen] = useState(false);
+  const openButtonRef = useRef(null);
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e) => {
+      if (e.key !== "Escape") return;
+      setOpen(false);
+      openButtonRef.current?.focus();
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [open]);
   return (
     <div class={props.class}>
       <button
         id="nav-button-mobile"
+        ref={openButtonRef}
         aria-controls="nav-menu-mobile"
         aria-describedby="nav-tooltip-mobile"
         aria-expanded={open}
