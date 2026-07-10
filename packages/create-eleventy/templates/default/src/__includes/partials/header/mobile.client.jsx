@@ -60,8 +60,10 @@ function Mobile(props) {
             {props.nav.map((item, itemIndex) => (
               <li key={`${item.name}-${itemIndex}`}>
                 {item.children && (
-                  <section class="mb-6">
-                    <h2 class="mb-2 ml-4 text-lg">{item.name}</h2>
+                  <div class="mb-6" role="group" aria-label={item.name}>
+                    <p class="mb-2 ml-4 text-lg" aria-hidden="true">
+                      {item.name}
+                    </p>
                     <ul>
                       {item.children.map((child, childIndex) => (
                         <li key={`${child.name}-${childIndex}`}>
@@ -71,7 +73,7 @@ function Mobile(props) {
                         </li>
                       ))}
                     </ul>
-                  </section>
+                  </div>
                 )}
                 {item.path && (
                   <a class="jumpu-text-button block" href={item.path}>
