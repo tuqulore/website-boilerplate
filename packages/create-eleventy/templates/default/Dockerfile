@@ -14,7 +14,7 @@ COPY package.json pnpm-lock.yaml ./
 RUN corepack enable
 RUN pnpm install --frozen-lockfile
 
-FROM gcr.io/distroless/nodejs:18@sha256:b534f9b5528e69baa7e8caf7bcc1d93ecf59faa15d289221decf5889a2ed3877
+FROM gcr.io/distroless/nodejs24-debian13
 WORKDIR /app
 ENV NODE_ENV=production
 COPY serve.js ./
