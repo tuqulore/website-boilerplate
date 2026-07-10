@@ -6,7 +6,11 @@ function Clicker() {
 
   return (
     <div>
-      <button class="jumpu-button" onClick={() => setCounter(counter + 1)}>
+      <button
+        type="button"
+        class="jumpu-button"
+        onClick={() => setCounter(counter + 1)}
+      >
         Count
       </button>
       <output>{counter}</output>
