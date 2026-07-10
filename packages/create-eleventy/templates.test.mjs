@@ -190,6 +190,13 @@ describe("create-eleventy templates", { concurrency: true }, () => {
               );
             }
 
+            // ignore ルールの回帰検知: *.client.jsx が Eleventy テンプレートとして
+            // 処理されると dist/clicker.client/ のようなページが生成されてしまう。
+            assert.ok(
+              !fs.existsSync(path.join(projectDir, "dist", "clicker.client")),
+              "dist/clicker.client/ が生成されている (.client.* の Eleventy ignore が効いていない可能性)",
+            );
+
             const indexHtml = fs.readFileSync(
               path.join(projectDir, "dist", "index.html"),
               "utf8",

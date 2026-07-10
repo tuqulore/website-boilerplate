@@ -25,10 +25,6 @@
     "./island": {
       "types": "./island.d.ts",
       "default": "./island.mjs"
-    },
-    "./resolver": {
-      "types": "./resolver.d.ts",
-      "default": "./resolver.mjs"
     }
   },
   "main": "./index.mjs",
@@ -47,7 +43,8 @@
   },
   "dependencies": {
     "@11ty/is-land": "^5.0.0",
-    "esbuild": "^0.28.0"
+    "esbuild": "^0.28.0",
+    "fast-glob": "^3.3.3"
   },
   "devDependencies": {
     "@tuqulore-inc/eslint-config": "workspace:*",

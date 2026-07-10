@@ -7,27 +7,13 @@ export interface PluginOptions {
    */
   preactVersion?: string;
   /**
-   * Glob pattern for client entry points (e.g., `"./src/**\/*.client.jsx"`).
-   * When provided, matching files are:
-   * - Bundled with esbuild
-   * - Ignored by Eleventy (not processed as templates)
-   * When omitted, no bundling happens and no ignore rule is added.
+   * Bundle `*.client.{js,jsx,ts,tsx}` entries with esbuild. Set to `false` to
+   * bring your own bundler; the plugin still adds the Eleventy ignore rule,
+   * wires the SSR URL resolver, copies `is-land.js`, and injects the browser
+   * setup.
+   * @default true
    */
-  entries?: string;
-  /**
-   * Source directory that contains client entry points. Used as esbuild
-   * `outbase` and as the marker segment when converting SSR-side client module
-   * URLs (e.g. `import.meta.url` inside a `*.client.jsx` file) to browser URLs.
-   * Should match your Eleventy input directory.
-   * @default "src"
-   */
-  srcDir?: string;
-  /**
-   * esbuild `outdir` for client entry bundles. Usually matches the Eleventy
-   * output directory so bundled `.client.js` files land next to their siblings.
-   * @default "dist"
-   */
-  outDir?: string;
+  bundle?: boolean;
 }
 
 /**

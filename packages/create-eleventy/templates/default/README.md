@@ -112,7 +112,7 @@ Eleventyテンプレートの参照先です。
 
 ## Partial Hydration
 
-JSXテンプレートの拡張子を `.client.jsx` にすると、その file は esbuild でバンドルされて `dist/**/*.client.js` に出力され、`<Island>` コンポーネントを通じて \<is-land> のクライアント側スクリプトとして読み込まれます。
+`.client.{js,jsx,ts,tsx}` という拡張子のファイルを `src` 配下に置くだけで、設定不要でパーシャルハイドレーションが有効になります。そのファイルは esbuild でバンドルされて `dist/**/*.client.js` に出力され、`<Island>` コンポーネントを通じて \<is-land> のクライアント側スクリプトとして読み込まれます。
 
 `clientComponent()` でマークしたコンポーネントを `<Island>` に渡すと、SSR 側の描画と、クライアント側のハイドレーションの両方に同じ props が流れます。
 

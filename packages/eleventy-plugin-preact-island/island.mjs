@@ -3,19 +3,19 @@ import { h } from "preact";
 let currentResolver = null;
 
 /**
- * Install the client module URL resolver. Called by the Eleventy plugin during
- * config setup. Also part of the public API for users who want to use `<Island>`
- * without adopting this package's file naming / URL convention.
+ * Install the client module URL resolver. Wired by the Eleventy plugin during
+ * config setup; also called by tests to swap resolvers between cases.
  *
- * Pass `null` to explicitly clear the currently installed resolver (used by
- * tests to reset state between cases).
+ * Pass `null` to explicitly clear the currently installed resolver.
  *
+ * @internal Not part of the public API. Registering the plugin via
+ *   `eleventyConfig.addPlugin` wires the resolver for you.
  * @param {((moduleUrl: string) => string) | null} resolver
  */
-export function setClientModuleResolver(resolver) {
+export function _setClientModuleResolver(resolver) {
   if (resolver !== null && typeof resolver !== "function") {
     throw new TypeError(
-      `setClientModuleResolver: \`resolver\` must be a function or null, got ${typeof resolver}`,
+      `_setClientModuleResolver: \`resolver\` must be a function or null, got ${typeof resolver}`,
     );
   }
   currentResolver = resolver;
@@ -81,7 +81,7 @@ export function Island({ component, on = "interaction", ...props }) {
   }
   if (typeof currentResolver !== "function") {
     throw new Error(
-      "Island: no client module URL resolver is configured. Ensure `@tuqulore-inc/eleventy-plugin-preact-island` is registered via `eleventyConfig.addPlugin`, or call `setClientModuleResolver` directly.",
+      "Island: no client module URL resolver is configured. Register `@tuqulore-inc/eleventy-plugin-preact-island` via `eleventyConfig.addPlugin`.",
     );
   }
   const importUrl = currentResolver(moduleUrl);

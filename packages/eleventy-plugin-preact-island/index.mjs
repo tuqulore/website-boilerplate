@@ -1,31 +1,31 @@
 import url from "node:url";
 import * as esbuild from "esbuild";
-import { setClientModuleResolver } from "./island.mjs";
-import { createClientModuleResolver } from "./resolver.mjs";
+import fg from "fast-glob";
+import { _setClientModuleResolver } from "./island.mjs";
+import { createClientModuleResolver, normalizeUrlPrefix } from "./resolver.mjs";
 
 /**
  * Eleventy plugin for Preact partial hydration with is-land.
  *
- * Owns the entire client boundary:
- * - Bundles `*.client.jsx` entries with esbuild
- * - Excludes them from Eleventy template processing (`ignores.add`)
+ * Zero-config and convention-first: it owns the entire client boundary for
+ * `*.client.{js,jsx,ts,tsx}` files under Eleventy's input directory:
+ * - Bundles them with esbuild (unless `bundle: false`)
+ * - Excludes them from Eleventy template processing (`ignores.add`, always)
  * - Wires the SSR-side `<Island>` component's URL resolver to match the bundle
- *   output layout (`srcDir` / `outDir`), automatically following Eleventy's
- *   own `pathPrefix` for the URL side
+ *   output layout, following Eleventy's own input directory and `pathPrefix`
  * - Injects the browser-side is-land + Preact setup into every HTML page
+ *
+ * Input/output directories ride on Eleventy's own configuration via
+ * `eleventyConfig.directories` (the userspace live getter that reflects
+ * `setInputDirectory`/`setOutputDirectory`). NOTE: `eleventyConfig.dir` is not
+ * used because it does not reflect those setters during plugin execution.
  *
  * @param {import("@11ty/eleventy").UserConfig} eleventyConfig
  * @param {Object} [pluginOptions]
  * @param {string} [pluginOptions.preactVersion] - Preact version for esm.sh CDN
- * @param {string} [pluginOptions.entries] - Glob pattern for client entry
- *   points (e.g. `"./src/**\/*.client.jsx"`). When provided, matching files are
- *   bundled by esbuild and ignored by Eleventy as templates. When omitted, no
- *   bundling happens and no ignore rule is added.
- * @param {string} [pluginOptions.srcDir="src"] - Source directory that contains
- *   client entry points. Used as esbuild `outbase` and as the marker segment
- *   in the SSR module URL → browser URL conversion.
- * @param {string} [pluginOptions.outDir="dist"] - esbuild `outdir` for client
- *   entry bundles. Usually matches the Eleventy output directory.
+ * @param {boolean} [pluginOptions.bundle=true] - Bundle client entries with
+ *   esbuild. Set to `false` to bring your own bundler; the ignore rule,
+ *   resolver wiring, is-land.js copy, and script injection stay active.
  */
 export default function (eleventyConfig, pluginOptions = {}) {
   try {
@@ -34,53 +34,68 @@ export default function (eleventyConfig, pluginOptions = {}) {
     console.log(`[eleventy-plugin-preact-island] WARN: ${e.message}`);
   }
 
-  const {
-    preactVersion = "",
-    entries,
-    srcDir = "src",
-    outDir = "dist",
-  } = pluginOptions;
+  const { preactVersion = "", bundle = true } = pluginOptions;
 
-  // SSR-side URL resolver: srcDir is our own convention; the URL prefix
-  // follows Eleventy's own pathPrefix so that sub-directory deployments
+  // Ride on Eleventy's own input/output directories (normalized, e.g. "./src/").
+  const inputDir = eleventyConfig.directories.input;
+  const outputDir = eleventyConfig.directories.output;
+  const clientGlob = `${inputDir}**/*.client.{js,jsx,ts,tsx}`;
+  const urlPrefix = normalizeUrlPrefix(eleventyConfig.pathPrefix ?? "/");
+
+  // SSR-side URL resolver: the input directory is our own convention; the URL
+  // prefix follows Eleventy's own pathPrefix so that sub-directory deployments
   // (e.g. GitHub Pages under `/repo/`) work without a second knob.
-  // Non-conforming builds can call `setClientModuleResolver` from the
-  // `./island` subpath instead of going through this plugin.
-  setClientModuleResolver(
+  _setClientModuleResolver(
     createClientModuleResolver({
-      srcDir,
-      urlPrefix: eleventyConfig.pathPrefix ?? "/",
+      inputDir,
+      urlPrefix,
     }),
   );
 
-  // Client entry bundling (opt-in via `entries`).
-  if (entries) {
-    // Convert glob to ignore pattern (remove leading ./)
-    const ignorePattern = entries.replace(/^\.\//, "");
-    eleventyConfig.ignores.add(ignorePattern);
+  // Always exclude client entries from the Eleventy template pipeline — this is
+  // part of the convention and independent of who bundles them.
+  eleventyConfig.ignores.add(clientGlob);
 
+  // Client entry bundling (default; disable with `bundle: false`).
+  if (bundle) {
     // watch/serve モードでは Eleventy の再ビルド毎に `eleventy.before` が発火する。
     // esbuild.context()+ctx.watch() を毎回作ると watcher/ファイルハンドルが
     // 増殖してリークするため、context は初回のみ作って再利用する。
     // build モードは 1 回きりなのでその都度 esbuild.build() で完結する。
     let watchCtx = null;
     eleventyConfig.on("eleventy.before", async ({ runMode }) => {
+      // watch context 生成後は entries を固定 (esbuild 側の watcher が再ビルドを担う)。
+      // NOTE: そのため watch 開始後に追加された .client ファイルは Eleventy 再起動まで
+      // 拾われない。旧来の glob 文字列方式でも esbuild は context 生成時に一度だけ glob を
+      // 解決するためパリティであり許容。
+      if (watchCtx) return;
+
+      // NOTE: エントリは明示ファイルリストで渡す (esbuild のワイルドカードはブレース展開
+      // {jsx,tsx} 未対応)。0 件時は esbuild を呼ばずスキップし、Island を使わないサイトでも
+      // ビルドが通るようにする。
+      // NOTE: fast-glob は node_modules をデフォルト除外しないため明示する。
+      // input が "." (プロジェクトルート) の構成で依存パッケージ内の *.client.* を
+      // 誤ってバンドルしない・毎ビルド node_modules を走査しないための guard。
+      const entryPoints = await fg(clientGlob, {
+        ignore: ["**/node_modules/**"],
+      });
+      if (entryPoints.length === 0) return;
+
       /** @type {import("esbuild").BuildOptions} */
       const options = {
         bundle: true,
-        entryPoints: [entries],
+        entryPoints,
         external: ["preact"],
         format: "esm",
         jsx: "automatic",
         jsxImportSource: "preact",
-        outbase: srcDir,
-        outdir: outDir,
+        outbase: inputDir,
+        outdir: outputDir,
       };
       if (runMode === "build") {
         await esbuild.build(options);
         return;
       }
-      if (watchCtx) return;
       watchCtx = await esbuild.context(options);
       await watchCtx.watch();
     });
@@ -95,7 +110,7 @@ export default function (eleventyConfig, pluginOptions = {}) {
   const generateImportMap = () => `<script type="importmap">
 {
   "imports": {
-    "is-land": "/is-land.js",
+    "is-land": "${urlPrefix}is-land.js",
     "preact": "https://esm.sh/preact${preactSuffix}",
     "preact/hooks": "https://esm.sh/preact${preactSuffix}/hooks?external=preact",
     "preact/jsx-runtime": "https://esm.sh/preact${preactSuffix}/jsx-runtime?external=preact"

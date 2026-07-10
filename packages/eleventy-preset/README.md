@@ -43,7 +43,7 @@ export default preset((eleventyConfig) => {
 | -------------------- | ------------------------------------------------- |
 | Input directory      | `src`                                             |
 | Output directory     | `dist`                                            |
-| Client entries       | `./src/**/*.client.jsx`                           |
+| Client entries       | `src/**/*.client.{js,jsx,ts,tsx}`                 |
 | PostCSS content glob | `src/**/*.{md,mdx,jsx}`                           |
 | Server watches       | `dist/**/*.css`                                   |
 | Markdown             | `breaks: true`, `linkify: true`                   |
@@ -245,7 +245,7 @@ import Footer from "./partials/footer.mdx";
 
 ## Partial Hydration
 
-This preset supports partial hydration using `@tuqulore-inc/eleventy-plugin-preact-island`. Author client components under `src/**/*.client.jsx`, mark the default export with `clientComponent()`, and render them from any JSX/MDX template through the `<Island>` wrapper.
+This preset supports partial hydration using `@tuqulore-inc/eleventy-plugin-preact-island`. Author client components under `src/**/*.client.{js,jsx,ts,tsx}`, mark the default export with `clientComponent()`, and render them from any JSX/MDX template through the `<Island>` wrapper. No configuration is needed — the plugin picks them up by convention.
 
 ### Creating a Client Component
 
@@ -307,7 +307,7 @@ The `on` prop maps to the `land-on:<value>` attribute on the underlying `<is-lan
 
 For parameterized triggers such as `on:media("(min-width: ...)")`, drop down to the raw `<is-land>` element (still supported); the injected setup script keeps working.
 
-See [@tuqulore-inc/eleventy-plugin-preact-island](../eleventy-plugin-preact-island/README.md) for the underlying plugin, including the `setClientModuleResolver` escape hatch for build layouts that don't fit the `.client.jsx` convention.
+See [@tuqulore-inc/eleventy-plugin-preact-island](../eleventy-plugin-preact-island/README.md) for the underlying plugin, including the `bundle: false` option for bringing your own bundler.
 
 ## Requirements
 

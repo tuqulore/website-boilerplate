@@ -32,15 +32,3 @@ export interface IslandProps<P = Record<string, unknown>> {
 export function Island<P = Record<string, unknown>>(
   props: IslandProps<P>,
 ): VNode;
-
-/**
- * Install the client module URL resolver. Called by the Eleventy plugin during
- * config setup. Also part of the public API for users who want to use `<Island>`
- * without adopting this package's file naming / URL convention.
- *
- * Pass `null` to explicitly clear the currently installed resolver.
- * Anything else throws `TypeError`.
- */
-export function setClientModuleResolver(
-  resolver: ((moduleUrl: string) => string) | null,
-): void;

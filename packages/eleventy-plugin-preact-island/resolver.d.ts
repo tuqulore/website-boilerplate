@@ -1,9 +1,10 @@
 export interface CreateClientModuleResolverOptions {
   /**
-   * Input directory that matches the Eleventy input directory / esbuild `outbase`.
-   * @default "src"
+   * Eleventy input directory (e.g. `eleventyConfig.directories.input`, `"./src/"`).
+   * Resolved to an absolute path; a client module URL must fall under it.
+   * @default "."
    */
-  srcDir?: string;
+  inputDir?: string;
   /**
    * URL path prefix where the compiled client module bundles are served.
    * @default "/"
@@ -17,6 +18,8 @@ export type ClientModuleResolver = (moduleUrl: string) => string;
  * Create a resolver that converts an SSR-side client module URL
  * (e.g. `import.meta.url` inside `foo.client.jsx`) into the browser URL
  * where the compiled bundle will be served.
+ *
+ * @internal Wired by the Eleventy plugin; not part of the public API.
  */
 export function createClientModuleResolver(
   options?: CreateClientModuleResolverOptions,

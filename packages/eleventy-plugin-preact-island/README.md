@@ -2,19 +2,20 @@
 
 Eleventy plugin for Preact partial hydration with is-land.
 
-An Island is the SSR-rendered HTML with client-side JavaScript layered on top; this package handles both sides in one plugin. It:
+An Island is SSR-rendered HTML with client-side JavaScript layered on top; this package handles both sides in one plugin. It is convention-first and zero-config: put your client entries under Eleventy's input directory with the `.client.{js,jsx,ts,tsx}` sub-extension, register the plugin, and it does the rest.
 
-1. Bundles the client entry points you pass via `entries` with esbuild (opt-in).
-2. Excludes those files from Eleventy template processing.
-3. Injects the browser-side [`@11ty/is-land`](https://github.com/11ty/is-land) + Preact setup into every HTML page.
+For any `*.client.{js,jsx,ts,tsx}` file under your Eleventy input directory, it:
+
+1. Bundles it with esbuild (unless you opt out with `bundle: false`).
+2. Excludes it from Eleventy template processing (so client entries are never rendered as pages).
+3. Copies [`@11ty/is-land`](https://github.com/11ty/is-land)'s `is-land.js` to the output directory and injects the browser-side is-land + Preact setup into every HTML page.
 4. Provides an `<Island>` wrapper that renders SSR content and emits the matching `<is-land>` element with the correct `import` URL for hydration.
 
-Two constants shape the wiring:
+## Convention
 
-- **`srcDir` / `outDir`**: the bundle layout you can customize per project (defaults `"src"` / `"dist"`).
-- **The `.client.{js,jsx,ts,tsx}` sub-extension**: hard-coded in the URL resolver. Files it converts must end with this suffix and are rewritten to `.client.js`. `entries` itself is a free-form glob, but only files matching this suffix will resolve at SSR time.
-
-The URL prefix follows Eleventy's own `pathPrefix`, so sub-directory deployments (e.g. GitHub Pages under `/repo/`) work without a second knob.
+- **Input / output directories ride on Eleventy's own configuration.** The plugin reads `eleventyConfig.directories.input` / `.output`, so `setInputDirectory` / `setOutputDirectory` (or the CLI `--input` / `--output`) are the single source of truth. There is no separate `srcDir` / `outDir` knob.
+- **Client entries are discovered by convention:** every `<input>/**/*.client.{js,jsx,ts,tsx}`. A file's sub-extension (`.client.`) is what marks it as a client entry; the compiled bundle is served at `<input-relative path>.client.js`.
+- **The URL prefix follows Eleventy's own [`pathPrefix`](https://www.11ty.dev/docs/config/#deploy-to-a-subdirectory-with-a-path-prefix)**, so sub-directory deployments (e.g. GitHub Pages under `/repo/`) work without a second knob.
 
 ## Installation
 
@@ -29,76 +30,24 @@ npm install -D @11ty/eleventy preact @tuqulore-inc/eleventy-plugin-preact-island
 import preactIsland from "@tuqulore-inc/eleventy-plugin-preact-island";
 
 export default function (eleventyConfig) {
-  eleventyConfig.addPlugin(preactIsland, {
-    entries: "./src/**/*.client.jsx",
-  });
+  eleventyConfig.addPlugin(preactIsland);
 }
 ```
 
+That's it. Author client components as `src/**/*.client.jsx` (or `.tsx` / `.js` / `.ts`) and render them through `<Island>` (see [Partial Hydration](#partial-hydration)).
+
 ## What it does
 
-1. **Bundles client entries** with esbuild — the glob you pass via `entries` (opt-in; if you omit it, no bundling happens and you're expected to produce the `.client.js` bundles yourself, see [Escape hatch](#escape-hatch-setclientmoduleresolver-for-non-conforming-builds))
-2. **Ignores** matching files as Eleventy templates (they're client entries, not pages)
-3. **Copies `is-land.js`** from `@11ty/is-land` to the output directory
+1. **Bundles client entries** with esbuild — every `*.client.{js,jsx,ts,tsx}` under the Eleventy input directory. If none exist, esbuild is skipped, so a site that doesn't use Islands still builds.
+2. **Ignores** those files as Eleventy templates (they're client entries, not pages). This ignore rule is always added, independent of `bundle`.
+3. **Copies `is-land.js`** from `@11ty/is-land` to the output directory.
 4. **Injects scripts** before `</head>`:
    - Import map for is-land and Preact (from esm.sh CDN)
    - Development-only WebSocket hook for rehydration after hot reload
    - is-land setup script with `Island.addInitType("preact", mount)`
-5. **Wires the URL resolver** so `<Island>` on the SSR side emits the same URL that the bundler produced. The resolver requires the `.client.{js,jsx,ts,tsx}` sub-extension.
+5. **Wires the URL resolver** so `<Island>` on the SSR side emits the same URL the bundler produced. Client entries must use the `.client.{js,jsx,ts,tsx}` sub-extension and live under the input directory.
 
 ## Options
-
-### `entries`
-
-- Type: `string`
-- Default: `undefined` (no bundling)
-
-Glob pattern for client entry points. Files matching this pattern are bundled with esbuild and excluded from Eleventy's template pipeline. When omitted, no bundling happens and no ignore rule is added — this mode is for users who already produce `.client.js` bundles some other way (see [Escape hatch](#escape-hatch-setclientmoduleresolver-for-non-conforming-builds)).
-
-The glob itself is free-form, but the SSR-side URL resolver only accepts source files ending in `.client.{js,jsx,ts,tsx}` (see below). Practically that means you'll want a glob like `./src/**/*.client.jsx`.
-
-```javascript
-eleventyConfig.addPlugin(preactIsland, {
-  entries: "./src/**/*.client.jsx",
-});
-```
-
-### `srcDir`
-
-- Type: `string`
-- Default: `"src"`
-
-Source directory that contains the client entry points. Used both as esbuild's `outbase` (to preserve the source directory structure under `outDir`) and as the marker segment when converting SSR-side client module URLs (e.g. `import.meta.url` inside `foo.client.jsx`) into browser URLs. Should match your Eleventy input directory.
-
-The `.client.{js,jsx,ts,tsx}` sub-extension is not an option — it is hard-coded in the URL resolver, so `<Island component={...}>` will throw at SSR time if the module's file doesn't end in one of those. If you need a different sub-extension (e.g. `.island.jsx`), replace the resolver via [`setClientModuleResolver`](#escape-hatch-setclientmoduleresolver-for-non-conforming-builds).
-
-### `outDir`
-
-- Type: `string`
-- Default: `"dist"`
-
-esbuild `outdir` for client entry bundles. Usually matches your Eleventy output directory so bundled `.client.js` files land next to their siblings.
-
-### URL prefix (follows Eleventy `pathPrefix`)
-
-There is no separate `urlPrefix` option. The plugin reads Eleventy's own [`pathPrefix`](https://www.11ty.dev/docs/config/#deploy-to-a-subdirectory-with-a-path-prefix) at plugin-registration time and uses that as the URL prefix for `<is-land import="...">`.
-
-- Default deployment (site served at `/`): `pathPrefix: "/"` → `<is-land import="/foo.client.js">`
-- Sub-directory deployment (e.g. GitHub Pages at `https://user.github.io/my-site/`): `pathPrefix: "/my-site/"` → `<is-land import="/my-site/foo.client.js">`
-
-Deployments that serve bundles from a completely different origin or path (e.g. a CDN mounted at `/cdn/` while the site itself is at `/`) fall outside this convention. Use the [`setClientModuleResolver` escape hatch](#escape-hatch-setclientmoduleresolver-for-non-conforming-builds) below.
-
-Combined example:
-
-```javascript
-eleventyConfig.addPlugin(preactIsland, {
-  entries: "./content/**/*.client.jsx",
-  srcDir: "content",
-  outDir: "_site",
-});
-```
-
-With this config, `content/foo.client.jsx` is bundled to `_site/foo.client.js`. If Eleventy's `pathPrefix` is `/`, the rendered element is `<is-land ... import="/foo.client.js">`.
 
 ### `preactVersion`
 
@@ -112,6 +61,28 @@ eleventyConfig.addPlugin(preactIsland, {
   preactVersion: "10.26.4",
 });
 ```
+
+### `bundle`
+
+- Type: `boolean`
+- Default: `true`
+
+Whether to bundle `*.client.{js,jsx,ts,tsx}` entries with esbuild. Set to `false` to bring your own bundler — everything else stays active: the Eleventy ignore rule, the SSR URL resolver wiring, the `is-land.js` copy, and the browser-side script injection. You are then responsible for producing the `.client.js` bundles at the URLs the resolver expects (`<pathPrefix><input-relative path>.client.js`).
+
+```javascript
+eleventyConfig.addPlugin(preactIsland, { bundle: false });
+```
+
+### URL prefix (follows Eleventy `pathPrefix`)
+
+There is no `urlPrefix` option. The plugin reads Eleventy's own [`pathPrefix`](https://www.11ty.dev/docs/config/#deploy-to-a-subdirectory-with-a-path-prefix) at plugin-registration time and uses it as the URL prefix for `<is-land import="...">` and for the `is-land` entry in the injected import map.
+
+- Default deployment (site served at `/`): `pathPrefix: "/"` → `<is-land import="/foo.client.js">`
+- Sub-directory deployment (e.g. GitHub Pages at `https://user.github.io/my-site/`): `pathPrefix: "/my-site/"` → `<is-land import="/my-site/foo.client.js">`
+
+> [!NOTE]
+>
+> Set the input/output directories with Eleventy's `setInputDirectory` / `setOutputDirectory` in the config function (or the CLI `--input` / `--output`), not from inside another plugin — the Island plugin reads them when it runs, so changing them after it registers is an ordering hazard.
 
 ## Partial Hydration
 
@@ -166,39 +137,11 @@ The example renders (after resolving the import URL):
 
 For parameterized triggers such as `on:media("(min-width: ...)")`, use the raw `<is-land>` element directly; the injected setup script still handles it.
 
-### Backward compatibility with raw `<is-land>`
+## Interoperating with raw `<is-land>`
 
-The raw `<is-land>` element remains fully supported — the script injection is unchanged. `<Island>` is a strict addition; existing partial hydration code that uses `<is-land>` directly continues to work.
+The raw `<is-land>` element remains fully supported — the script injection is unchanged, and existing partial hydration code that writes `<is-land>` by hand keeps working. `<Island>` is a strict addition on top.
 
-## Escape hatch: `setClientModuleResolver` for non-conforming builds
-
-The plugin's convention is:
-
-- Client entries live under `<srcDir>/**/*.client.{js,jsx,ts,tsx}`
-- Bundles are served at `<eleventyPathPrefix>**/*.client.js`
-
-If your build doesn't fit this convention — for example, you bundle client code with Vite and it lands at a hashed URL like `/assets/foo-abc123.js`, you use a different sub-extension like `.island.jsx`, or your bundles are served from a different origin than the site itself — you can override just the URL resolver while keeping the plugin's browser-side setup (importmap, is-land script injection, dev rehydration hook).
-
-Do so by registering the plugin normally (without `entries`, so it won't try to bundle for you) and then installing a custom resolver from the `./island` subpath. **Order matters**: the plugin installs its default resolver when it runs, so `setClientModuleResolver` must be called _after_ `addPlugin(preactIsland)` to take effect.
-
-```javascript
-// eleventy.config.mjs
-import preactIsland from "@tuqulore-inc/eleventy-plugin-preact-island";
-import { setClientModuleResolver } from "@tuqulore-inc/eleventy-plugin-preact-island/island";
-
-export default function (eleventyConfig) {
-  // Registers is-land + Preact browser setup. Skip `entries` because you're
-  // bundling the client code yourself.
-  eleventyConfig.addPlugin(preactIsland);
-
-  // Override the URL resolver installed by the plugin above.
-  setClientModuleResolver((moduleUrl) => myBuild.urlFor(moduleUrl));
-}
-```
-
-- The plugin's `srcDir` option (plus Eleventy's `pathPrefix`) exists so you don't have to write a resolver at all when your build layout is a simple prefix rewrite.
-- `setClientModuleResolver` is the low-level extension point that keeps the `<Island>` / `clientComponent` primitives usable across arbitrary conventions.
-- Pass `null` to `setClientModuleResolver` to explicitly clear the resolver; anything other than a function or `null` throws `TypeError`.
+If you want to control bundling entirely yourself (custom output layout, a different sub-extension, hashed asset URLs, or serving bundles from another origin), you can bypass this plugin's `<Island>` convention and drive [`@11ty/is-land`](https://github.com/11ty/is-land) directly — write the `<is-land>` elements and their `import` URLs yourself. The plugin's browser-side setup (import map, is-land script, dev rehydration hook) still applies to those elements.
 
 ## Requirements
 

@@ -50,12 +50,10 @@ export default function preset(extend = () => {}) {
     // Preact SSR
     eleventyConfig.addPlugin(preact);
 
-    // Preact partial hydration with is-land (owns client bundle + URL resolver)
-    eleventyConfig.addPlugin(preactIsland, {
-      entries: `./${SRC_DIR}/**/*.client.jsx`,
-      srcDir: SRC_DIR,
-      outDir: OUT_DIR,
-    });
+    // Preact partial hydration with is-land. Zero-config: it reads Eleventy's
+    // input/output directories (set above) and the `.client.{js,jsx,ts,tsx}`
+    // convention, owning the client bundle + Eleventy ignore + URL resolver.
+    eleventyConfig.addPlugin(preactIsland);
 
     // PostCSS processing
     eleventyConfig.addPlugin(postcss, {

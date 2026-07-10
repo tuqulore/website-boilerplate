@@ -2,28 +2,32 @@ import { describe, it, beforeEach } from "node:test";
 import assert from "node:assert";
 import { h } from "preact";
 import { render } from "preact-render-to-string";
-import { Island, clientComponent, setClientModuleResolver } from "./island.mjs";
+import {
+  Island,
+  clientComponent,
+  _setClientModuleResolver,
+} from "./island.mjs";
 
-describe("setClientModuleResolver", () => {
+describe("_setClientModuleResolver", () => {
   it("関数を渡せる", () => {
-    assert.doesNotThrow(() => setClientModuleResolver(() => "/x.js"));
+    assert.doesNotThrow(() => _setClientModuleResolver(() => "/x.js"));
     // 状態を残さない: 後続テストの beforeEach で null リセットされるが念のため
-    setClientModuleResolver(null);
+    _setClientModuleResolver(null);
   });
 
   it("null で明示的にクリアできる", () => {
-    setClientModuleResolver(() => "/x.js");
-    assert.doesNotThrow(() => setClientModuleResolver(null));
+    _setClientModuleResolver(() => "/x.js");
+    assert.doesNotThrow(() => _setClientModuleResolver(null));
   });
 
   it("関数でも null でもない値は TypeError で拒否する", () => {
     for (const bad of [undefined, 0, "string", {}, [], true]) {
       assert.throws(
-        () => setClientModuleResolver(bad),
+        () => _setClientModuleResolver(bad),
         (err) =>
           err instanceof TypeError &&
           /`resolver` must be a function or null/.test(err.message),
-        `setClientModuleResolver(${JSON.stringify(bad)}) が TypeError にならなかった`,
+        `_setClientModuleResolver(${JSON.stringify(bad)}) が TypeError にならなかった`,
       );
     }
   });
@@ -54,12 +58,12 @@ describe("clientComponent", () => {
 describe("Island", () => {
   beforeEach(() => {
     // 各テストで resolver をリセットし、テスト間の状態漏れを防ぐ
-    setClientModuleResolver(null);
+    _setClientModuleResolver(null);
   });
 
   it("clientComponent 済み component を <is-land> でラップし、resolver 経由の import URL と JSON props を出力する", () => {
     const receivedUrls = [];
-    setClientModuleResolver((moduleUrl) => {
+    _setClientModuleResolver((moduleUrl) => {
       receivedUrls.push(moduleUrl);
       return "/foo.client.js";
     });
@@ -84,14 +88,14 @@ describe("Island", () => {
   });
 
   it("on prop のデフォルトは interaction", () => {
-    setClientModuleResolver(() => "/x.client.js");
+    _setClientModuleResolver(() => "/x.client.js");
     const X = clientComponent(() => null, "file:///proj/src/x.client.jsx");
     const html = render(h(Island, { component: X }));
     assert.match(html, /land-on:interaction/);
   });
 
   it("component が渡されていない (または関数でない) 場合は TypeError", () => {
-    setClientModuleResolver(() => "/x.client.js");
+    _setClientModuleResolver(() => "/x.client.js");
     assert.throws(
       () => render(h(Island, { component: "not-a-fn" })),
       TypeError,
@@ -99,7 +103,7 @@ describe("Island", () => {
   });
 
   it("on に不正な値 (空白 / 空文字 / 非文字列) を渡すと TypeError", () => {
-    setClientModuleResolver(() => "/x.client.js");
+    _setClientModuleResolver(() => "/x.client.js");
     const X = clientComponent(() => null, "file:///proj/src/x.client.jsx");
     for (const on of ["foo bar", "", 'bad"quote', 123, null]) {
       assert.throws(
@@ -112,7 +116,7 @@ describe("Island", () => {
   });
 
   it("component が clientComponent でラップされていない場合は明示エラー", () => {
-    setClientModuleResolver(() => "/x.client.js");
+    _setClientModuleResolver(() => "/x.client.js");
     const Bare = () => null;
     assert.throws(
       () => render(h(Island, { component: Bare })),
@@ -129,7 +133,7 @@ describe("Island", () => {
   });
 
   it("children を渡しても component の SSR 出力が優先される (呼び出し側は component だけ渡せば済む)", () => {
-    setClientModuleResolver(() => "/x.client.js");
+    _setClientModuleResolver(() => "/x.client.js");
     const X = clientComponent(function X(props) {
       return h("i", null, `x-${props.tag}`);
     }, "file:///proj/src/x.client.jsx");
@@ -141,7 +145,7 @@ describe("Island", () => {
   });
 
   it("children は props シリアライズにもコンポーネント SSR にも漏れない", () => {
-    setClientModuleResolver(() => "/x.client.js");
+    _setClientModuleResolver(() => "/x.client.js");
     const receivedProps = [];
     const X = clientComponent(function X(props) {
       receivedProps.push(props);
@@ -160,7 +164,7 @@ describe("Island", () => {
   });
 
   it("JSON.stringify に失敗する props (循環参照など) は Island 文脈のエラーで包む", () => {
-    setClientModuleResolver(() => "/x.client.js");
+    _setClientModuleResolver(() => "/x.client.js");
     const X = clientComponent(function X() {
       return null;
     }, "file:///proj/src/x.client.jsx");

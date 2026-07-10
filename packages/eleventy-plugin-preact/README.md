@@ -72,12 +72,9 @@ export default function (eleventyConfig) {
   eleventyConfig.addPlugin(preact);
 
   // Partial hydration + client bundle + URL resolver (single source of truth).
-  // The URL prefix follows Eleventy's own `pathPrefix`, so it is not set here.
-  eleventyConfig.addPlugin(preactIsland, {
-    entries: "./src/**/*.client.jsx",
-    srcDir: "src",
-    outDir: "dist",
-  });
+  // Zero-config: it rides on Eleventy's input/output directories, the
+  // `.client.{js,jsx,ts,tsx}` convention, and Eleventy's own `pathPrefix`.
+  eleventyConfig.addPlugin(preactIsland);
 }
 ```
 
