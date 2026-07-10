@@ -166,4 +166,15 @@ describe("Island plugin ignore ルール (常時追加)", () => {
       "./src/**/*.client.{js,jsx,ts,tsx}",
     ]);
   });
+
+  // NOTE: Eleventy の directories.input は常に「./ 前置 + 末尾スラッシュ」に正規化
+  // される (ProjectDirectories.normalizeDirectory)。input 未設定 (プロジェクト
+  // ルート) の正規化形 "./" でも有効な glob になることをここで固定する。
+  it("input がプロジェクトルート (正規化形 './') でも有効な glob を追加する", () => {
+    const config = makeEleventyConfigStub({ input: "./" });
+    preactIsland(config);
+    assert.deepStrictEqual(config._ignoreAdds, [
+      "./**/*.client.{js,jsx,ts,tsx}",
+    ]);
+  });
 });

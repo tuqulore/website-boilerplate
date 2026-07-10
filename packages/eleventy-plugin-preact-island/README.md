@@ -75,7 +75,7 @@ eleventyConfig.addPlugin(preactIsland, { bundle: false });
 
 ### URL prefix (follows Eleventy `pathPrefix`)
 
-There is no `urlPrefix` option. The plugin reads Eleventy's own [`pathPrefix`](https://www.11ty.dev/docs/config/#deploy-to-a-subdirectory-with-a-path-prefix) at plugin-registration time and uses it as the URL prefix for `<is-land import="...">` and for the `is-land` entry in the injected import map.
+There is no `urlPrefix` option. The plugin reads Eleventy's own [`pathPrefix`](https://www.11ty.dev/docs/config/#deploy-to-a-subdirectory-with-a-path-prefix) when it executes and uses it as the URL prefix for `<is-land import="...">` and for the `is-land` entry in the injected import map. Eleventy 3 runs plugins after your config function returns, so a `pathPrefix` declared in the config return object (or via the CLI `--pathprefix`) is already visible to the plugin.
 
 - Default deployment (site served at `/`): `pathPrefix: "/"` → `<is-land import="/foo.client.js">`
 - Sub-directory deployment (e.g. GitHub Pages at `https://user.github.io/my-site/`): `pathPrefix: "/my-site/"` → `<is-land import="/my-site/foo.client.js">`
