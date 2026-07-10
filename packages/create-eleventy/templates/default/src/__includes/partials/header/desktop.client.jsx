@@ -9,20 +9,40 @@ function MenuList(props) {
   const handleTransitionStart = () => open && setVisible(true);
   const handleTransitionEnd = () => !open && setVisible(false);
   const ref = useRef(null);
+  const buttonRef = useRef(null);
+  const slug = `${slugify(props.item.name)}-${props.index}`;
   useEffect(() => {
-    const handler = (e) => {
-      if (!ref.current || ref.current.contains(e.target)) return;
+    if (!open) return;
+    const clickHandler = (e) => {
+      if (ref.current?.contains(e.target)) return;
       setOpen(false);
     };
-    document.addEventListener("click", handler);
-    return () => document.removeEventListener("click", handler);
-  }, [ref.current, setOpen]);
+    const keyHandler = (e) => {
+      if (e.key !== "Escape") return;
+      if (!ref.current?.contains(e.target)) return;
+      setOpen(false);
+      buttonRef.current?.focus();
+    };
+    document.addEventListener("click", clickHandler);
+    document.addEventListener("keydown", keyHandler);
+    return () => {
+      document.removeEventListener("click", clickHandler);
+      document.removeEventListener("keydown", keyHandler);
+    };
+  }, [open]);
   return (
-    <div role="presentation" ref={ref}>
+    <div
+      ref={ref}
+      onFocusOut={(e) => {
+        if (ref.current?.contains(e.relatedTarget)) return;
+        setOpen(false);
+      }}
+    >
       <button
-        id={`nav-button-${slugify(props.item.name)}`}
-        aria-haspopup="menu"
-        aria-controls={`nav-menu-${slugify(props.item.name)}`}
+        id={`nav-button-${slug}`}
+        ref={buttonRef}
+        aria-controls={`nav-menu-${slug}`}
+        aria-expanded={open}
         class="jumpu-text-button"
         type="button"
         onClick={() => setOpen(!open)}
@@ -30,9 +50,8 @@ function MenuList(props) {
         {props.item.name}
       </button>
       <ul
-        id={`nav-menu-${slugify(props.item.name)}`}
-        role="menu"
-        aria-labelledby={`nav-button-${slugify(props.item.name)}`}
+        id={`nav-menu-${slug}`}
+        aria-labelledby={`nav-button-${slug}`}
         class={twMerge(
           "jumpu-card absolute top-full left-1/2 max-h-[50vh] -translate-x-1/2 overflow-y-auto p-2",
           "translate-y-2 transition duration-75 ease-in-out",
@@ -55,9 +74,9 @@ function Desktop(props) {
         {props.nav.map((item, itemIndex) =>
           "children" in item ? (
             <li key={`${item.name}-${itemIndex}`} class="relative">
-              <MenuList item={item}>
+              <MenuList item={item} index={itemIndex}>
                 {item.children.map((child, childIndex) => (
-                  <li key={`${child.name}-${childIndex}`} role="menuitem">
+                  <li key={`${child.name}-${childIndex}`}>
                     <a
                       class="jumpu-text-button w-full whitespace-nowrap"
                       href={child.path}

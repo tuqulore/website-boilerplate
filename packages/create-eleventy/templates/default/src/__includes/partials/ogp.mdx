@@ -1,6 +1,10 @@
 import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
 
 <meta
+  name="description"
+  content={eleventy.description ?? eleventy.site.description}
+/>
+<meta
   property="og:description"
   content={eleventy.description ?? eleventy.site.description}
 />
@@ -9,10 +13,11 @@ import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
 <meta property="og:type" content="website" />
 <meta
   property="og:url"
-  content={new URL(eleventy.site.url).origin.concat(eleventy.page.url)}
+  content={new URL(eleventy.page.url, eleventy.site.url).href}
 />
 <meta
   property="og:image"
-  content={new URL(eleventy.site.url).origin.concat(eleventy.ogp ?? "ogp.png")}
+  content={new URL(eleventy.ogp ?? "/ogp.png", eleventy.site.url).href}
 />
-<meta property="twitter:card" content="summary" />
+<meta property="og:image:alt" content={eleventy.title ?? eleventy.site.name} />
+<meta name="twitter:card" content="summary" />

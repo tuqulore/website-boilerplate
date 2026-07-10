@@ -23,7 +23,7 @@ export default defineConfig([
     files: ["**/*.cjs", "*.js", "src/_data/**/*.js"],
     languageOptions: { globals: globals.node },
   },
-  react.configs.flat.recommended,
+  { ...react.configs.flat.recommended, files: ["**/*.{jsx,mdx}"] },
   {
     files: ["**/*.{jsx,mdx}"],
     plugins: { react },
@@ -35,6 +35,13 @@ export default defineConfig([
         ...globals.serviceworker,
         ...globals.browser,
       },
+    },
+    settings: {
+      // NOTE: 本テンプレートは Preact 処理系だが、eslint-plugin-react の
+      // JSX 構文ルール (jsx-key など) を流用したい。version 未指定だと
+      // "React version not specified" 警告が出るので、Preact 10 の JSX
+      // runtime が API 互換な React 18 系をスタブとして与えて抑制する。
+      react: { version: "18.3.0" },
     },
     rules: {
       "react/jsx-uses-react": "off",

@@ -5,11 +5,15 @@ function Clicker() {
   const [counter, setCounter] = useState(0);
 
   return (
-    <div>
-      <button class="jumpu-button" onClick={() => setCounter(counter + 1)}>
+    <div class="flex items-center gap-4">
+      <button
+        type="button"
+        class="jumpu-button"
+        onClick={() => setCounter(counter + 1)}
+      >
         Count
       </button>
-      <p>{counter}</p>
+      <output class="text-xl tabular-nums">{counter}</output>
     </div>
   );
 }

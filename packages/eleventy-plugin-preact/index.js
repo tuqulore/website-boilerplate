@@ -40,7 +40,15 @@ export default function (eleventyConfig) {
       return async function (data) {
         return _runWithEleventyData(data, async () => {
           const content = await this.defaultRenderer(data);
-          return render(jsx(content.type, content.props, content.key));
+          const html = render(
+            jsx(content.type, content.props, content.key),
+          ).trimStart();
+          // NOTE: preact-render-to-string does not emit a DOCTYPE, so full-page
+          // outputs land in quirks mode. Prepend only when the render actually
+          // starts with <html> to leave partial / island renders untouched.
+          // trimStart しているのは MDX/JSX の出力先頭に改行や BOM 等の空白が
+          // 混ざり得るためで、その影響で startsWith 判定が外れないようにする。
+          return html.startsWith("<html") ? `<!doctype html>${html}` : html;
         });
       };
     },

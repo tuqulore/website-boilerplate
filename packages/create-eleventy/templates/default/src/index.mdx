@@ -3,17 +3,22 @@ import Clicker from "./clicker.client.jsx";
 
 export const data = {
   layout: "post",
-  title: "Hello World",
+  title: "ようこそ",
 };
 
-# Hello World
+# ようこそ
 
-## Hello World
+これは default テンプレートのスターターページです。`src/index.mdx` を編集して、実際のコンテンツに置き換えてください。
 
-### Hello World
+## 含まれているもの
 
-#### Hello World
+- Eleventy + Preact + Tailwind CSS
+- MDX で書けるレイアウト・ページ
+- `.client.jsx` 命名によるパーシャルハイドレーション
+- Tailwind Typography による Markdown スタイル
 
-Hello World
+## Partial Hydration サンプル
+
+以下のカウンターは Preact コンポーネントで、初回操作時にクライアント側でハイドレーションされます。
 
 <Island component={Clicker} on="interaction" />

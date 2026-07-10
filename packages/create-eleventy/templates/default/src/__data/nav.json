@@ -1,15 +1,12 @@
 [
   {
-    "name": "Group Menu",
+    "name": "Group A",
     "children": [
-      { "name": "Menu", "path": "/" },
-      { "name": "Menu", "path": "/" },
-      { "name": "Menu", "path": "/" },
-      { "name": "Menu", "path": "/" },
-      { "name": "Menu", "path": "/" },
-      { "name": "Menu", "path": "/" }
+      { "name": "Item A-1", "path": "/" },
+      { "name": "Item A-2", "path": "/" },
+      { "name": "Item A-3", "path": "/" }
     ]
   },
-  { "name": "Menu", "path": "/" },
-  { "name": "Menu", "path": "/" }
+  { "name": "Item B", "path": "/" },
+  { "name": "Item C", "path": "/" }
 ]
