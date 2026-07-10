@@ -12,8 +12,9 @@ function MenuList(props) {
   const buttonRef = useRef(null);
   const slug = `${slugify(props.item.name)}-${props.index}`;
   useEffect(() => {
+    if (!open) return;
     const clickHandler = (e) => {
-      if (!ref.current || ref.current.contains(e.target)) return;
+      if (ref.current?.contains(e.target)) return;
       setOpen(false);
     };
     const keyHandler = (e) => {
@@ -28,7 +29,7 @@ function MenuList(props) {
       document.removeEventListener("click", clickHandler);
       document.removeEventListener("keydown", keyHandler);
     };
-  }, []);
+  }, [open]);
   return (
     <div
       ref={ref}
