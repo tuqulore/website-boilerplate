@@ -24,17 +24,17 @@ function Mobile(props) {
         ref={openButtonRef}
         aria-controls="nav-menu-mobile"
         aria-expanded={open}
-        aria-label="Open navigation menu"
+        aria-label={
+          open ? "Close navigation menu" : "Open navigation menu"
+        }
         class="jumpu-icon-button h-12 w-12 text-2xl"
         type="button"
         onClick={() => setOpen((v) => !v)}
       >
         <span class="icon-[material-symbols--menu]"></span>
       </button>
-      <div
+      <nav
         id="nav-menu-mobile"
-        role="dialog"
-        aria-modal="true"
         aria-label="Global navigation"
         inert={!open}
         class={twMerge(
@@ -55,36 +55,34 @@ function Mobile(props) {
         >
           <span class="icon-[material-symbols--close]"></span>
         </button>
-        <nav>
-          <ul class="flex flex-col px-4 py-16">
-            {props.nav.map((item, itemIndex) => (
-              <li key={`${item.name}-${itemIndex}`}>
-                {item.children && (
-                  <div class="mb-6" role="group" aria-label={item.name}>
-                    <p class="mb-2 ml-4 text-lg" aria-hidden="true">
-                      {item.name}
-                    </p>
-                    <ul>
-                      {item.children.map((child, childIndex) => (
-                        <li key={`${child.name}-${childIndex}`}>
-                          <a class="jumpu-text-button block" href={child.path}>
-                            {child.name}
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {item.path && (
-                  <a class="jumpu-text-button block" href={item.path}>
+        <ul class="flex flex-col px-4 py-16">
+          {props.nav.map((item, itemIndex) => (
+            <li key={`${item.name}-${itemIndex}`}>
+              {item.children && (
+                <div class="mb-6" role="group" aria-label={item.name}>
+                  <p class="mb-2 ml-4 text-lg" aria-hidden="true">
                     {item.name}
-                  </a>
-                )}
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </div>
+                  </p>
+                  <ul>
+                    {item.children.map((child, childIndex) => (
+                      <li key={`${child.name}-${childIndex}`}>
+                        <a class="jumpu-text-button block" href={child.path}>
+                          {child.name}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {item.path && (
+                <a class="jumpu-text-button block" href={item.path}>
+                  {item.name}
+                </a>
+              )}
+            </li>
+          ))}
+        </ul>
+      </nav>
     </div>
   );
 }
