@@ -2,15 +2,15 @@ import module from "node:module";
 import url from "node:url";
 import render from "preact-render-to-string";
 import { jsx } from "preact/jsx-runtime";
-import { _runWithEleventyData } from "./eleventy.mjs";
+import { _runWithEleventyData } from "./eleventy.js";
 
 // Register Node.js loaders for JSX/MDX support
 module.register(
-  import.meta.resolve("./loaders/mdx.mjs"),
+  import.meta.resolve("./loaders/mdx.js"),
   url.pathToFileURL("./"),
 );
 module.register(
-  import.meta.resolve("./loaders/jsx.mjs"),
+  import.meta.resolve("./loaders/jsx.js"),
   url.pathToFileURL("./"),
 );
 

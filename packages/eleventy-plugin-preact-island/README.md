@@ -26,7 +26,7 @@ npm install -D @11ty/eleventy preact @tuqulore-inc/eleventy-plugin-preact-island
 ## Usage
 
 ```javascript
-// eleventy.config.mjs
+// eleventy.config.js
 import preactIsland from "@tuqulore-inc/eleventy-plugin-preact-island";
 
 export default function (eleventyConfig) {

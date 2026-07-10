@@ -17,10 +17,10 @@
   "author": "tuqulore inc.",
   "type": "module",
   "bin": {
-    "create-eleventy": "./index.mjs"
+    "create-eleventy": "./index.js"
   },
   "files": [
-    "index.mjs",
+    "index.js",
     "templates"
   ],
   "scripts": {

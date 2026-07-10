@@ -3,7 +3,7 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 RUN corepack enable
 RUN pnpm install --frozen-lockfile
-COPY postcss.config.mjs eleventy.config.mjs .env* ./
+COPY postcss.config.js eleventy.config.js .env* ./
 COPY src/ ./src
 COPY lib/ ./lib
 RUN pnpm build
@@ -17,8 +17,8 @@ RUN pnpm install --frozen-lockfile
 FROM gcr.io/distroless/nodejs:18@sha256:b534f9b5528e69baa7e8caf7bcc1d93ecf59faa15d289221decf5889a2ed3877
 WORKDIR /app
 ENV NODE_ENV=production
-COPY serve.mjs ./
+COPY serve.js ./
 COPY --from=build /app/dist ./dist
 COPY --from=install /app/node_modules ./node_modules
 
-CMD ["serve.mjs"]
+CMD ["serve.js"]

@@ -8,7 +8,7 @@ import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const cli = path.join(here, "index.mjs");
+const cli = path.join(here, "index.js");
 const templatesDir = path.join(here, "templates");
 const workspaceRoot = path.resolve(here, "..", "..");
 
@@ -177,7 +177,7 @@ describe("create-eleventy templates", { concurrency: true }, () => {
           // も回帰検知できるよう、生成物の実在と HTML 内の import URL を検証する。
           if (template === "default") {
             // CLI が `__prefix` を `_prefix` にリネームするため、build 出力上は
-            // `_includes/**` に落ちる (index.mjs L84-89 を参照)。
+            // `_includes/**` に落ちる (index.js L84-89 を参照)。
             const expectedBundles = [
               "clicker.client.js",
               "_includes/partials/header/desktop.client.js",

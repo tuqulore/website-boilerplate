@@ -2,11 +2,7 @@ import { describe, it, beforeEach } from "node:test";
 import assert from "node:assert";
 import { h } from "preact";
 import { render } from "preact-render-to-string";
-import {
-  Island,
-  clientComponent,
-  _setClientModuleResolver,
-} from "./island.mjs";
+import { Island, clientComponent, _setClientModuleResolver } from "./island.js";
 
 describe("_setClientModuleResolver", () => {
   it("関数を渡せる", () => {

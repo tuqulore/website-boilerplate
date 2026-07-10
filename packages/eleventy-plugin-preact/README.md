@@ -13,7 +13,7 @@ npm install -D @11ty/eleventy @tuqulore-inc/eleventy-plugin-preact preact
 ## Usage
 
 ```javascript
-// eleventy.config.mjs
+// eleventy.config.js
 import preact from "@tuqulore-inc/eleventy-plugin-preact";
 
 export default function (eleventyConfig) {

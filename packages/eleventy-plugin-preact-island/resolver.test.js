@@ -2,7 +2,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert";
 import path from "node:path";
 import url from "node:url";
-import { createClientModuleResolver } from "./resolver.mjs";
+import { createClientModuleResolver } from "./resolver.js";
 
 // Absolute inputDir values keep tests independent of the runner's cwd (the
 // resolver `path.resolve`s inputDir, so module URLs must fall under the

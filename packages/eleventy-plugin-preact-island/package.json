@@ -20,22 +20,22 @@
   "exports": {
     ".": {
       "types": "./index.d.ts",
-      "default": "./index.mjs"
+      "default": "./index.js"
     },
     "./island": {
       "types": "./island.d.ts",
-      "default": "./island.mjs"
+      "default": "./island.js"
     }
   },
-  "main": "./index.mjs",
+  "main": "./index.js",
   "files": [
     "README.md",
     "index.d.ts",
-    "index.mjs",
+    "index.js",
     "island.d.ts",
-    "island.mjs",
+    "island.js",
     "resolver.d.ts",
-    "resolver.mjs"
+    "resolver.js"
   ],
   "scripts": {
     "lint": "eslint --fix .",

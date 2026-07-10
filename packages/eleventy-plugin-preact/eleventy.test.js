@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert";
-import { eleventy, _runWithEleventyData } from "./eleventy.mjs";
+import { eleventy, _runWithEleventyData } from "./eleventy.js";
 
 describe("eleventy singleton", () => {
   describe("SSRコンテキスト内でのデータアクセス", () => {

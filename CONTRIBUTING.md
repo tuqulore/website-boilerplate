@@ -43,7 +43,7 @@ CI（`.github/workflows/ci.yaml`）は `pnpm lint` → `pnpm -r test` → 整形
 
 ### 手動テストの目的
 
-自動テスト (`packages/create-eleventy/templates.test.mjs`) は「scaffold できる／install & build が正常に完了する」といったリグレッション検知が目的です。手動テストはそれとは別で、**テンプレートとエコシステムの利用体験**を触って確かめることが目的です。具体的には次のような観点を、実際にコードを触りブラウザで見て判断します。
+自動テスト (`packages/create-eleventy/templates.test.js`) は「scaffold できる／install & build が正常に完了する」といったリグレッション検知が目的です。手動テストはそれとは別で、**テンプレートとエコシステムの利用体験**を触って確かめることが目的です。具体的には次のような観点を、実際にコードを触りブラウザで見て判断します。
 
 - 生成物が「そのまま開発を始められる最小構成」になっているか
 - CLI の対話・ヘルプ・エラーメッセージが分かりやすいか
@@ -55,7 +55,7 @@ CI（`.github/workflows/ci.yaml`）は `pnpm lint` → `pnpm -r test` → 整形
 
 ### 現ブランチのソースを差し込むセットアップ
 
-`packages/create-eleventy/templates/*` は生成後の `package.json` から `@tuqulore-inc/eleventy-preset: ^4.1.0` のように **公開済みバージョンへの依存として** プリセットを参照します。素の `pnpm install` では npm レジストリの公開版が解決されるため、現ブランチのワークスペースパッケージに加えた変更を触って確かめるには `pnpm pack` した tarball を `pnpm.overrides` で差し込む必要があります。仕組みの詳細は `packages/create-eleventy/templates.test.mjs` を参照してください。
+`packages/create-eleventy/templates/*` は生成後の `package.json` から `@tuqulore-inc/eleventy-preset: ^4.1.0` のように **公開済みバージョンへの依存として** プリセットを参照します。素の `pnpm install` では npm レジストリの公開版が解決されるため、現ブランチのワークスペースパッケージに加えた変更を触って確かめるには `pnpm pack` した tarball を `pnpm.overrides` で差し込む必要があります。仕組みの詳細は `packages/create-eleventy/templates.test.js` を参照してください。
 
 以下のスクリプトをリポジトリルートで `bash` として実行すると、`$WORK/my-app` に「現ブランチのソースを差し込んだ scaffold 済みプロジェクト」ができ、`pnpm install` まで済んだ状態になります。後片付けは手動で行います（動作確認中に消えると困るため）。
 
@@ -88,7 +88,7 @@ done
 
 # CLI で WORK 配下へ scaffold する。CLI は cwd に作るのでサブシェルで cd してから叩く。
 # 対話 UI や --help の体験も確認したい場合はここで別途手で叩き直すこと。
-(cd "$WORK" && node "$REPO/packages/create-eleventy/index.mjs" my-app --template default)
+(cd "$WORK" && node "$REPO/packages/create-eleventy/index.js" my-app --template default)
 
 # WORK を単独ワークスペース化して pnpm-workspace.yaml に overrides を書き出す。
 # - overrides は transitive にも効くので、テンプレートが直接依存していないプラグイン群も一括で差し替わる。
@@ -122,7 +122,7 @@ echo "後片付け: rm -r \"$WORK\" \"$PACK\""
 
 `$WORK/my-app` および CLI そのものに対して、以下を実際に操作して確認します。
 
-**CLI の使用体験**（`packages/create-eleventy/index.mjs`）
+**CLI の使用体験**（`packages/create-eleventy/index.js`）
 
 - `--help` の出力が意図通りに読めるか
 - プロジェクト名／テンプレート名を省略した場合の対話プロンプトが分かりやすいか

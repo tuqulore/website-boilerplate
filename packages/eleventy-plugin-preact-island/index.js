@@ -1,8 +1,8 @@
 import url from "node:url";
 import * as esbuild from "esbuild";
 import fg from "fast-glob";
-import { _setClientModuleResolver } from "./island.mjs";
-import { createClientModuleResolver, normalizeUrlPrefix } from "./resolver.mjs";
+import { _setClientModuleResolver } from "./island.js";
+import { createClientModuleResolver, normalizeUrlPrefix } from "./resolver.js";
 
 /**
  * Eleventy plugin for Preact partial hydration with is-land.

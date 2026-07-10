@@ -11,7 +11,7 @@ npm install -D @11ty/eleventy @tuqulore-inc/eleventy-preset preact postcss
 ## Usage
 
 ```javascript
-// eleventy.config.mjs
+// eleventy.config.js
 import preset from "@tuqulore-inc/eleventy-preset";
 
 export default preset();
@@ -20,7 +20,7 @@ export default preset();
 ### With Custom Configuration
 
 ```javascript
-// eleventy.config.mjs
+// eleventy.config.js
 import preset from "@tuqulore-inc/eleventy-preset";
 
 export default preset((eleventyConfig) => {
@@ -189,7 +189,7 @@ import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
 Data files in `src/_data/` are available via the `eleventy` singleton:
 
 ```javascript
-// src/_data/site.mjs
+// src/_data/site.js
 export default {
   name: "Site Name",
   description: "Site Description",

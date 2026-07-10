@@ -2,8 +2,8 @@ import { describe, it } from "node:test";
 import assert from "node:assert";
 import { h } from "preact";
 import { render } from "preact-render-to-string";
-import preactIsland from "./index.mjs";
-import { Island, clientComponent } from "./island.mjs";
+import preactIsland from "./index.js";
+import { Island, clientComponent } from "./island.js";
 
 /**
  * Minimal UserConfig stub carrying only what the plugin actually reads.
