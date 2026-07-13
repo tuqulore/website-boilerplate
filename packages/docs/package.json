@@ -3,7 +3,7 @@
   "version": "5.0.2-alpha.0",
   "private": true,
   "type": "module",
-  "description": "@tuqulore-inc/website-boilerplate の公式ドキュメントサイト",
+  "description": "tuqulore による Website Boilerplate のドキュメントサイト",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tuqulore/website-boilerplate.git",

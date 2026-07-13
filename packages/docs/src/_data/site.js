@@ -6,8 +6,8 @@ if (!process.env.SITE_URL) {
 
 export default {
   description:
-    "@tuqulore-inc/website-boilerplate の公式ドキュメント。Getting Started、設計思想、応用ケース、ロードマップを日英で提供する。",
-  name: "@tuqulore-inc docs",
+    "Website を構築するときに便利な設計と実装のセット。tuqulore が現場で蓄えたものをボイラープレートとしてまとめ、公開しています。",
+  name: "Website Boilerplate",
   url: process.env.SITE_URL,
   author: "tuqulore inc.",
 };
