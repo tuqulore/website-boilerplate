@@ -2,7 +2,11 @@
 
 Eleventy plugin for Preact server-side rendering with JSX/MDX support.
 
-This plugin enables you to use JSX and MDX files as Eleventy templates, rendering Preact components to HTML on the server.
+This plugin registers `.jsx` and `.mdx` as Eleventy template formats and renders them to HTML with Preact.
+
+## Documentation
+
+The design rationale (why Preact, why MDX, layout chaining) lives at [Plugins / eleventy-plugin-preact](https://website.tuqulore.pages.dev/en/plugins/eleventy-plugin-preact/). The writing conventions (`export const data`, `layout`, the `eleventy` singleton) live at [Preset Conventions](https://website.tuqulore.pages.dev/en/preset/).
 
 ## Installation
 
@@ -23,60 +27,21 @@ export default function (eleventyConfig) {
 
 ## What it does
 
-1. **Adds JSX/MDX template formats** - Use `.jsx` and `.mdx` files as Eleventy templates
-2. **Server-side rendering** - Renders Preact components to HTML using `preact-render-to-string`
-3. **Registers Node.js loaders** for JSX/MDX at module load time
+1. Adds `.jsx` and `.mdx` as Eleventy template formats.
+2. Renders Preact components to HTML with `preact-render-to-string`.
+3. Registers Node.js loaders for JSX and MDX at module load time.
 
-Client-side bundling and partial hydration are the responsibility of a companion package — see [With Partial Hydration](#with-partial-hydration) below.
+Client-side bundling and Partial Hydration are handled by [@tuqulore-inc/eleventy-plugin-preact-island](../eleventy-plugin-preact-island). Register the two side by side, or use [@tuqulore-inc/eleventy-preset](../eleventy-preset), which composes both.
 
-## Eleventy Data Access
+## API
 
-This plugin provides a singleton object for accessing Eleventy data from any template or component during SSR, without prop drilling.
+### `import preact from "@tuqulore-inc/eleventy-plugin-preact"`
 
-### Usage
+The Eleventy plugin factory. Register with `eleventyConfig.addPlugin(preact)`.
 
-```jsx
-import { eleventy } from "@tuqulore-inc/eleventy-plugin-preact/eleventy";
+### `import { eleventy } from "@tuqulore-inc/eleventy-plugin-preact/eleventy"`
 
-// In layout
-<title>{eleventy.title} | {eleventy.site.name}</title>
-
-// In partials (no need to pass props)
-<footer>&copy; {eleventy.site.author}</footer>
-```
-
-### Available Data
-
-| Property                                       | Description                               |
-| ---------------------------------------------- | ----------------------------------------- |
-| `eleventy.content`                             | Rendered HTML from child template         |
-| `eleventy.title`, `eleventy.description`, etc. | Values from `data` export or front matter |
-| `eleventy.site`, `eleventy.nav`, etc.          | Global data from `_data/` directory       |
-| `eleventy.page`                                | Eleventy page data (url, date, etc.)      |
-
-### Important Notes
-
-- The `eleventy` singleton is only available during SSR. Accessing it outside of SSR context will throw an error.
-- For hydrated components, use `<Island>` from `@tuqulore-inc/eleventy-plugin-preact-island/island`, which forwards the passed props to both the SSR render and the client hydration; the `eleventy` singleton itself is not available on the client.
-
-## With Partial Hydration
-
-For partial hydration, use this plugin together with `@tuqulore-inc/eleventy-plugin-preact-island`. The Island plugin owns client-side bundling (`*.client.jsx`), the Eleventy ignore rule, and the SSR-to-browser URL resolver — this plugin only does SSR.
-
-```javascript
-import preact from "@tuqulore-inc/eleventy-plugin-preact";
-import preactIsland from "@tuqulore-inc/eleventy-plugin-preact-island";
-
-export default function (eleventyConfig) {
-  // Server-side rendering (no options)
-  eleventyConfig.addPlugin(preact);
-
-  // Partial hydration + client bundle + URL resolver (single source of truth).
-  // Zero-config: it rides on Eleventy's input/output directories, the
-  // `.client.{js,jsx,ts,tsx}` convention, and Eleventy's own `pathPrefix`.
-  eleventyConfig.addPlugin(preactIsland);
-}
-```
+The SSR-side singleton. Exposes `content`, `title`, `description`, `site`, `nav`, `page`, and any other data provided by Eleventy. Available only during SSR; not accessible from client-hydrated components. See [Preset Conventions / Data Access](https://website.tuqulore.pages.dev/en/preset/data-access/) for details.
 
 ## Requirements
 

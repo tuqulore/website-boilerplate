@@ -2,6 +2,10 @@
 
 Eleventy plugin for processing CSS with PostCSS.
 
+## Documentation
+
+The design rationale (why an independent plugin, `contentGlob` and Tailwind dependency tracking, applying Tailwind CSS) lives at [Plugins / eleventy-plugin-postcss](https://website.tuqulore.pages.dev/en/plugins/eleventy-plugin-postcss/).
+
 ## Installation
 
 ```bash
@@ -21,7 +25,7 @@ export default function (eleventyConfig) {
 }
 ```
 
-This plugin requires a PostCSS configuration file (`postcss.config.js`) in your project root:
+A PostCSS configuration file (`postcss.config.js`) at the project root is required:
 
 ```javascript
 // postcss.config.js
@@ -32,16 +36,18 @@ export default {
 };
 ```
 
-## Options
+## API
 
-### `contentGlob`
+### Plugin options
+
+#### `contentGlob`
 
 - Type: `string | string[]`
 - Default: `[]`
 
-Glob patterns for files to track as dependencies. When any of these files change, the CSS will be rebuilt. This is useful for TailwindCSS which scans content files for class names.
+Glob patterns for files to track as CSS dependencies. When any matching file changes, the CSS is rebuilt. Useful for Tailwind CSS, which scans templates for class names.
 
-When using `contentGlob`, you should also configure `setServerOptions` to watch the generated CSS files for dev server reload:
+When using `contentGlob`, also configure `setServerOptions` so the dev server reloads the browser after CSS regeneration:
 
 ```javascript
 eleventyConfig.addPlugin(postcss, {
@@ -52,12 +58,12 @@ eleventyConfig.setServerOptions({
 });
 ```
 
-### `skip`
+#### `skip`
 
 - Type: `(inputPath: string) => boolean`
 - Default: `undefined`
 
-Predicate invoked for each CSS template file. When it returns `true`, processing and output of that file are skipped. Useful for excluding partials or files handled by another pipeline (e.g., `@import`ed fragments).
+Predicate called for each CSS template. Return `true` to skip processing and output. Useful for `@import`ed fragments or CSS handled by another pipeline.
 
 ```javascript
 eleventyConfig.addPlugin(postcss, {
