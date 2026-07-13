@@ -60,13 +60,44 @@ The build output. You do not edit this by hand — it is in `.gitignore` and get
 
 Files under `src/` follow these naming rules.
 
-| Extension          | Behavior                                       |
-| ------------------ | ---------------------------------------------- |
-| `.mdx`             | Page template: Markdown mixed with JSX         |
-| `.jsx`             | JSX template or partial                        |
-| `.client.jsx` etc. | Client-side components (Islands)               |
-| `.css`             | Stylesheet processed by PostCSS                |
-| Others             | Handled by Eleventy defaults or passed through |
+<table>
+  <thead>
+    <tr>
+      <th>Extension</th>
+      <th>Behavior</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <code>.mdx</code>
+      </td>
+      <td>Page template: Markdown mixed with JSX</td>
+    </tr>
+    <tr>
+      <td>
+        <code>.jsx</code>
+      </td>
+      <td>JSX template or partial</td>
+    </tr>
+    <tr>
+      <td>
+        <code>.client.jsx</code> etc.
+      </td>
+      <td>Client-side components (Islands)</td>
+    </tr>
+    <tr>
+      <td>
+        <code>.css</code>
+      </td>
+      <td>Stylesheet processed by PostCSS</td>
+    </tr>
+    <tr>
+      <td>Others</td>
+      <td>Handled by Eleventy defaults or passed through</td>
+    </tr>
+  </tbody>
+</table>
 
 Files with the `.client.` sub-extension (`.client.js`, `.client.jsx`, `.client.ts`, `.client.tsx`) are:
 

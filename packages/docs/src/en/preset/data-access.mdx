@@ -32,13 +32,58 @@ import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
 
 ## What is on the singleton
 
-| Property                                       | Description                                                                                                          |
-| ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `eleventy.content`                             | Rendered HTML of the child template                                                                                  |
-| `eleventy.title`, `eleventy.description`, etc. | Values from the current page's `export const data`                                                                   |
-| `eleventy.site`, `eleventy.nav`, etc.          | Top-level keys of the global data under `_data/`                                                                     |
-| `eleventy.page`                                | Eleventy's [`page` variable](https://www.11ty.dev/docs/data-eleventy-supplied/#page-variable) (URL, date, and so on) |
-| `eleventy.locale`                              | The `locale` field from `export const data`                                                                          |
+<table>
+  <thead>
+    <tr>
+      <th>Property</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <code>eleventy.content</code>
+      </td>
+      <td>Rendered HTML of the child template</td>
+    </tr>
+    <tr>
+      <td>
+        <code>eleventy.title</code>, <code>eleventy.description</code>, etc.
+      </td>
+      <td>
+        Values from the current page&apos;s <code>export const data</code>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>eleventy.site</code>, <code>eleventy.nav</code>, etc.
+      </td>
+      <td>
+        Top-level keys of the global data under <code>_data/</code>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>eleventy.page</code>
+      </td>
+      <td>
+        Eleventy&apos;s{" "}
+        <a href="https://www.11ty.dev/docs/data-eleventy-supplied/#page-variable">
+          <code>page</code> variable
+        </a>{" "}
+        (URL, date, and so on)
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>eleventy.locale</code>
+      </td>
+      <td>
+        The <code>locale</code> field from <code>export const data</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 `eleventy.content` is where a parent layout receives its child's rendered HTML. The value is already an HTML string, so embed it via `dangerouslySetInnerHTML`. Injecting it into the JSX tree directly would re-parse the child's output on top of the parent render, paying the cost twice.
 

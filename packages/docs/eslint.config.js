@@ -44,6 +44,7 @@ export default defineConfig([
       "react/react-in-jsx-scope": "off",
       "react/prop-types": "off",
       "react/no-unknown-property": "off",
+      "react/no-unescaped-entities": "off",
     },
   },
   mdx.flat,

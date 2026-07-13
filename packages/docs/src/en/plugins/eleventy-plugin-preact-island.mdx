@@ -91,11 +91,43 @@ When in doubt, use "elements that touch the same state go into the same Island" 
 
 The `on` prop on `<Island>` picks when hydration happens.
 
-| Value         | Where it fits                                                                                         |
-| ------------- | ----------------------------------------------------------------------------------------------------- |
-| `interaction` | Wait until the user clicks or focuses. Fits most buttons and forms. This is the default.              |
-| `visible`     | Hydrate when the element scrolls into view. Fits interactive blocks lower on the page.                |
-| `idle`        | Hydrate once the browser is idle. Fits lightweight UI that has to work right after the initial paint. |
+<table>
+  <thead>
+    <tr>
+      <th>Value</th>
+      <th>Where it fits</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <code>interaction</code>
+      </td>
+      <td>
+        Wait until the user clicks or focuses. Fits most buttons and forms. This
+        is the default.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>visible</code>
+      </td>
+      <td>
+        Hydrate when the element scrolls into view. Fits interactive blocks
+        lower on the page.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>idle</code>
+      </td>
+      <td>
+        Hydrate once the browser is idle. Fits lightweight UI that has to work
+        right after the initial paint.
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 The tie-breaker is "how much time does the user actually give us before touching this Island?" — delay the ones with more slack, hydrate early only the ones that need it.
 

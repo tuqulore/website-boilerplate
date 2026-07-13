@@ -32,13 +32,58 @@ import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
 
 ## 参照できるプロパティ
 
-| プロパティ                                     | 内容                                                                                                       |
-| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `eleventy.content`                             | 子テンプレートを描画した HTML                                                                              |
-| `eleventy.title`, `eleventy.description`, etc. | `export const data` に書いた各値                                                                           |
-| `eleventy.site`, `eleventy.nav`, etc.          | グローバルデータ (`_data/` 配下) のトップレベルキー                                                        |
-| `eleventy.page`                                | Eleventy の [`page` 変数](https://www.11ty.dev/docs/data-eleventy-supplied/#page-variable) (URL、日付など) |
-| `eleventy.locale`                              | `export const data.locale` に書いた値                                                                      |
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>内容</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <code>eleventy.content</code>
+      </td>
+      <td>子テンプレートを描画した HTML</td>
+    </tr>
+    <tr>
+      <td>
+        <code>eleventy.title</code>, <code>eleventy.description</code>, etc.
+      </td>
+      <td>
+        <code>export const data</code> に書いた各値
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>eleventy.site</code>, <code>eleventy.nav</code>, etc.
+      </td>
+      <td>
+        グローバルデータ (<code>_data/</code> 配下) のトップレベルキー
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>eleventy.page</code>
+      </td>
+      <td>
+        Eleventy の{" "}
+        <a href="https://www.11ty.dev/docs/data-eleventy-supplied/#page-variable">
+          <code>page</code> 変数
+        </a>{" "}
+        (URL、日付など)
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>eleventy.locale</code>
+      </td>
+      <td>
+        <code>export const data.locale</code> に書いた値
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 `eleventy.content` は親レイアウトが子の描画結果を受け取るための箱です。中身は既に HTML 文字列なので、`dangerouslySetInnerHTML` で埋め込みます。JSX ツリーに直接埋めると再描画のコストを二重に払う形になります。
 
