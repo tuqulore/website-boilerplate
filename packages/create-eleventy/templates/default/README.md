@@ -119,11 +119,11 @@ Eleventyテンプレートの参照先です。
 ```jsx
 // src/counter.client.jsx
 import { clientComponent } from "@tuqulore-inc/eleventy-preset/island";
-import { useState } from "preact/hooks";
+import { useSignal } from "@preact/signals";
 
 function Counter(props) {
-  const [n, setN] = useState(props.initial ?? 0);
-  return <button onClick={() => setN(n + 1)}>{n}</button>;
+  const n = useSignal(props.initial ?? 0);
+  return <button onClick={() => n.value++}>{n}</button>;
 }
 
 export default clientComponent(Counter, import.meta.url);

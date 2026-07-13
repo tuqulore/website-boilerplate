@@ -1,8 +1,56 @@
+import { readFileSync } from "node:fs";
+import { createRequire } from "node:module";
+import { dirname, join } from "node:path";
 import url from "node:url";
 import * as esbuild from "esbuild";
 import fg from "fast-glob";
 import { _setClientModuleResolver } from "./island.js";
 import { createClientModuleResolver, normalizeUrlPrefix } from "./resolver.js";
+
+const require = createRequire(import.meta.url);
+
+// esm.sh の import map URL を、ホスト側にインストール済のバージョンで自動 pin
+// するための解決子。preact / devalue のように SSR 側 (Node) と クライアント側
+// (CDN) の 2 面で同じ package が要る依存を「同一バージョンで動かす」ための共通
+// 基盤。プロセス中に実体が入れ替わることは無いのでモジュールロード時に対象を
+// 決めておく (プラグイン関数からは戻り値を参照するだけ)。
+//
+// 解決経路は 2 段構え:
+//   1. `require("<name>/package.json")` — `./package.json` を exports に
+//      公開している package (preact 等) はこれで 1 回で取れる。
+//   2. entry パスから package.json を上方向に辿る — devalue 5.x のように
+//      exports で `./package.json` を出していない package のフォールバック。
+//      ルート到達 (`dirname(dir) === dir`) で終端。
+// どちらも失敗するのは、peer が意図的に入っていない (bundle: false 運用等) か、
+// npm hoisting が意図せぬ配置になった場合。呼び出し側で latest フォールバック
+// + 警告に切り替える。
+const resolveInstalledPackageVersion = (name) => {
+  try {
+    return require(`${name}/package.json`).version;
+  } catch {
+    // exports 制約 (ERR_PACKAGE_PATH_NOT_EXPORTED) 等: entry から辿る。
+  }
+  try {
+    let dir = dirname(url.fileURLToPath(import.meta.resolve(name)));
+    while (true) {
+      try {
+        const pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf8"));
+        if (pkg.name === name && typeof pkg.version === "string") {
+          return pkg.version;
+        }
+      } catch {
+        // このディレクトリには package.json が無い、または JSON parse 失敗。
+      }
+      const parent = dirname(dir);
+      if (parent === dir) return null;
+      dir = parent;
+    }
+  } catch {
+    return null;
+  }
+};
+const installedPreactVersion = resolveInstalledPackageVersion("preact");
+const installedDevalueVersion = resolveInstalledPackageVersion("devalue");
 
 /**
  * Eleventy plugin for Preact partial hydration with is-land.
@@ -22,7 +70,15 @@ import { createClientModuleResolver, normalizeUrlPrefix } from "./resolver.js";
  *
  * @param {import("@11ty/eleventy").UserConfig} eleventyConfig
  * @param {Object} [pluginOptions]
- * @param {string} [pluginOptions.preactVersion] - Preact version for esm.sh CDN
+ * @param {string} [pluginOptions.preactVersion] - Override the Preact version
+ *   used in the esm.sh CDN URL. Defaults to the version of `preact` installed
+ *   in the host project (auto-detected from `preact/package.json`). Set this
+ *   only to force the CDN side to a different version than the installed one.
+ * @param {string} [pluginOptions.devalueVersion] - Override the devalue version
+ *   used in the esm.sh CDN URL. Defaults to the version of `devalue` bundled
+ *   with this plugin (auto-detected from `devalue/package.json`) so the
+ *   SSR-side `stringify` and the client-side `parse` come from the same
+ *   version. Set this only to force the CDN side to a different version.
  * @param {boolean} [pluginOptions.bundle=true] - Bundle client entries with
  *   esbuild. Set to `false` to bring your own bundler; the ignore rule,
  *   resolver wiring, is-land.js copy, and script injection stay active.
@@ -34,7 +90,40 @@ export default function (eleventyConfig, pluginOptions = {}) {
     console.log(`[eleventy-plugin-preact-island] WARN: ${e.message}`);
   }
 
-  const { preactVersion = "", bundle = true } = pluginOptions;
+  const { preactVersion, devalueVersion, bundle = true } = pluginOptions;
+
+  // 優先順位:
+  //  1. ユーザ指定があればそれを尊重 (CDN 側だけ差し替えたい高度な用途)。
+  //  2. インストール済 preact のバージョンを自動検出できたらそれで pin。
+  //  3. どちらも無い場合は latest フォールバックにするが、SSR/CSR の
+  //     バージョンドリフトが復活するので登録時に一度だけ警告する。
+  let resolvedPreactVersion;
+  if (preactVersion) {
+    resolvedPreactVersion = preactVersion;
+  } else if (installedPreactVersion) {
+    resolvedPreactVersion = installedPreactVersion;
+  } else {
+    resolvedPreactVersion = "";
+    console.warn(
+      "[eleventy-plugin-preact-island] WARN: could not resolve the installed preact version; falling back to latest via esm.sh. Install `preact` (>=10) to pin the CDN version.",
+    );
+  }
+
+  // preactVersion と同じ優先順位ロジックで devalue も揃える。devalue は
+  // このプラグイン自身の dependency なので通常は必ず解決できるが、npm の
+  // 変な hoist などで失敗した場合は latest フォールバック + 警告で SSR/CSR
+  // ドリフトを可視化する。
+  let resolvedDevalueVersion;
+  if (devalueVersion) {
+    resolvedDevalueVersion = devalueVersion;
+  } else if (installedDevalueVersion) {
+    resolvedDevalueVersion = installedDevalueVersion;
+  } else {
+    resolvedDevalueVersion = "";
+    console.warn(
+      "[eleventy-plugin-preact-island] WARN: could not resolve the installed devalue version; falling back to latest via esm.sh. Pin explicitly with pluginOptions.devalueVersion to avoid version drift.",
+    );
+  }
 
   // Ride on Eleventy's own input/output directories (normalized, e.g. "./src/").
   const inputDir = eleventyConfig.directories.input;
@@ -85,7 +174,12 @@ export default function (eleventyConfig, pluginOptions = {}) {
       const options = {
         bundle: true,
         entryPoints,
-        external: ["preact"],
+        // NOTE: `@preact/signals` は preact の `options` オブジェクトを patch する。
+        // client bundle ごとに signals を同梱すると patch と signal graph が bundle
+        // 数ぶん複製されて Cycle detected を誤発火する。external + import map で
+        // 単一インスタンスに寄せる。`@preact/signals-core` も signals が外部参照
+        // する前提で同様に external 化する。
+        external: ["preact", "@preact/signals", "@preact/signals-core"],
         format: "esm",
         jsx: "automatic",
         jsxImportSource: "preact",
@@ -105,7 +199,10 @@ export default function (eleventyConfig, pluginOptions = {}) {
   eleventyConfig.addPassthroughCopy({
     [url.fileURLToPath(import.meta.resolve("@11ty/is-land/is-land.js"))]: "/",
   });
-  const preactSuffix = preactVersion ? `@${preactVersion}` : "";
+  const preactSuffix = resolvedPreactVersion ? `@${resolvedPreactVersion}` : "";
+  const devalueSuffix = resolvedDevalueVersion
+    ? `@${resolvedDevalueVersion}`
+    : "";
 
   const generateImportMap = () => `<script type="importmap">
 {
@@ -113,7 +210,10 @@ export default function (eleventyConfig, pluginOptions = {}) {
     "is-land": "${urlPrefix}is-land.js",
     "preact": "https://esm.sh/preact${preactSuffix}",
     "preact/hooks": "https://esm.sh/preact${preactSuffix}/hooks?external=preact",
-    "preact/jsx-runtime": "https://esm.sh/preact${preactSuffix}/jsx-runtime?external=preact"
+    "preact/jsx-runtime": "https://esm.sh/preact${preactSuffix}/jsx-runtime?external=preact",
+    "@preact/signals": "https://esm.sh/@preact/signals?external=preact,preact/hooks",
+    "@preact/signals-core": "https://esm.sh/@preact/signals-core",
+    "devalue": "https://esm.sh/devalue${devalueSuffix}"
   }
 }
 </script>`;
@@ -166,13 +266,14 @@ window.__eleventyRehydrate = () => {
     return `<script type="module">
 import { Island } from "is-land";
 import { h, hydrate } from "preact";
+import { parse } from "devalue";
 Island.attributePrefix = "land-on:";
 
 const mount = async (target) => {
   try {
     const component = await import(target.getAttribute("import"));
     const propsAttr = target.getAttribute("props");
-    const props = propsAttr ? JSON.parse(propsAttr) : {};
+    const props = propsAttr ? parse(propsAttr) : {};
     hydrate(h(component.default, props), target);
   } catch (e) {
     console.error("Failed to mount component:", e);

@@ -42,7 +42,7 @@ That's it. Author client components as `src/**/*.client.jsx` (or `.tsx` / `.js` 
 2. **Ignores** those files as Eleventy templates (they're client entries, not pages). This ignore rule is always added, independent of `bundle`.
 3. **Copies `is-land.js`** from `@11ty/is-land` to the output directory.
 4. **Injects scripts** before `</head>`:
-   - Import map for is-land and Preact (from esm.sh CDN)
+   - Import map for is-land, Preact, `@preact/signals`, and [`devalue`](https://github.com/Rich-Harris/devalue) (from esm.sh CDN). `@preact/signals` is resolved via the import map so every island bundle shares a single signals instance and preact `options` patch — bundling it per entry would replicate the patch and trip the runtime `Cycle detected` guard.
    - Development-only WebSocket hook for rehydration after hot reload
    - is-land setup script with `Island.addInitType("preact", mount)`
 5. **Wires the URL resolver** so `<Island>` on the SSR side emits the same URL the bundler produced. Client entries must use the `.client.{js,jsx,ts,tsx}` sub-extension and live under the input directory.
@@ -52,13 +52,41 @@ That's it. Author client components as `src/**/*.client.jsx` (or `.tsx` / `.js` 
 ### `preactVersion`
 
 - Type: `string`
-- Default: `""` (latest)
+- Default: auto-detected from the installed `preact` (falls back to esm.sh
+  latest with a warning if `preact` cannot be resolved)
 
-Specify the Preact version to use from esm.sh CDN.
+Normally you do not need to set this. The plugin reads the version of `preact`
+installed in your project (from `preact/package.json`) and pins the esm.sh
+import-map URLs to it, so the CDN runtime stays in sync with the SSR/bundle
+side by default.
+
+Set this only to force the CDN side to a different version than the installed
+one (e.g., an emergency rollback of the runtime without touching your
+`package.json`).
 
 ```javascript
 eleventyConfig.addPlugin(preactIsland, {
   preactVersion: "10.26.4",
+});
+```
+
+### `devalueVersion`
+
+- Type: `string`
+- Default: auto-detected from the `devalue` bundled with this plugin (falls
+  back to esm.sh latest with a warning if `devalue` cannot be resolved)
+
+Normally you do not need to set this. The plugin reads the version of `devalue`
+bundled with itself (from `devalue/package.json`) and pins the esm.sh
+import-map URL to it, so the SSR-side `devalue.stringify` and the client-side
+`devalue.parse` stay on the same version by default.
+
+Set this only to force the CDN side to a different version than the bundled
+one.
+
+```javascript
+eleventyConfig.addPlugin(preactIsland, {
+  devalueVersion: "5.8.1",
 });
 ```
 
@@ -121,25 +149,31 @@ The example renders (after resolving the import URL):
   land-on:interaction
   type="preact"
   import="/counter.client.js"
-  props='{"label":"click me"}'
+  props='[{"label":1},"click me"]'
 >
   <button>0</button>
 </is-land>
 ```
 
+The `props` attribute is serialized with [`devalue`](https://github.com/Rich-Harris/devalue), not `JSON.stringify`, so `<Island>` can pass values JSON can't represent — `Date`, `Map`, `Set`, `RegExp`, `BigInt`, `undefined`, `NaN`, `Infinity`, and cyclic references — all the way through to hydration with their native types intact. The client-side setup calls `devalue.parse` to reconstruct them.
+
 #### Props
 
-| Prop        | Type                              | Description                                                                             |
-| ----------- | --------------------------------- | --------------------------------------------------------------------------------------- |
-| `component` | `ClientComponent`                 | Component wrapped with `clientComponent()` in its `*.client.jsx` file.                  |
-| `on`        | `string` (default: `interaction`) | is-land initialization trigger. Rendered as the boolean attribute `land-on:<on>`.       |
-| ...rest     | any                               | Serialized as `props` on `<is-land>` and forwarded to the component's SSR render as-is. |
+| Prop        | Type                              | Description                                                                                                                                         |
+| ----------- | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `component` | `ClientComponent`                 | Component wrapped with `clientComponent()` in its `*.client.jsx` file.                                                                              |
+| `on`        | `string` (default: `interaction`) | is-land initialization trigger. Rendered as the boolean attribute `land-on:<on>`.                                                                   |
+| ...rest     | any                               | Serialized with [`devalue`](https://github.com/Rich-Harris/devalue) onto `<is-land props="...">` and forwarded to the component's SSR render as-is. |
+
+Supported prop types include everything JSON can carry plus `Date`, `Map`, `Set`, `RegExp`, `BigInt`, `undefined`, `NaN`, `Infinity`, and cyclic references. Functions, symbols, DOM nodes, and unregistered class instances are not serializable — passing them throws an `Island: failed to devalue.stringify props` error at build time.
 
 For parameterized triggers such as `on:media("(min-width: ...)")`, use the raw `<is-land>` element directly; the injected setup script still handles it.
 
 ## Interoperating with raw `<is-land>`
 
 The raw `<is-land>` element remains fully supported — the script injection is unchanged, and existing partial hydration code that writes `<is-land>` by hand keeps working. `<Island>` is a strict addition on top.
+
+The `props` attribute is now serialized with [`devalue`](https://github.com/Rich-Harris/devalue); write raw `<is-land props="...">` values with `devalue.stringify` if you construct them by hand.
 
 If you want to control bundling entirely yourself (custom output layout, a different sub-extension, hashed asset URLs, or serving bundles from another origin), you can bypass this plugin's `<Island>` convention and drive [`@11ty/is-land`](https://github.com/11ty/is-land) directly — write the `<is-land>` elements and their `import` URLs yourself. The plugin's browser-side setup (import map, is-land script, dev rehydration hook) still applies to those elements.
 

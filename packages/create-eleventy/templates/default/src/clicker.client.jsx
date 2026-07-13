@@ -1,15 +1,15 @@
 import { clientComponent } from "@tuqulore-inc/eleventy-preset/island";
-import { useState } from "preact/hooks";
+import { useSignal } from "@preact/signals";
 
 function Clicker() {
-  const [counter, setCounter] = useState(0);
+  const counter = useSignal(0);
 
   return (
     <div class="flex items-center gap-4">
       <button
         type="button"
         class="jumpu-button"
-        onClick={() => setCounter(counter + 1)}
+        onClick={() => counter.value++}
       >
         Count
       </button>

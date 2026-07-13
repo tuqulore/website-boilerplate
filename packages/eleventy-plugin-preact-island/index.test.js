@@ -1,9 +1,35 @@
+import { createRequire } from "node:module";
 import { describe, it } from "node:test";
 import assert from "node:assert";
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { h } from "preact";
 import { render } from "preact-render-to-string";
 import preactIsland from "./index.js";
 import { Island, clientComponent } from "./island.js";
+
+const require = createRequire(import.meta.url);
+
+// index.js の resolveInstalledDevalueVersion が導出するはずのバージョンを
+// テスト側から独立に取得する (両実装が一致することを確認)。devalue の
+// exports は `./package.json` を公開していないので、entry パスから上方向に
+// package.json を探す (preact のように require では取れない)。
+function readInstalledDevalueVersion() {
+  let dir = dirname(fileURLToPath(import.meta.resolve("devalue")));
+  while (true) {
+    try {
+      const pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf8"));
+      if (pkg.name === "devalue") return pkg.version;
+    } catch {
+      // 上へ辿る
+    }
+    const parent = dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  throw new Error("devalue package.json not found");
+}
 
 /**
  * Minimal UserConfig stub carrying only what the plugin actually reads.
@@ -133,6 +159,101 @@ describe("Island plugin importmap ↔ Eleventy pathPrefix", () => {
       "dist/index.html",
     );
     assert.match(html, /"is-land": "\/is-land\.js"/);
+  });
+});
+
+describe("Island plugin importmap ↔ preact バージョン自動検出", () => {
+  it("preactVersion 未指定時は importmap がインストール済 preact のバージョンで pin される", () => {
+    const config = makeEleventyConfigStub({ pathPrefix: undefined });
+    preactIsland(config);
+
+    const html = config._transform(
+      "preact-island-inject",
+      "<html><head></head><body></body></html>",
+      "dist/index.html",
+    );
+    // テスト側でもプラグインと同じ peer 依存の preact を参照するので値は一致する
+    const { version } = require("preact/package.json");
+    assert.ok(
+      html.includes(`https://esm.sh/preact@${version}"`),
+      `expected importmap to pin preact to @${version}, got: ${html}`,
+    );
+    assert.ok(
+      html.includes(`https://esm.sh/preact@${version}/hooks?external=preact`),
+    );
+    assert.ok(
+      html.includes(
+        `https://esm.sh/preact@${version}/jsx-runtime?external=preact`,
+      ),
+    );
+  });
+
+  it("preactVersion 指定時は指定値が優先され、警告は出ない", (t) => {
+    const warn = t.mock.method(console, "warn");
+    const config = makeEleventyConfigStub({ pathPrefix: undefined });
+    preactIsland(config, { preactVersion: "10.20.0" });
+
+    const html = config._transform(
+      "preact-island-inject",
+      "<html><head></head><body></body></html>",
+      "dist/index.html",
+    );
+    assert.ok(html.includes(`https://esm.sh/preact@10.20.0"`));
+    assert.strictEqual(warn.mock.callCount(), 0);
+  });
+});
+
+describe("Island plugin importmap ↔ devalue バージョン自動検出", () => {
+  it("devalueVersion 未指定時は importmap が同梱 devalue のバージョンで pin される", () => {
+    const config = makeEleventyConfigStub({ pathPrefix: undefined });
+    preactIsland(config);
+
+    const html = config._transform(
+      "preact-island-inject",
+      "<html><head></head><body></body></html>",
+      "dist/index.html",
+    );
+    // テスト側でもプラグインが依存しているのと同じ devalue を参照するので値は一致する
+    const version = readInstalledDevalueVersion();
+    assert.ok(
+      html.includes(`https://esm.sh/devalue@${version}"`),
+      `expected importmap to pin devalue to @${version}, got: ${html}`,
+    );
+  });
+
+  it("devalueVersion 指定時は指定値が優先され、警告は出ない", (t) => {
+    const warn = t.mock.method(console, "warn");
+    const config = makeEleventyConfigStub({ pathPrefix: undefined });
+    preactIsland(config, { devalueVersion: "5.0.0" });
+
+    const html = config._transform(
+      "preact-island-inject",
+      "<html><head></head><body></body></html>",
+      "dist/index.html",
+    );
+    assert.ok(html.includes(`https://esm.sh/devalue@5.0.0"`));
+    assert.strictEqual(warn.mock.callCount(), 0);
+  });
+
+  // preactVersion と同じく `if (devalueVersion)` の truthy 判定にしてあるので、
+  // 空文字は「未指定と同じ扱い」= 自動検出フォールバックに落ちる。preact 側と
+  // 非対称に「空文字で latest 強制」を追加しないことをここで固定する。
+  it("devalueVersion に空文字を渡すと未指定と同じく自動検出でピン留めされる", (t) => {
+    const warn = t.mock.method(console, "warn");
+    const config = makeEleventyConfigStub({ pathPrefix: undefined });
+    preactIsland(config, { devalueVersion: "" });
+
+    const html = config._transform(
+      "preact-island-inject",
+      "<html><head></head><body></body></html>",
+      "dist/index.html",
+    );
+    const version = readInstalledDevalueVersion();
+    assert.ok(
+      html.includes(`https://esm.sh/devalue@${version}"`),
+      `expected empty string to fall through to auto-detected devalue@${version}, got: ${html}`,
+    );
+    assert.strictEqual(warn.mock.callCount(), 0);
   });
 });
 
