@@ -94,10 +94,7 @@ describe("Island", () => {
     assert.match(html, /type="preact"/);
     assert.match(html, /import="\/foo\.client\.js"/);
     // devalue.stringify({ name: "alice" }) → [{"name":1},"alice"] が HTML エスケープされる
-    assert.match(
-      html,
-      /props="\[\{&quot;name&quot;:1\},&quot;alice&quot;\]"/,
-    );
+    assert.match(html, /props="\[\{&quot;name&quot;:1\},&quot;alice&quot;\]"/);
     // SSR 内容として component が同じ props でレンダリングされている
     assert.match(html, /<span>alice<\/span>/);
     assert.match(html, /<\/is-land>$/);
@@ -204,14 +201,14 @@ describe("Island", () => {
     assert.throws(
       () => render(h(Island, { component: X, onClick: () => {} })),
       (err) => {
-        assert.match(
-          err.message,
-          /Island: failed to devalue\.stringify props/,
-        );
+        assert.match(err.message, /Island: failed to devalue\.stringify props/);
         assert.match(err.message, /\/x\.client\.js/);
         // devalue の DevalueError.path は原因 prop の位置を示す
         assert.match(err.message, /at `\.onClick`/);
-        assert.ok(err.cause instanceof Error, "元エラーが cause に保持されている");
+        assert.ok(
+          err.cause instanceof Error,
+          "元エラーが cause に保持されている",
+        );
         return true;
       },
     );
@@ -273,7 +270,7 @@ describe("Island", () => {
       return null;
     }, "file:///proj/src/x.client.jsx");
 
-    const payload = '</script><script>alert(1)</script>';
+    const payload = "</script><script>alert(1)</script>";
     const html = render(h(Island, { component: X, s: payload }));
     // devalue が < を < に unicode escape するため属性値に生 </script> は出ない
     assert.doesNotMatch(html, /<\/script>/);

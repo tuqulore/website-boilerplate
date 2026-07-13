@@ -159,10 +159,10 @@ The `props` attribute is serialized with [`devalue`](https://github.com/Rich-Har
 
 #### Props
 
-| Prop        | Type                              | Description                                                                             |
-| ----------- | --------------------------------- | --------------------------------------------------------------------------------------- |
-| `component` | `ClientComponent`                 | Component wrapped with `clientComponent()` in its `*.client.jsx` file.                  |
-| `on`        | `string` (default: `interaction`) | is-land initialization trigger. Rendered as the boolean attribute `land-on:<on>`.       |
+| Prop        | Type                              | Description                                                                                                                                         |
+| ----------- | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `component` | `ClientComponent`                 | Component wrapped with `clientComponent()` in its `*.client.jsx` file.                                                                              |
+| `on`        | `string` (default: `interaction`) | is-land initialization trigger. Rendered as the boolean attribute `land-on:<on>`.                                                                   |
 | ...rest     | any                               | Serialized with [`devalue`](https://github.com/Rich-Harris/devalue) onto `<is-land props="...">` and forwarded to the component's SSR render as-is. |
 
 Supported prop types include everything JSON can carry plus `Date`, `Map`, `Set`, `RegExp`, `BigInt`, `undefined`, `NaN`, `Infinity`, and cyclic references. Functions, symbols, DOM nodes, and unregistered class instances are not serializable — passing them throws an `Island: failed to devalue.stringify props` error at build time.
