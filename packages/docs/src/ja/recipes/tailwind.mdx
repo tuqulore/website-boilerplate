@@ -1,0 +1,57 @@
+export const data = {
+  layout: "post",
+  locale: "ja",
+  title: "Tailwind CSS",
+};
+
+# Tailwind CSS のレシピ
+
+本ページは、scaffold された default テンプレートで Tailwind CSS を扱う手順と、Tailwind のプラグインを追加する方法を扱います。CSS の処理経路そのものについては [Architecture / PostCSS](/ja/architecture/postcss/) を参照してください。
+
+## デフォルト構成
+
+`src/main.css` が Tailwind の入り口です。scaffold の初期状態は次の 4 行で構成します。
+
+```css
+@import "tailwindcss";
+@import "@jumpu-ui/tailwindcss";
+@plugin "@tailwindcss/typography";
+@plugin "@iconify/tailwind4";
+```
+
+- `@import "tailwindcss"` が Tailwind 本体を有効化します。
+- `@import "@jumpu-ui/tailwindcss"` が Jumpu UI のデザインシステムを載せます。
+- `@plugin` で `@tailwindcss/typography` と `@iconify/tailwind4` を Tailwind に組み込みます。前者は Markdown 本文の `prose` クラスを提供し、後者は Iconify アイコンをクラス指定で使えるようにします。
+
+Tailwind 4 では設定ファイル (`tailwind.config.js`) を書かず、CSS の中で完結する方式を採用しています。プロジェクトに応じたテーマ拡張やユーティリティ追加もこの `main.css` に集約します。
+
+## テーマを拡張する
+
+色やフォントなど独自のトークンを増やす場合は、`@theme` ディレクティブで宣言します。
+
+```css
+@theme {
+  --color-brand: oklch(0.7 0.15 250);
+  --font-display: "Zen Kaku Gothic New", sans-serif;
+}
+```
+
+追加したトークンは `bg-brand` や `font-display` などのクラスで参照できます。既存のトークンを上書きしたいときも同じディレクティブで書き換えます。
+
+## プラグインを増やす
+
+Tailwind エコシステムの外部プラグインを取り込みたいときは、`@plugin` ディレクティブに続けてパッケージ名を書きます。
+
+```css
+@plugin "@tailwindcss/forms";
+```
+
+`package.json` にプラグインを追加してから記述します。プラグインは `main.css` を読み込むタイミングで解決されます。
+
+## 依存追跡が効いていること
+
+Tailwind はテンプレートで使われているクラスを走査してから CSS を生成します。本プリセットは Eleventy に対して `src/**/*.{md,mdx,jsx}` をクラス走査対象として登録しており、新しいクラスを書いたら開発サーバ上で即座に反映されます。
+
+追加した `.client.jsx` ファイルは、Eleventy のテンプレート形式ではないので既定の追跡対象から外れます。もし `.client.jsx` の内側で書いた Tailwind クラスを反映させたいなら、プリセットの `extend` から PostCSS プラグインを再登録し、`contentGlob` に `src/**/*.client.{jsx,tsx}` を追加します (`preset()` の extend で `eleventyConfig.addPlugin(postcssPlugin, { contentGlob: [...] })` のような差し替えが必要になるため、規約から外れた運用になる点は認識しておいてください)。
+
+素直に Island 側のクラス指定を親のテンプレートにも書いておく回避策で済むケースがほとんどです。

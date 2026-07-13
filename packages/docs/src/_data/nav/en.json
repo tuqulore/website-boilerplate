@@ -24,6 +24,15 @@
       { "name": "MDX", "path": "/en/architecture/mdx/" }
     ]
   },
-  { "name": "Recipes", "path": "/en/recipes/" },
+  {
+    "name": "Recipes",
+    "path": "/en/recipes/",
+    "children": [
+      { "name": "Tailwind CSS", "path": "/en/recipes/tailwind/" },
+      { "name": "Island granularity", "path": "/en/recipes/island/" },
+      { "name": "Adding i18n", "path": "/en/recipes/i18n/" },
+      { "name": "Adding a plugin", "path": "/en/recipes/plugin/" }
+    ]
+  },
   { "name": "Roadmap", "path": "/en/roadmap/" }
 ]

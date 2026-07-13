@@ -24,6 +24,15 @@
       { "name": "MDX", "path": "/ja/architecture/mdx/" }
     ]
   },
-  { "name": "Recipes", "path": "/ja/recipes/" },
+  {
+    "name": "Recipes",
+    "path": "/ja/recipes/",
+    "children": [
+      { "name": "Tailwind CSS", "path": "/ja/recipes/tailwind/" },
+      { "name": "Island の粒度", "path": "/ja/recipes/island/" },
+      { "name": "i18n の足し方", "path": "/ja/recipes/i18n/" },
+      { "name": "プラグインを追加する", "path": "/ja/recipes/plugin/" }
+    ]
+  },
   { "name": "Roadmap", "path": "/ja/roadmap/" }
 ]

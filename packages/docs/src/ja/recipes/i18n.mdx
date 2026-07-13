@@ -1,0 +1,97 @@
+export const data = {
+  layout: "post",
+  locale: "ja",
+  title: "i18n の足し方",
+};
+
+# 複数言語を足すレシピ
+
+本ページは、本ボイラープレートで作ったサイトを複数言語に対応させる手順を扱います。本ドキュメント自身がこの方式で日英対応しているため、そのまま実例になります。
+
+## ディレクトリ分割方式を採用する
+
+言語ごとにサブディレクトリを切り、`src/{locale}/` の下に各言語のページをまとめます。
+
+```
+src/
+  index.mdx        (言語選択のトップ)
+  ja/
+    index.mdx      → /ja/
+    about.mdx      → /ja/about/
+  en/
+    index.mdx      → /en/
+    about.mdx      → /en/about/
+```
+
+Eleventy はディレクトリ構造をそのまま URL に反映するため、追加の設定は要りません。ファイル名で locale を切る方式 (`about.ja.mdx` / `about.en.mdx`) と比べて、テンプレートエンジンの拡張子解決との衝突がなく、ディレクトリ単位で共通ファイル (`_data`、`_includes` の一部) を持たせやすい利点があります。
+
+## ページに locale を持たせる
+
+各ページの `data` に `locale` を宣言します。`<html lang>` の値やレイアウト内での分岐に使います。
+
+```mdx
+export const data = {
+  layout: "post",
+  locale: "ja",
+  title: "はじめてのサイト",
+};
+```
+
+未翻訳のページであることをフラグにしたい場合は `translated: false` を添えます。本ドキュメントでは、翻訳が追いついていない英語ページに `translated: false` を付け、本文には日本語版へのリンクだけを置いています。プレースホルダで読者を袋小路に誘導しない工夫です。
+
+## ナビゲーションを言語別にする
+
+グローバルデータの nav を言語ごとに分けます。`_data/nav/` の下に `ja.json` と `en.json` を置くと、Eleventy はそれぞれを `nav.ja` / `nav.en` としてネストしたキーで公開します。
+
+```
+src/_data/nav/
+  ja.json
+  en.json
+```
+
+sidebar からは `eleventy.nav[eleventy.locale]` を参照して、現在の locale に合った nav を描画します。
+
+```jsx
+{
+  (eleventy.nav[eleventy.locale ?? "ja"] ?? []).map((section) => (
+    <li key={section.name}>
+      <a href={section.path}>{section.name}</a>
+      {/* ... */}
+    </li>
+  ));
+}
+```
+
+これで、`/ja/` 配下のページから開いた sidebar のリンクは `/ja/...` に、`/en/` 配下のページから開いた sidebar のリンクは `/en/...` に、それぞれ向かうようになります。ラベル自体も `ja.json` / `en.json` で言語ごとに書き分けられます。
+
+## 言語切替の UI を用意する
+
+`_includes/partials/header.mdx` などのグローバルな partial に、言語ごとのトップページへの静的リンクを置きます。
+
+```mdx
+<nav class="ml-auto flex gap-4">
+  <a href="/ja/">日本語</a>
+  <a href="/en/">English</a>
+</nav>
+```
+
+同じページの別言語版に飛ばすには、現在の URL から `/ja/` `/en/` プレフィックスを差し替えるロジックが必要です。ページ数が増えたら partial 側で `eleventy.page.url` を書き換える形にリファクタします。本ドキュメントは現状トップページへのリンクだけを置いています。
+
+## 未翻訳ページのフォールバック
+
+翻訳が追いついていないページには、読者を日本語版へ誘導する 1 段落だけを置きます。
+
+```mdx
+export const data = {
+  layout: "post",
+  locale: "en",
+  translated: false,
+  title: "Project structure",
+};
+
+# Project structure
+
+Translation in progress. See the [Japanese version](/ja/getting-started/structure/) for now.
+```
+
+サイドバー上ではリンクを残したまま、飛んだ先で日本語版への導線を明示する形です。「英語版なし」を隠すよりも、「翻訳中である」旨を明示するほうが読者にとって親切です。
