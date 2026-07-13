@@ -11,6 +11,16 @@ export interface PluginOptions {
    */
   preactVersion?: string;
   /**
+   * Override the devalue version used in the esm.sh CDN URL (e.g., "5.8.1").
+   *
+   * Defaults to the version of `devalue` bundled with this plugin
+   * (auto-detected from `devalue/package.json`), so the SSR-side `stringify`
+   * and the client-side `parse` come from the same devalue version by default.
+   * Set this only to force the CDN side to a different version than the
+   * bundled one.
+   */
+  devalueVersion?: string;
+  /**
    * Bundle `*.client.{js,jsx,ts,tsx}` entries with esbuild. Set to `false` to
    * bring your own bundler; the plugin still adds the Eleventy ignore rule,
    * wires the SSR URL resolver, copies `is-land.js`, and injects the browser

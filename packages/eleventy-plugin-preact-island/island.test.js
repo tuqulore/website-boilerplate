@@ -2,7 +2,24 @@ import { describe, it, beforeEach } from "node:test";
 import assert from "node:assert";
 import { h } from "preact";
 import { render } from "preact-render-to-string";
+import { parse } from "devalue";
 import { Island, clientComponent, _setClientModuleResolver } from "./island.js";
+
+// SSR HTML から <is-land ... props="..."> の props 属性値を取り出し、HTML エスケープを
+// 戻して devalue.parse に通す。SSR 側の stringify とクライアント側の parse が
+// 対で復元するラウンドトリップを、クライアント setup 文字列を eval せずに検証する。
+function extractParsedProps(html) {
+  const m = html.match(/ props="([^"]*)"/);
+  if (!m) throw new Error(`no props attribute in: ${html}`);
+  const decoded = m[1]
+    .replaceAll("&quot;", '"')
+    .replaceAll("&lt;", "<")
+    .replaceAll("&gt;", ">")
+    .replaceAll("&#39;", "'")
+    // &amp; は最後に戻す (先にやると &amp;quot; が " まで剥がれる)
+    .replaceAll("&amp;", "&");
+  return parse(decoded);
+}
 
 describe("_setClientModuleResolver", () => {
   it("関数を渡せる", () => {
@@ -57,7 +74,7 @@ describe("Island", () => {
     _setClientModuleResolver(null);
   });
 
-  it("clientComponent 済み component を <is-land> でラップし、resolver 経由の import URL と JSON props を出力する", () => {
+  it("clientComponent 済み component を <is-land> でラップし、resolver 経由の import URL と devalue props を出力する", () => {
     const receivedUrls = [];
     _setClientModuleResolver((moduleUrl) => {
       receivedUrls.push(moduleUrl);
@@ -76,8 +93,11 @@ describe("Island", () => {
     assert.match(html, /land-on:visible/);
     assert.match(html, /type="preact"/);
     assert.match(html, /import="\/foo\.client\.js"/);
-    // JSON.stringify({ name: "alice" }) が HTML エスケープされて属性値に入る
-    assert.match(html, /props="\{&quot;name&quot;:&quot;alice&quot;\}"/);
+    // devalue.stringify({ name: "alice" }) → [{"name":1},"alice"] が HTML エスケープされる
+    assert.match(
+      html,
+      /props="\[\{&quot;name&quot;:1\},&quot;alice&quot;\]"/,
+    );
     // SSR 内容として component が同じ props でレンダリングされている
     assert.match(html, /<span>alice<\/span>/);
     assert.match(html, /<\/is-land>$/);
@@ -154,31 +174,110 @@ describe("Island", () => {
 
     // <is-land props="..."> 属性に children/VNode が混入していないことを確認
     // (props 属性値は tag のみで完結)
-    assert.match(html, /props="\{&quot;tag&quot;:&quot;auto&quot;\}"/);
+    assert.match(html, /props="\[\{&quot;tag&quot;:1\},&quot;auto&quot;\]"/);
     // component 側にも children は渡らない
     assert.deepStrictEqual(receivedProps, [{ tag: "auto" }]);
   });
 
-  it("JSON.stringify に失敗する props (循環参照など) は Island 文脈のエラーで包む", () => {
+  it("循環参照 props は throw せず、devalue で識別子が復元される", () => {
     _setClientModuleResolver(() => "/x.client.js");
     const X = clientComponent(function X() {
       return null;
     }, "file:///proj/src/x.client.jsx");
 
-    const circular = {};
+    const circular = { name: "root" };
     circular.self = circular;
 
+    const html = render(h(Island, { component: X, data: circular }));
+    const parsed = extractParsedProps(html);
+    assert.strictEqual(parsed.data.name, "root");
+    // 循環参照の identity が復元される (JSON では不可能だった挙動)
+    assert.strictEqual(parsed.data.self, parsed.data);
+  });
+
+  it("devalue-serializable でない props (関数など) は Island 文脈のエラーで包む", () => {
+    _setClientModuleResolver(() => "/x.client.js");
+    const X = clientComponent(function X() {
+      return null;
+    }, "file:///proj/src/x.client.jsx");
+
     assert.throws(
-      () => render(h(Island, { component: X, data: circular })),
+      () => render(h(Island, { component: X, onClick: () => {} })),
       (err) => {
-        assert.match(err.message, /Island: failed to JSON\.stringify props/);
-        assert.match(err.message, /\/x\.client\.js/);
-        assert.ok(
-          err.cause instanceof TypeError,
-          "元の TypeError が cause に保持されている",
+        assert.match(
+          err.message,
+          /Island: failed to devalue\.stringify props/,
         );
+        assert.match(err.message, /\/x\.client\.js/);
+        // devalue の DevalueError.path は原因 prop の位置を示す
+        assert.match(err.message, /at `\.onClick`/);
+        assert.ok(err.cause instanceof Error, "元エラーが cause に保持されている");
         return true;
       },
     );
+  });
+
+  it("Date が SSR → devalue.parse で instanceof Date のまま round-trip する", () => {
+    _setClientModuleResolver(() => "/x.client.js");
+    const X = clientComponent(function X() {
+      return null;
+    }, "file:///proj/src/x.client.jsx");
+
+    const at = new Date("2026-07-13T00:00:00Z");
+    const html = render(h(Island, { component: X, at }));
+    const parsed = extractParsedProps(html);
+    assert.ok(parsed.at instanceof Date);
+    assert.strictEqual(parsed.at.getTime(), at.getTime());
+  });
+
+  it("Map / Set / BigInt / undefined / NaN / Infinity / RegExp が round-trip する", () => {
+    _setClientModuleResolver(() => "/x.client.js");
+    const X = clientComponent(function X() {
+      return null;
+    }, "file:///proj/src/x.client.jsx");
+
+    const map = new Map([
+      ["a", 1],
+      ["b", 2],
+    ]);
+    const set = new Set(["x", "y"]);
+    const html = render(
+      h(Island, {
+        component: X,
+        map,
+        set,
+        big: 10n,
+        undef: undefined,
+        nan: NaN,
+        inf: Infinity,
+        regex: /abc/gi,
+      }),
+    );
+    const parsed = extractParsedProps(html);
+    assert.ok(parsed.map instanceof Map);
+    assert.deepStrictEqual([...parsed.map], [...map]);
+    assert.ok(parsed.set instanceof Set);
+    assert.deepStrictEqual([...parsed.set], [...set]);
+    assert.strictEqual(parsed.big, 10n);
+    assert.strictEqual(parsed.undef, undefined);
+    assert.ok(Number.isNaN(parsed.nan));
+    assert.strictEqual(parsed.inf, Infinity);
+    assert.ok(parsed.regex instanceof RegExp);
+    assert.strictEqual(parsed.regex.source, "abc");
+    assert.strictEqual(parsed.regex.flags, "gi");
+  });
+
+  it("文字列 prop に閉じタグ様の内容が入っても HTML には生 </script> が出ず、round-trip で復元される", () => {
+    _setClientModuleResolver(() => "/x.client.js");
+    const X = clientComponent(function X() {
+      return null;
+    }, "file:///proj/src/x.client.jsx");
+
+    const payload = '</script><script>alert(1)</script>';
+    const html = render(h(Island, { component: X, s: payload }));
+    // devalue が < を < に unicode escape するため属性値に生 </script> は出ない
+    assert.doesNotMatch(html, /<\/script>/);
+    const parsed = extractParsedProps(html);
+    assert.strictEqual(parsed.s, payload);
   });
 });

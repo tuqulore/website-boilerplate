@@ -91,6 +91,9 @@ importers:
       '@11ty/is-land':
         specifier: ^5.0.0
         version: 5.0.1
+      devalue:
+        specifier: ^5.8.1
+        version: 5.8.1
       esbuild:
         specifier: ^0.28.0
         version: 0.28.1
@@ -1308,6 +1311,9 @@ packages:
   detect-libc@2.1.2:
     resolution: {integrity: sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==}
     engines: {node: '>=8'}
+
+  devalue@5.8.1:
+    resolution: {integrity: sha512-4CXDYRBGqN+57wVJkuXBYmpAVUSg3L6JAQa/DFqm238G73E1wuyc/JhGQJzN7vUf/CMphYau2zXbfWzDR5aTEw==}
 
   devlop@1.1.0:
     resolution: {integrity: sha512-RWmIqhcFf1lRYBvNmr7qTNuyCt/7/ns2jbpp1+PalgE/rDQcBT0fioSMUpJ93irlUhC5hrg4cYqe6U+0ImW0rA==}
@@ -4034,6 +4040,8 @@ snapshots:
   detect-indent@7.0.2: {}
 
   detect-libc@2.1.2: {}
+
+  devalue@5.8.1: {}
 
   devlop@1.1.0:
     dependencies:
