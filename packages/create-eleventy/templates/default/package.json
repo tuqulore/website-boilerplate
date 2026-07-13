@@ -19,6 +19,7 @@
     "@iconify/json": "^2.2.90",
     "@iconify/tailwind4": "^1.0.6",
     "@jumpu-ui/tailwindcss": "3.0.1",
+    "@preact/signals": "^2.9.3",
     "@tailwindcss/postcss": "^4.0.14",
     "@tailwindcss/typography": "0.5.20",
     "@tuqulore-inc/eleventy-preset": "^5.0.1",
