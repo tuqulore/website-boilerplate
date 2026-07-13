@@ -11,7 +11,19 @@
       { "name": "Project structure", "path": "/en/getting-started/structure/" }
     ]
   },
-  { "name": "Architecture", "path": "/en/architecture/" },
+  {
+    "name": "Architecture",
+    "path": "/en/architecture/",
+    "children": [
+      { "name": "Preset", "path": "/en/architecture/preset/" },
+      {
+        "name": "Partial Hydration",
+        "path": "/en/architecture/preact-island/"
+      },
+      { "name": "PostCSS", "path": "/en/architecture/postcss/" },
+      { "name": "MDX", "path": "/en/architecture/mdx/" }
+    ]
+  },
   { "name": "Recipes", "path": "/en/recipes/" },
   { "name": "Roadmap", "path": "/en/roadmap/" }
 ]

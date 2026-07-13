@@ -1,0 +1,18 @@
+export const data = {
+  layout: "post",
+  locale: "ja",
+  title: "Architecture",
+};
+
+# Architecture
+
+本章は、本ボイラープレートを支えるプリセットとプラグイン群の内部設計を扱います。scaffold されたテンプレートが「なぜこの形になっているか」を知りたい開発者を想定します。
+
+本ボイラープレートは、次の 4 つの層で成り立ちます。
+
+- [プリセット](/ja/architecture/preset/): 3 つのプラグインを束ね、Eleventy への入り口を提供します。
+- [Partial Hydration](/ja/architecture/preact-island/): Island コンポーネントで初期表示を静的な HTML に留め、必要なときだけクライアント側で動かします。
+- [PostCSS](/ja/architecture/postcss/): Tailwind CSS などの PostCSS プラグインを Eleventy のパイプラインで回します。
+- [MDX](/ja/architecture/mdx/): Markdown に JSX を混ぜて書ける形式を扱います。
+
+順に読んでいけば、プリセットの入り口から Island のランタイムまでを通して把握できます。個別のプラグインだけを使いたい場合は、該当ページに直接進んでも構いません。

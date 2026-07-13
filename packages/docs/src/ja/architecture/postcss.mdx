@@ -1,0 +1,45 @@
+export const data = {
+  layout: "post",
+  locale: "ja",
+  title: "PostCSS",
+};
+
+# PostCSS
+
+本ページは、CSS を PostCSS で処理する層 (`@tuqulore-inc/eleventy-plugin-postcss`) の設計を扱います。Tailwind CSS を採用しやすくするための構造と、Eleventy の依存追跡に載せる仕組みを示します。
+
+## なぜ独立したプラグインなのか
+
+PostCSS 処理は、SSR や Partial Hydration とは独立した関心事です。JSX プラグインが Preact 依存に閉じていられるのと同じ理由で、CSS 処理も別プラグインに切り出しています。
+
+分けておくと、Tailwind をやめて素の CSS だけを扱いたいプロジェクトでも、他のプラグインを触らずに済みます。逆に、他の Eleventy プロジェクトへ PostCSS 対応だけを持ち込むことも簡単です。
+
+## Eleventy のテンプレート形式として登録する
+
+本プラグインは `eleventyConfig.addTemplateFormats("css")` と `eleventyConfig.addExtension("css", ...)` を使い、CSS を Eleventy 自身のテンプレート形式として扱わせます。ビルド中に発見された `src/**/*.css` はテンプレートエンジンを通り、PostCSS の変換結果が出力されます。
+
+外側で PostCSS CLI を回さない設計です。Eleventy の dev サーバが起動する裏で、CSS も同じイベントループで処理されます。ソースファイルの変更検知と、成果物の書き出しが 1 本のパイプラインに載ります。
+
+## `contentGlob` と Tailwind の依存追跡
+
+Tailwind CSS は、テンプレート内で使われているクラス名を走査してから CSS を出力します。CSS の中身は入力の `.css` に書かれていなくても、テンプレートの変更で結果が変わり得ます。
+
+これに合わせて、本プラグインは `contentGlob` オプションで「CSS の依存」として追跡するファイルを受け取ります。プリセットのデフォルトは次の値です。
+
+```js
+contentGlob: ["src/**/*.{md,mdx,jsx}"];
+```
+
+Eleventy の `addDependencies` API を通じて、これらのファイルの変更が CSS の再ビルドを引き起こします。テンプレートに新しい Tailwind クラスを書いた瞬間に、開発サーバ上で反映されます。
+
+## `setServerOptions` で成果物を watch する
+
+生成された `dist/**/*.css` の変更は、開発サーバ側でブラウザリロードのトリガーとして再度 watch する必要があります。プリセットは `eleventyConfig.setServerOptions({ watch: ["dist/**/*.css"] })` を組み込んでいます。
+
+これで「テンプレート変更 → CSS 再ビルド → dist/main.css 更新 → ブラウザリロード」の流れが自動で回ります。
+
+## `skip` で個別ファイルを除外する
+
+`skip: (inputPath) => boolean` を渡すと、その述語が `true` を返した CSS ファイルは処理と出力から外れます。`@import` 用のフラグメントや、別のパイプラインで扱う CSS を Eleventy 側で無視するためのフックです。
+
+デフォルトの `default` テンプレートはひとつの `main.css` に集約する構成で、`skip` は使っていません。フラグメントを分けたい場合の逃げ道として用意しています。

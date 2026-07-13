@@ -1,0 +1,18 @@
+export const data = {
+  layout: "post",
+  locale: "en",
+  title: "Architecture",
+};
+
+# Architecture
+
+This chapter covers the internal design of the preset and its plugins. It targets developers who want to know why the scaffolded template looks the way it does.
+
+The boilerplate stands on four layers:
+
+- [Preset](/en/architecture/preset/): bundles three plugins and provides the single entry point into Eleventy.
+- [Partial Hydration](/en/architecture/preact-island/): keeps the initial paint as static HTML and only runs client JS where it is actually needed.
+- [PostCSS](/en/architecture/postcss/): drives PostCSS plugins such as Tailwind CSS through the Eleventy pipeline.
+- [MDX](/en/architecture/mdx/): describes the format that lets you mix JSX into Markdown.
+
+Individual pages are still being translated. See the [Japanese chapter](/ja/architecture/) for the full text.
