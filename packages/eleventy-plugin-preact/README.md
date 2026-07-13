@@ -6,7 +6,7 @@ This plugin registers `.jsx` and `.mdx` as Eleventy template formats and renders
 
 ## Documentation
 
-The design rationale (why Preact, why MDX, layout chaining) lives at [Plugins / eleventy-plugin-preact](https://website.tuqulore.pages.dev/en/plugins/eleventy-plugin-preact/). The writing conventions (`export const data`, `layout`, the `eleventy` singleton) live at [Preset Conventions](https://website.tuqulore.pages.dev/en/preset/).
+The design rationale (why Preact, why MDX, layout chaining) lives at [Plugins / eleventy-plugin-preact](https://website.tuqulore.workers.dev/en/plugins/eleventy-plugin-preact/). The writing conventions (`export const data`, `layout`, the `eleventy` singleton) live at [Preset Conventions](https://website.tuqulore.workers.dev/en/preset/).
 
 ## Installation
 
@@ -41,7 +41,7 @@ The Eleventy plugin factory. Register with `eleventyConfig.addPlugin(preact)`.
 
 ### `import { eleventy } from "@tuqulore-inc/eleventy-plugin-preact/eleventy"`
 
-The SSR-side singleton. Exposes `content`, `title`, `description`, `site`, `nav`, `page`, and any other data provided by Eleventy. Available only during SSR; not accessible from client-hydrated components. See [Preset Conventions / Data Access](https://website.tuqulore.pages.dev/en/preset/data-access/) for details.
+The SSR-side singleton. Exposes `content`, `title`, `description`, `site`, `nav`, `page`, and any other data provided by Eleventy. Available only during SSR; not accessible from client-hydrated components. See [Preset Conventions / Data Access](https://website.tuqulore.workers.dev/en/preset/data-access/) for details.
 
 ## Requirements
 

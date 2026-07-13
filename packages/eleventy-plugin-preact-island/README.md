@@ -6,7 +6,7 @@ An Island is SSR-rendered HTML with client-side JavaScript layered on top; this 
 
 ## Documentation
 
-The design rationale (why Partial Hydration, why is-land, the `.client.*` convention, `<Island>` semantics, Island granularity) lives at [Plugins / eleventy-plugin-preact-island](https://website.tuqulore.pages.dev/en/plugins/eleventy-plugin-preact-island/).
+The design rationale (why Partial Hydration, why is-land, the `.client.*` convention, `<Island>` semantics, Island granularity) lives at [Plugins / eleventy-plugin-preact-island](https://website.tuqulore.workers.dev/en/plugins/eleventy-plugin-preact-island/).
 
 ## Installation
 

@@ -4,7 +4,7 @@ A monorepo of boilerplate code and tooling for building Eleventy projects.
 
 ## Documentation
 
-Full documentation lives at [website.tuqulore.pages.dev](https://website.tuqulore.pages.dev/).
+Full documentation lives at [website.tuqulore.workers.dev](https://website.tuqulore.workers.dev/).
 
 ## Packages
 

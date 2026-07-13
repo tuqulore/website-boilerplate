@@ -1,0 +1,9 @@
+{
+  // Cloudflare Workers (static assets) deployment config for the docs site.
+  // The Worker name determines the workers.dev URL: website.tuqulore.workers.dev
+  "name": "website",
+  "compatibility_date": "2026-07-13",
+  "assets": {
+    "directory": "./dist",
+  },
+}

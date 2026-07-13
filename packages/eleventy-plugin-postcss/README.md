@@ -4,7 +4,7 @@ Eleventy plugin for processing CSS with PostCSS.
 
 ## Documentation
 
-The design rationale (why an independent plugin, `contentGlob` and Tailwind dependency tracking, applying Tailwind CSS) lives at [Plugins / eleventy-plugin-postcss](https://website.tuqulore.pages.dev/en/plugins/eleventy-plugin-postcss/).
+The design rationale (why an independent plugin, `contentGlob` and Tailwind dependency tracking, applying Tailwind CSS) lives at [Plugins / eleventy-plugin-postcss](https://website.tuqulore.workers.dev/en/plugins/eleventy-plugin-postcss/).
 
 ## Installation
 
