@@ -9,49 +9,48 @@ import { createClientModuleResolver, normalizeUrlPrefix } from "./resolver.js";
 
 const require = createRequire(import.meta.url);
 
-// NOTE: peer で入っている preact の package.json から version を取り、
-// import map の esm.sh URL に反映するための解決子。プロセス中に実体が
-// 入れ替わることは無いのでモジュールロード時に一度だけ評価する。
-// 解決に失敗するのは peer が意図的に入っていない (bundle: false 運用等)
-// 例外的なケース。呼び出し側でフォールバックする。
-const resolveInstalledPreactVersion = () => {
+// esm.sh の import map URL を、ホスト側にインストール済のバージョンで自動 pin
+// するための解決子。preact / devalue のように SSR 側 (Node) と クライアント側
+// (CDN) の 2 面で同じ package が要る依存を「同一バージョンで動かす」ための共通
+// 基盤。プロセス中に実体が入れ替わることは無いのでモジュールロード時に対象を
+// 決めておく (プラグイン関数からは戻り値を参照するだけ)。
+//
+// 解決経路は 2 段構え:
+//   1. `require("<name>/package.json")` — `./package.json` を exports に
+//      公開している package (preact 等) はこれで 1 回で取れる。
+//   2. entry パスから package.json を上方向に辿る — devalue 5.x のように
+//      exports で `./package.json` を出していない package のフォールバック。
+//      ルート到達 (`dirname(dir) === dir`) で終端。
+// どちらも失敗するのは、peer が意図的に入っていない (bundle: false 運用等) か、
+// npm hoisting が意図せぬ配置になった場合。呼び出し側で latest フォールバック
+// + 警告に切り替える。
+const resolveInstalledPackageVersion = (name) => {
   try {
-    return require("preact/package.json").version;
+    return require(`${name}/package.json`).version;
   } catch {
-    return null;
+    // exports 制約 (ERR_PACKAGE_PATH_NOT_EXPORTED) 等: entry から辿る。
   }
-};
-const installedPreactVersion = resolveInstalledPreactVersion();
-
-// NOTE: SSR 側 (`island.js` の `devalue.stringify`) と importmap 経由の
-// esm.sh 側 (`devalue.parse`) が乖離するとフォーマット破綻の原因になる。
-// 既定では Node 側で解決される devalue の package.json から version を
-// 導出して importmap に埋め込み、両者を実質的に揃える。preact と違って
-// devalue の exports は `./package.json` を公開していないので、entry の
-// パスから package.json を上方向に探す必要がある。
-const resolveInstalledDevalueVersion = () => {
   try {
-    let dir = dirname(url.fileURLToPath(import.meta.resolve("devalue")));
+    let dir = dirname(url.fileURLToPath(import.meta.resolve(name)));
     while (true) {
       try {
         const pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf8"));
-        if (pkg.name === "devalue" && typeof pkg.version === "string") {
+        if (pkg.name === name && typeof pkg.version === "string") {
           return pkg.version;
         }
       } catch {
         // このディレクトリには package.json が無い、または JSON parse 失敗。
       }
       const parent = dirname(dir);
-      // ルート到達で終端 (POSIX/Windows どちらも root は dirname が自身を返す)。
-      if (parent === dir) break;
+      if (parent === dir) return null;
       dir = parent;
     }
-    return null;
   } catch {
     return null;
   }
 };
-const installedDevalueVersion = resolveInstalledDevalueVersion();
+const installedPreactVersion = resolveInstalledPackageVersion("preact");
+const installedDevalueVersion = resolveInstalledPackageVersion("devalue");
 
 /**
  * Eleventy plugin for Preact partial hydration with is-land.
