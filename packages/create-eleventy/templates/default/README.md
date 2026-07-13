@@ -1,78 +1,78 @@
 # My Eleventy Site
 
-## 動作環境
+## Requirements
 
 - [Active LTS](https://github.com/nodejs/release#release-schedule)
 - Docker
 
-## クイックスタート
+## Quick start
 
 > [!NOTE]
 >
-> 事前に [pnpmをインストール](https://pnpm.io/ja/installation)してください。
+> Install [pnpm](https://pnpm.io/installation) first.
 
 ```shell
-pnpm install # npmパッケージのインストール
-pnpm dev # 開発サーバーの起動
+pnpm install # install dependencies
+pnpm dev # start the dev server
 ```
 
-## npmスクリプト
+## npm scripts
 
-| タスク名 | 説明                         |
-| :------- | :--------------------------- |
-| build    | 静的サイト生成します。       |
-| clean    | ビルド成果物を取り除きます。 |
-| dev      | 開発サーバーを起動します。   |
-| format   | コード整形します。           |
-| lint     | 静的コード検査します。       |
+| Task   | Description               |
+| :----- | :------------------------ |
+| build  | Generate the static site. |
+| clean  | Remove build artifacts.   |
+| dev    | Start the dev server.     |
+| format | Format code.              |
+| lint   | Run static checks.        |
 
-## 環境変数
+## Environment variables
 
-| 変数名   | 説明                                    |
-| :------- | :-------------------------------------- |
-| SITE_URL | 本リポジトリで構築するサイトのURL。必須 |
+| Name     | Description                                               |
+| :------- | :-------------------------------------------------------- |
+| SITE_URL | The URL of the site built from this repository. Required. |
 
-### カスケーディング (`pnpm dev`)
+### Cascade (`pnpm dev`)
 
 1. .env
 2. .env.development
 3. .env.local
 4. .env.development.local
 
-の順番で参照します。後に参照される値が優先されます。リポジトリに含めない環境変数は.env.localあるいは.env.development.localに記述してください。
+They are read in that order; later values win. Put values that should not be committed into `.env.local` or `.env.development.local`.
 
-### カスケーディング (`pnpm build`)
+### Cascade (`pnpm build`)
 
 1. .env
 2. .env.production
 3. .env.local
 4. .env.production.local
 
-の順番で参照します。後に参照される値が優先されます。リポジトリに含めない環境変数は.env.productionあるいは.env.production.localに記述してください。
+They are read in that order; later values win. Put values that should not be committed into `.env.production` or `.env.production.local`.
 
-## 採用しているライブラリ
+## Libraries used
 
 ### [Eleventy](https://www.11ty.dev/)
 
-静的サイト生成するためのライブラリです。
+A static site generator.
 
 ### [Preact](https://preactjs.com/)
 
-JSXテンプレートから動的な振る舞いとHTMLを生成するためのライブラリです。
+Renders JSX templates into HTML with dynamic behavior.
 
 ### [Tailwind CSS](https://tailwindcss.com/)
 
-見た目を実装するためのユーティリティファーストなCSSフレームワークです。
+A utility-first CSS framework for the look and feel.
 
 ### [Jumpu UI](https://github.com/tuqulore/jumpu-ui)
 
-一貫性のある見た目を実装するためのユーティリティフレンドリーなデザインシステムです。
+A utility-friendly design system for a consistent look and feel.
 
 ### [Iconify SVG Framework](https://docs.iconify.design/icon-components/svg-framework/)
 
-SVGアイコンを参照するためのライブラリです。
+Provides SVG icons.
 
-## ディレクトリ構成
+## Directory layout
 
 ```
 .
@@ -86,35 +86,35 @@ SVGアイコンを参照するためのライブラリです。
 
 ### dist
 
-ビルド成果物の出力先です。
+The build output directory.
 
 ### src
 
-Eleventyテンプレートの参照先です。
+Eleventy's template input root.
 
 ### src/\_data
 
-[グローバルデータ](https://www.11ty.dev/docs/data-global/)を配置します。
+Where [global data](https://www.11ty.dev/docs/data-global/) lives.
 
 ### src/\_includes
 
-[レイアウトチェイニング](https://www.11ty.dev/docs/layout-chaining/)のための[レイアウトテンプレート](https://www.11ty.dev/docs/layouts/)を配置します。
+Where [layout templates](https://www.11ty.dev/docs/layouts/) for [layout chaining](https://www.11ty.dev/docs/layout-chaining/) live.
 
-具体的には[フロントマター](https://www.11ty.dev/docs/data-frontmatter/)あるいはエクスポートしたdataオブジェクトにてlayoutプロパティで指定するものを指します。
+Specifically, the values referenced from a [frontmatter](https://www.11ty.dev/docs/data-frontmatter/) or an exported `data` object's `layout` property.
 
 ### src/\_includes/partials
 
-テンプレート内で呼び出すためのJSXコンポーネント/MDXテンプレートを配置します。
+Where JSX and MDX partials called from templates live.
 
 ### src/public
 
-静的アセットを配置します。distディレクトリ直下に出力されます。
+Where static assets live. Copied to the root of `dist/`.
 
 ## Partial Hydration
 
-`.client.{js,jsx,ts,tsx}` という拡張子のファイルを `src` 配下に置くだけで、設定不要でパーシャルハイドレーションが有効になります。そのファイルは esbuild でバンドルされて `dist/**/*.client.js` に出力され、`<Island>` コンポーネントを通じて \<is-land> のクライアント側スクリプトとして読み込まれます。
+Drop a file with the `.client.{js,jsx,ts,tsx}` sub-extension anywhere under `src/`, and Partial Hydration turns on with no extra configuration. That file is bundled with esbuild and emitted to `dist/**/*.client.js`, then loaded through the `<Island>` component as the client-side script of `<is-land>`.
 
-`clientComponent()` でマークしたコンポーネントを `<Island>` に渡すと、SSR 側の描画と、クライアント側のハイドレーションの両方に同じ props が流れます。
+Pass a component marked with `clientComponent()` to `<Island>`, and the same props flow into both the SSR-side render and the client-side hydration.
 
 ```jsx
 // src/counter.client.jsx
@@ -137,7 +137,7 @@ import Counter from "./counter.client.jsx";
 <Island component={Counter} on="interaction" initial={5} />
 ```
 
-上の例では、`<Island>` が次のような \<is-land> 要素を SSR 出力します。
+For the example above, `<Island>` emits an `<is-land>` element like this from SSR:
 
 ```html
 <is-land
@@ -150,15 +150,15 @@ import Counter from "./counter.client.jsx";
 </is-land>
 ```
 
-`on` prop は \<is-land> の初期化トリガー (`interaction` / `visible` / `idle`) に対応します。
+The `on` prop maps to the `<is-land>` initialization trigger (`interaction` / `visible` / `idle`).
 
 > [!NOTE]
 >
-> [\<is-land>](https://github.com/11ty/is-land?tab=readme-ov-file#usage)の初期化条件を指定する属性は、デフォルトでは `on:*` の書式で指定する必要がありますが、JSX の書式と競合するので `land-on:*` に変更しています。パラメータ付きトリガー (例: `on:media("(min-width: ...)")`) を使う場合は `<Island>` ではなく素の \<is-land> を直接書いてください。
+> The [`<is-land>`](https://github.com/11ty/is-land?tab=readme-ov-file#usage) initialization attribute normally uses the `on:*` form, but that conflicts with JSX syntax, so this preset uses `land-on:*` instead. For parameterized triggers such as `on:media("(min-width: ...)")`, drop `<Island>` and use the raw `<is-land>` element.
 
 ## Docker
 
-以下のような手順で静的サイトを配信するDockerイメージを生成し、コンテナーを生成して動作させることができます。
+To build and run a Docker image that serves the static site:
 
 ```
 docker build -t my-eleventy-site .
