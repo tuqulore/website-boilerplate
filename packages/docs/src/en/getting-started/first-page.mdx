@@ -1,10 +1,68 @@
 export const data = {
   layout: "post",
   locale: "en",
-  translated: false,
   title: "Write your first page",
 };
 
 # Write your first page
 
-Translation in progress. See the [Japanese version](/ja/getting-started/first-page/) for now.
+This page walks through replacing the placeholder content in the scaffolded project with your first real page. It assumes no prior experience with **MDX** (Markdown that lets you drop JSX into it).
+
+## Keep the dev server running
+
+Start `pnpm dev` before you edit anything.
+
+```shell
+pnpm dev
+```
+
+The dev server watches `src/` and reloads the browser on every change, so edits show up as you save.
+
+## The shape of `src/index.mdx`
+
+The scaffolded `src/index.mdx` has this outline:
+
+```mdx
+import { Island } from "@tuqulore-inc/eleventy-preset/island";
+import Clicker from "./clicker.client.jsx";
+
+export const data = {
+  layout: "post",
+  title: "Welcome",
+};
+
+# Welcome
+
+...
+```
+
+- The `import` lines pull in values used as JSX inside MDX.
+- `export const data` is the Eleventy page data — here it sets `layout` and `title`.
+- Everything after the blank line is Markdown: headings, paragraphs, and lists render to HTML as-is.
+
+## Replacing the title and body
+
+Start by editing `title` inside `export const data` and the H1 body.
+
+```mdx
+export const data = {
+  layout: "post",
+  title: "My first site",
+};
+
+# My first site
+
+Built with Eleventy and Preact.
+```
+
+Save the file. The browser reloads automatically and the updated title and body appear.
+
+## Removing the Island
+
+The scaffold ships `<Island component={Clicker} />` — an example counter that showcases **Partial Hydration** (the initial paint stays as static HTML, and the client-side script only loads when the user actually interacts). If you do not need that on a docs-style site, delete the corresponding `import` line and the `<Island>` element.
+
+The design rationale and use cases for Partial Hydration live in [Plugins / eleventy-plugin-preact-island](/en/plugins/eleventy-plugin-preact-island/).
+
+## Next
+
+Grasping the directory layout of the scaffolded project makes it easier to know where to go next. Continue with [Project structure](/en/getting-started/structure/).

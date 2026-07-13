@@ -1,10 +1,85 @@
 export const data = {
   layout: "post",
   locale: "en",
-  translated: false,
   title: "Directory & naming",
 };
 
 # Directory & naming
 
-Translation in progress. See the [Japanese version](/ja/preset/directory/) for now.
+This page covers the directory conventions the preset brings in and the file-naming rules that go with them. The scaffolded project already follows them, so new files drop into place.
+
+## Directory layout
+
+The scaffolded project, showing only the paths the preset depends on, looks like this:
+
+```
+.
+├── dist
+├── eleventy.config.js
+├── package.json
+└── src
+    ├── _data
+    ├── _includes
+    │   └── partials
+    └── public
+```
+
+Everything you write or implement lives under `src/`. `dist/` is the build output, and `eleventy.config.js` is a thin layer that just calls the preset.
+
+## `src/`
+
+Eleventy's template input root. The preset internally calls `setInputDirectory("src")`, and this location is not overridable. Pages (MDX), partials, static assets, and global data all live under here.
+
+## `src/_data/`
+
+Where [global data](https://www.11ty.dev/docs/data-global/) goes. The file name becomes the data key, readable from any template. The scaffold includes `site.js` (site-wide metadata) and `nav/` (per-language navigation).
+
+Sub-directories become nested keys. Placing `_data/nav/ja.json` and `_data/nav/en.json` exposes them as `nav.ja` and `nav.en`.
+
+## `src/_includes/`
+
+Where the [layouts](https://www.11ty.dev/docs/layouts/) for [layout chaining](https://www.11ty.dev/docs/layout-chaining/) live. When a page's `layout: "..."` in `export const data` (or in the frontmatter) resolves, Eleventy looks under this directory.
+
+By convention, `_includes/base.mdx` holds the HTML skeleton and `_includes/post.mdx` holds the article wrapper. See [Templates](/en/preset/templates/) for the details.
+
+## `src/_includes/partials/`
+
+Where JSX and MDX partials called from templates live. The scaffold ships `header.mdx`, `footer.mdx`, and `ogp.mdx`. Partials are not treated as Eleventy templates; you `import` them and use them through JSX.
+
+## `src/public/`
+
+Where static assets (favicon, `robots.txt`, pre-optimized images, and so on) live. Everything here is copied verbatim to the root of `dist/` at build time.
+
+Files under `src/public/` are excluded from the image optimization step below. This separates "leave as-is" from "process" cleanly.
+
+## `dist/`
+
+The build output. You do not edit this by hand — it is in `.gitignore` and gets removed by `pnpm clean`.
+
+## File-naming conventions
+
+Files under `src/` follow these naming rules.
+
+| Extension          | Behavior                                       |
+| ------------------ | ---------------------------------------------- |
+| `.mdx`             | Page template: Markdown mixed with JSX         |
+| `.jsx`             | JSX template or partial                        |
+| `.client.jsx` etc. | Client-side components (Islands)               |
+| `.css`             | Stylesheet processed by PostCSS                |
+| Others             | Handled by Eleventy defaults or passed through |
+
+Files with the `.client.` sub-extension (`.client.js`, `.client.jsx`, `.client.ts`, `.client.tsx`) are:
+
+- Bundled with esbuild and emitted at `dist/<input-relative path>.client.js`.
+- Excluded from Eleventy's template processing, so they never render as pages.
+- Automatically resolved to their bundled URL when passed to `<Island component={...}>` in MDX.
+
+This is a convention that declares "which files are client-side" without any additional configuration. For details, see [Plugins / eleventy-plugin-preact-island](/en/plugins/eleventy-plugin-preact-island/).
+
+## Image optimization and static assets
+
+Images matching `src/**/*.{jpeg,jpg,png,webp,gif,tiff,avif,svg}` — excluding those under `src/public/` — are optimized with `@11ty/eleventy-img` and written to the matching location under `dist/`.
+
+Everything under `src/public/`, in contrast, is copied verbatim to `dist/`. Pre-optimized images, favicons, `robots.txt`, and similar files go there.
+
+Keeping "leave as-is" and "process" in separate directories prevents unintended re-encoding and quality loss.

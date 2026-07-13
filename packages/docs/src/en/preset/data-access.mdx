@@ -1,10 +1,99 @@
 export const data = {
   layout: "post",
   locale: "en",
-  translated: false,
   title: "Data Access",
 };
 
 # Data Access
 
-Translation in progress. See the [Japanese version](/ja/preset/data-access/) for now.
+This page covers how templates and partials read Eleventy data (global data, page data, and the built-in `page` object). The preset ships an `eleventy` singleton so you never have to prop-drill values from layouts down to partials.
+
+## The `eleventy` singleton
+
+Import the singleton from `@tuqulore-inc/eleventy-preset/eleventy`. It is only valid inside JSX / MDX evaluated during SSR.
+
+```jsx
+import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
+
+<title>
+  {eleventy.title} | {eleventy.site.name}
+</title>;
+```
+
+Partials work the same way — they import `eleventy` themselves rather than relying on props from the surrounding layout.
+
+```jsx
+import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
+
+<footer>
+  <p>&copy; {eleventy.site.author}</p>
+</footer>;
+```
+
+## What is on the singleton
+
+| Property                                       | Description                                                                                                          |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `eleventy.content`                             | Rendered HTML of the child template                                                                                  |
+| `eleventy.title`, `eleventy.description`, etc. | Values from the current page's `export const data`                                                                   |
+| `eleventy.site`, `eleventy.nav`, etc.          | Top-level keys of the global data under `_data/`                                                                     |
+| `eleventy.page`                                | Eleventy's [`page` variable](https://www.11ty.dev/docs/data-eleventy-supplied/#page-variable) (URL, date, and so on) |
+| `eleventy.locale`                              | The `locale` field from `export const data`                                                                          |
+
+`eleventy.content` is where a parent layout receives its child's rendered HTML. The value is already an HTML string, so embed it via `dangerouslySetInnerHTML`. Injecting it into the JSX tree directly would re-parse the child's output on top of the parent render, paying the cost twice.
+
+## Writing global data
+
+Files under `src/_data/` become top-level keys on the singleton.
+
+```js
+// src/_data/site.js
+export default {
+  name: "My Website",
+  description: "About this site",
+  url: process.env.SITE_URL,
+  author: "tuqulore inc.",
+};
+```
+
+```jsx
+// From a template
+<title>{eleventy.site.name}</title>
+```
+
+Sub-directories become nested keys:
+
+```
+src/_data/nav/ja.json
+src/_data/nav/en.json
+```
+
+```jsx
+{
+  eleventy.nav.ja.map((item) => <a href={item.path}>{item.name}</a>);
+}
+{
+  eleventy.nav.en.map((item) => <a href={item.path}>{item.name}</a>);
+}
+```
+
+Templates typically pick which side to read based on the current page's `locale`: `eleventy.nav[eleventy.locale]`. This is exactly what this documentation's sidebar does.
+
+## Only valid during SSR
+
+The `eleventy` singleton is only valid during SSR. Islands hydrated on the client cannot see it. To pass SSR-side values into an Island, hand them in as props on `<Island>`.
+
+```jsx
+import { Island } from "@tuqulore-inc/eleventy-preset/island";
+import Nav from "./nav.client.jsx";
+
+<Island component={Nav} on="interaction" items={eleventy.nav.ja} />;
+```
+
+Props passed to `<Island>` flow to both the SSR render and the client-side hydration. What the browser sees after hydration matches what SSR rendered.
+
+## Reading SSR-only data inside an Island
+
+Importing `eleventy` inside a `.client.jsx` file fails on the client — the import itself does not resolve. The rule is: SSR-only values always come in through `<Island>` props.
+
+State that lives entirely inside the Island (user input, fetch results) is held with the component's own `useState` / `useEffect`. Anything that originated on the server side arrives as a prop.
