@@ -1,0 +1,15 @@
+@import "tailwindcss";
+@import "@jumpu-ui/tailwindcss";
+@plugin "@tailwindcss/typography";
+@plugin "@iconify/tailwind4";
+
+@layer base {
+  html {
+    scroll-padding-top: 4rem;
+  }
+
+  :focus-visible {
+    outline: 2px solid AccentColor;
+    outline-offset: 2px;
+  }
+}

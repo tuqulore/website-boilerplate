@@ -1,0 +1,32 @@
+import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
+import Ogp from "./partials/ogp.mdx";
+import Header from "./partials/header.mdx";
+import Footer from "./partials/footer.mdx";
+
+<html lang={eleventy.locale ?? "ja"}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {eleventy.title && `${eleventy.title} | `}
+      {eleventy.site.name}
+    </title>
+    <Ogp />
+    <link rel="stylesheet" href="/main.css" />
+  </head>
+  <body>
+    <a
+      href="#main"
+      class="jumpu-button sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50"
+    >
+      本文へスキップ
+    </a>
+    <Header />
+    <main
+      id="main"
+      class="mx-auto mb-4 min-h-[60vh] max-w-6xl px-4"
+      dangerouslySetInnerHTML={{ __html: eleventy.content }}
+    ></main>
+    <Footer />
+  </body>
+</html>
