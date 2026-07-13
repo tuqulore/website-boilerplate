@@ -1,0 +1,36 @@
+import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
+import Ogp from "./partials/ogp.mdx";
+import Header from "./partials/header.mdx";
+import Sidebar from "./partials/sidebar.mdx";
+import Footer from "./partials/footer.mdx";
+
+<html lang={eleventy.locale ?? "ja"}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {eleventy.title && `${eleventy.title} | `}
+      {eleventy.site[eleventy.locale ?? "ja"].name}
+    </title>
+    <Ogp />
+    <link rel="stylesheet" href="/main.css" />
+  </head>
+  <body>
+    <a
+      href="#main"
+      class="jumpu-button sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50"
+    >
+      {eleventy.locale === "en" ? "Skip to main content" : "本文へスキップ"}
+    </a>
+    <Header />
+    <div class="mx-auto mb-4 max-w-6xl gap-8 px-4 md:flex">
+      <Sidebar />
+      <main
+        id="main"
+        class="min-h-[60vh] flex-1"
+        dangerouslySetInnerHTML={{ __html: eleventy.content }}
+      ></main>
+    </div>
+    <Footer />
+  </body>
+</html>

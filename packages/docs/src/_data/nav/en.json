@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Getting Started",
+    "path": "/en/getting-started/",
+    "children": [
+      { "name": "Installation", "path": "/en/getting-started/install/" },
+      {
+        "name": "Write your first page",
+        "path": "/en/getting-started/first-page/"
+      },
+      { "name": "Project structure", "path": "/en/getting-started/structure/" }
+    ]
+  },
+  { "name": "Architecture", "path": "/en/architecture/" },
+  {
+    "name": "Preset Conventions",
+    "path": "/en/preset/",
+    "children": [
+      { "name": "Directory", "path": "/en/preset/directory/" },
+      { "name": "Templates", "path": "/en/preset/templates/" },
+      { "name": "Data Access", "path": "/en/preset/data-access/" }
+    ]
+  },
+  {
+    "name": "Plugins",
+    "path": "/en/plugins/",
+    "children": [
+      {
+        "name": "eleventy-plugin-preact",
+        "path": "/en/plugins/eleventy-plugin-preact/"
+      },
+      {
+        "name": "eleventy-plugin-preact-island",
+        "path": "/en/plugins/eleventy-plugin-preact-island/"
+      },
+      {
+        "name": "eleventy-plugin-postcss",
+        "path": "/en/plugins/eleventy-plugin-postcss/"
+      }
+    ]
+  }
+]

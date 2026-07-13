@@ -1,0 +1,49 @@
+export const data = {
+  layout: "post",
+  locale: "ja",
+  title: "インストール",
+};
+
+# インストール
+
+本ページは、本ボイラープレートを新しいサイトの土台にするまでの前提と手順を扱います。ローカルに新規サイトを scaffold し、開発サーバが立ち上がるところまで進めます。
+
+## 動作環境
+
+必要なものは Node.js と pnpm の 2 つです。
+
+Node.js は [Active LTS](https://github.com/nodejs/release#release-schedule) を対象にします。scaffold されるプロジェクトの `engines.node` は `>=20` を宣言しています。
+
+本ボイラープレートは、scaffold と開発の両方でパッケージマネージャに pnpm を採用しています。npm や yarn での動作は保証しません。pnpm を未導入の場合は [公式インストール手順](https://pnpm.io/ja/installation) を参照してください。
+
+## サイトを scaffold する
+
+サイトの雛形は CLI `@tuqulore-inc/create-eleventy` から作ります。
+
+```shell
+pnpm create @tuqulore-inc/eleventy my-project
+```
+
+`my-project` は作りたいディレクトリ名に置き換えます。テンプレートを引数で指定したいときは `-t` を渡します。
+
+```shell
+pnpm create @tuqulore-inc/eleventy my-project -t default
+```
+
+現時点で用意しているテンプレートは `default` だけです。`default` は Eleventy、Preact、Tailwind CSS を組み合わせた一通りの構成を持ちます。
+
+## 依存をインストールして開発サーバを起動する
+
+scaffold されたディレクトリに入り、依存を入れて開発サーバを起動します。
+
+```shell
+cd my-project
+pnpm install
+pnpm dev
+```
+
+`pnpm dev` は Eleventy の開発サーバを立ち上げ、`http://localhost:8080/` で待ち受けます。ソースファイルへの変更は、保存するたびにブラウザへ自動的に反映されます。
+
+## 次に読む
+
+サイトが立ち上がったら、[最初のページを書く](/ja/getting-started/first-page/) に進み、scaffold のプレースホルダを差し替える手順を追います。ディレクトリの役割を先に把握したい場合は [プロジェクト構成](/ja/getting-started/structure/) を見てください。

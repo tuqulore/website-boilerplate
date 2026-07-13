@@ -1,21 +1,25 @@
 # Website Boilerplate
 
-Eleventyプロジェクトのためのボイラープレートとツール群を提供するモノレポです。
+A monorepo of boilerplate code and tooling for building Eleventy projects.
 
-## パッケージ
+## Documentation
 
-| パッケージ                                                                              | 説明                                                             |
-| :-------------------------------------------------------------------------------------- | :--------------------------------------------------------------- |
-| [@tuqulore-inc/create-eleventy](./packages/create-eleventy)                             | `pnpm create @tuqulore-inc/eleventy` でプロジェクトを作成するCLI |
-| [@tuqulore-inc/eleventy-preset](./packages/eleventy-preset)                             | Eleventy設定のプリセット                                         |
-| [@tuqulore-inc/eleventy-plugin-preact](./packages/eleventy-plugin-preact)               | PreactでJSXテンプレートを使用するためのプラグイン                |
-| [@tuqulore-inc/eleventy-plugin-preact-island](./packages/eleventy-plugin-preact-island) | Partial Hydrationを実現するためのプラグイン                      |
-| [@tuqulore-inc/eleventy-plugin-postcss](./packages/eleventy-plugin-postcss)             | PostCSSを使用するためのプラグイン                                |
-| [@tuqulore-inc/eslint-config](./packages/eslint-config)                                 | 共有のESLint設定                                                 |
+Full documentation lives at [website.tuqulore.pages.dev](https://website.tuqulore.pages.dev/).
 
-## クイックスタート
+## Packages
 
-新しいEleventyプロジェクトを作成するには：
+| Package                                                                                 | Description                                                              |
+| :-------------------------------------------------------------------------------------- | :----------------------------------------------------------------------- |
+| [@tuqulore-inc/create-eleventy](./packages/create-eleventy)                             | CLI for creating a new project with `pnpm create @tuqulore-inc/eleventy` |
+| [@tuqulore-inc/eleventy-preset](./packages/eleventy-preset)                             | Eleventy configuration preset                                            |
+| [@tuqulore-inc/eleventy-plugin-preact](./packages/eleventy-plugin-preact)               | Plugin for JSX/MDX templates via Preact SSR                              |
+| [@tuqulore-inc/eleventy-plugin-preact-island](./packages/eleventy-plugin-preact-island) | Plugin for Partial Hydration                                             |
+| [@tuqulore-inc/eleventy-plugin-postcss](./packages/eleventy-plugin-postcss)             | Plugin for PostCSS                                                       |
+| [@tuqulore-inc/eslint-config](./packages/eslint-config)                                 | Shared ESLint config                                                     |
+
+## Quick start
+
+Create a new Eleventy project:
 
 ```shell
 pnpm create @tuqulore-inc/eleventy my-project
@@ -24,35 +28,35 @@ pnpm install
 pnpm dev
 ```
 
-## 開発
+## Development
 
-開発フロー・コード整形・静的検査・パッケージの手動テスト手順は[コントリビューションガイド](./CONTRIBUTING.md)を参照してください。
+For the development workflow, code formatting, static checks, and the manual testing procedure, see [CONTRIBUTING.md](./CONTRIBUTING.md).
 
-### 動作環境
+### Requirements
 
 - [Active LTS](https://github.com/nodejs/release#release-schedule)
 
-### セットアップ
+### Setup
 
 ```shell
 pnpm install
 ```
 
-### npmスクリプト
+### npm scripts
 
-| タスク名              | 説明                                                                                 |
-| :-------------------- | :----------------------------------------------------------------------------------- |
-| format                | コード整形します。                                                                   |
-| lint                  | 静的コード検査します。                                                               |
-| packages:bump-version | @lerna-lite/versionによるバージョンアップを実施します。リリース時に使用します。      |
-| packages:publish      | @lerna-lite/publishによるnpmへのパッケージ公開を実施します。リリース時に使用します。 |
+| Task                  | Description                                                             |
+| :-------------------- | :---------------------------------------------------------------------- |
+| format                | Format code.                                                            |
+| lint                  | Run static checks.                                                      |
+| packages:bump-version | Bump versions with @lerna-lite/version. Used at release time.           |
+| packages:publish      | Publish packages to npm with @lerna-lite/publish. Used at release time. |
 
-## GitHubワークフロー
+## GitHub workflows
 
 ### CI
 
-PRブランチで静的コード検査とコード整形をおこないます。
+Static checks and code formatting run on PR branches.
 
 ### Release / Publish
 
-パッケージのリリースとnpm公開を行います。詳細は[リリースガイド](./RELEASING.md)を参照してください。
+Package releases and npm publishing. See [RELEASING.md](./RELEASING.md) for details.

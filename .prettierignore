@@ -1,2 +1,3 @@
 lerna.json
 pnpm-lock.yaml
+packages/docs/dist/

@@ -1,0 +1,85 @@
+export const data = {
+  layout: "post",
+  locale: "ja",
+  title: "eleventy-plugin-postcss",
+};
+
+# `@tuqulore-inc/eleventy-plugin-postcss`
+
+本ページは、CSS を PostCSS で処理する `@tuqulore-inc/eleventy-plugin-postcss` の内部設計と応用ケースを扱います。API リファレンスとインストール手順はパッケージの README を参照してください。
+
+## なぜ独立したプラグインなのか
+
+PostCSS 処理は、SSR や Partial Hydration とは独立した関心事です。JSX プラグインが Preact 依存に閉じていられるのと同じ理由で、CSS 処理も別プラグインに切り出しています。
+
+分けておくと、Tailwind をやめて素の CSS だけを扱いたいプロジェクトでも、他のプラグインを触らずに済みます。逆に、他の Eleventy プロジェクトへ PostCSS 対応だけを持ち込むことも簡単です。
+
+## Eleventy のテンプレート形式として登録する
+
+本プラグインは `eleventyConfig.addTemplateFormats("css")` と `eleventyConfig.addExtension("css", ...)` を使い、CSS を Eleventy 自身のテンプレート形式として扱わせます。ビルド中に発見された `src/**/*.css` はテンプレートエンジンを通り、PostCSS の変換結果が出力されます。
+
+外側で PostCSS CLI を回さない設計です。Eleventy の dev サーバが起動する裏で、CSS も同じイベントループで処理されます。ソースファイルの変更検知と、成果物の書き出しが 1 本のパイプラインに載ります。
+
+## `contentGlob` と Tailwind の依存追跡
+
+Tailwind CSS は、テンプレート内で使われているクラス名を走査してから CSS を出力します。CSS の中身は入力の `.css` に書かれていなくても、テンプレートの変更で結果が変わり得ます。
+
+これに合わせて、本プラグインは `contentGlob` オプションで「CSS の依存」として追跡するファイルを受け取ります。プリセットのデフォルトは次の値です。
+
+```js
+contentGlob: ["src/**/*.{md,mdx,jsx}"];
+```
+
+Eleventy の `addDependencies` API を通じて、これらのファイルの変更が CSS の再ビルドを引き起こします。テンプレートに新しい Tailwind クラスを書いた瞬間に、開発サーバ上で反映されます。
+
+`.client.jsx` は Eleventy のテンプレート形式ではないため、既定の追跡対象から外れます。Island の内側で書いた Tailwind クラスを反映させたいときは、親のテンプレート側にも同じクラスを書いておくか、`contentGlob` を差し替えて追跡対象を広げる必要があります。前者で済ませるのが素直です。
+
+## `setServerOptions` で成果物を watch する
+
+生成された `dist/**/*.css` の変更は、開発サーバ側でブラウザリロードのトリガーとして再度 watch する必要があります。プリセットは `eleventyConfig.setServerOptions({ watch: ["dist/**/*.css"] })` を組み込んでいます。
+
+これで「テンプレート変更 → CSS 再ビルド → dist/main.css 更新 → ブラウザリロード」の流れが自動で回ります。
+
+## `skip` で個別ファイルを除外する
+
+`skip: (inputPath) => boolean` を渡すと、その述語が `true` を返した CSS ファイルは処理と出力から外れます。`@import` 用のフラグメントや、別のパイプラインで扱う CSS を Eleventy 側で無視するためのフックです。
+
+デフォルトの `default` テンプレートはひとつの `main.css` に集約する構成で、`skip` は使っていません。フラグメントを分けたい場合の逃げ道として用意しています。
+
+## Tailwind CSS を書く
+
+scaffold された `src/main.css` が Tailwind の入り口です。scaffold の初期状態は 4 行で構成します。
+
+```css
+@import "tailwindcss";
+@import "@jumpu-ui/tailwindcss";
+@plugin "@tailwindcss/typography";
+@plugin "@iconify/tailwind4";
+```
+
+- `@import "tailwindcss"` が Tailwind 本体を有効化します。
+- `@import "@jumpu-ui/tailwindcss"` が Jumpu UI のデザインシステムを載せます。
+- `@plugin` で `@tailwindcss/typography` と `@iconify/tailwind4` を組み込みます。前者は Markdown 本文の `prose` クラス、後者は Iconify アイコンをクラス指定で使えるようにする役目です。
+
+Tailwind 4 では設定ファイル (`tailwind.config.js`) を書かず、CSS の中で完結する方式を採用しています。プロジェクトに応じたテーマ拡張やユーティリティ追加もこの `main.css` に集約します。
+
+## テーマとプラグインを増やす
+
+色やフォントなど独自のトークンを増やすときは、`@theme` ディレクティブで宣言します。
+
+```css
+@theme {
+  --color-brand: oklch(0.7 0.15 250);
+  --font-display: "Zen Kaku Gothic New", sans-serif;
+}
+```
+
+追加したトークンは `bg-brand` や `font-display` などのクラスで参照できます。既存のトークンを上書きしたいときも同じディレクティブで書き換えます。
+
+Tailwind エコシステムの外部プラグインを取り込みたいときは、`@plugin` ディレクティブに続けてパッケージ名を書きます。
+
+```css
+@plugin "@tailwindcss/forms";
+```
+
+`package.json` にプラグインを追加してから記述します。プラグインは `main.css` を読み込むタイミングで解決されます。

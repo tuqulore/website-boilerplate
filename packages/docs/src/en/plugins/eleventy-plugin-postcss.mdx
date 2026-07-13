@@ -1,0 +1,85 @@
+export const data = {
+  layout: "post",
+  locale: "en",
+  title: "eleventy-plugin-postcss",
+};
+
+# `@tuqulore-inc/eleventy-plugin-postcss`
+
+This page covers the internal design and applied guidance for `@tuqulore-inc/eleventy-plugin-postcss`, the plugin that runs CSS through PostCSS. For the API reference and installation, see the package README.
+
+## Why an independent plugin
+
+PostCSS processing has nothing to do with SSR or Partial Hydration. In the same way the JSX plugin stays inside its Preact dependency, CSS processing lives in its own plugin.
+
+Splitting it out means a project that drops Tailwind and writes plain CSS never touches the other plugins. It also means a project that only wants PostCSS on top of Eleventy can pull this plugin in on its own.
+
+## Registering CSS as an Eleventy template format
+
+The plugin uses `eleventyConfig.addTemplateFormats("css")` and `eleventyConfig.addExtension("css", ...)` to make CSS a first-class Eleventy template format. Any `src/**/*.css` discovered during the build goes through the template engine, and the PostCSS output lands in `dist/`.
+
+This means no external PostCSS CLI in the loop. While Eleventy's dev server is running, CSS is processed on the same event loop. Source-change detection and output writing share one pipeline.
+
+## `contentGlob` and Tailwind dependency tracking
+
+Tailwind CSS reads class names out of your templates before it emits CSS. The output can change without the source `.css` changing — a new class in a template is enough.
+
+The plugin accepts a `contentGlob` option to declare which files count as CSS dependencies. The preset default is:
+
+```js
+contentGlob: ["src/**/*.{md,mdx,jsx}"];
+```
+
+Through Eleventy's `addDependencies` API, changes to any of those files trigger a CSS rebuild. Write a new Tailwind class into a template and it lights up on the dev server the next moment.
+
+Because `.client.jsx` files are not Eleventy templates, they are not tracked by default. If you write Tailwind classes inside an Island and want them picked up, either write the same class on the parent template as well, or override `contentGlob` to widen the tracked set. The former is usually the simpler answer.
+
+## `setServerOptions` for output watching
+
+Generated files under `dist/**/*.css` need to be watched separately so the dev server triggers a browser reload when they update. The preset wires this up with `eleventyConfig.setServerOptions({ watch: ["dist/**/*.css"] })`.
+
+The end-to-end loop — template change → CSS rebuild → `dist/main.css` update → browser reload — runs automatically.
+
+## `skip` for excluding individual files
+
+`skip: (inputPath) => boolean` gets called for each CSS template. Returning `true` skips both processing and output for that file — useful for `@import`ed fragments or CSS handled by another pipeline.
+
+The default `default` template collects everything into one `main.css` and does not need `skip`. It exists as an escape hatch when you need to split CSS into fragments.
+
+## Writing Tailwind CSS
+
+The scaffolded `src/main.css` is the Tailwind entry point. The initial file has four lines:
+
+```css
+@import "tailwindcss";
+@import "@jumpu-ui/tailwindcss";
+@plugin "@tailwindcss/typography";
+@plugin "@iconify/tailwind4";
+```
+
+- `@import "tailwindcss"` turns Tailwind itself on.
+- `@import "@jumpu-ui/tailwindcss"` loads the Jumpu UI design system.
+- `@plugin` adds `@tailwindcss/typography` (Markdown body via the `prose` class) and `@iconify/tailwind4` (Iconify icons by class name).
+
+Tailwind 4 skips the `tailwind.config.js` file and expresses configuration in the CSS itself. Theme extensions and utility additions live in the same `main.css`.
+
+## Adding themes and plugins
+
+To add tokens (colors, fonts, and so on), use the `@theme` directive.
+
+```css
+@theme {
+  --color-brand: oklch(0.7 0.15 250);
+  --font-display: "Zen Kaku Gothic New", sans-serif;
+}
+```
+
+The tokens become classes like `bg-brand` and `font-display`. Overriding existing tokens uses the same directive.
+
+To pull in a Tailwind ecosystem plugin, use `@plugin` with the package name.
+
+```css
+@plugin "@tailwindcss/forms";
+```
+
+Add the plugin to `package.json` first. Plugins get resolved when `main.css` loads.

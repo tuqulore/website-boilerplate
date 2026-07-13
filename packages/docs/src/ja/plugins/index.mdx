@@ -1,0 +1,22 @@
+export const data = {
+  layout: "post",
+  locale: "ja",
+  title: "Plugins",
+};
+
+# Plugins
+
+本セクションは、プリセットが束ねる 3 つの Eleventy プラグインの内部設計と応用ケースを扱います。「なぜこう作ったか」と「どう動くか」に閉じ、日常の書き方は [Preset の規約](/ja/preset/) を参照してください。
+
+## プラグイン一覧
+
+- [`@tuqulore-inc/eleventy-plugin-preact`](/ja/plugins/eleventy-plugin-preact/): JSX / MDX を Eleventy のテンプレートとして扱い、Preact でサーバサイドレンダリングします。
+- [`@tuqulore-inc/eleventy-plugin-preact-island`](/ja/plugins/eleventy-plugin-preact-island/): Partial Hydration を担い、`.client.*` を esbuild で bundle して `<is-land>` で hydrate します。
+- [`@tuqulore-inc/eleventy-plugin-postcss`](/ja/plugins/eleventy-plugin-postcss/): PostCSS を Eleventy のテンプレート形式として登録し、Tailwind CSS などのプラグインを回します。
+
+3 つとも独立してインストールでき、プリセットを介さずに他の Eleventy プロジェクトへ持ち込めます。
+
+## API リファレンスと拡張
+
+- 各プラグインの API (オプション、export される関数) は、パッケージの README を参照してください。
+- プリセットに別のプラグイン (例: RSS、Syntax Highlight) を追加したい場合は、`preset()` に extend 関数を渡して `eleventyConfig.addPlugin` を呼びます。詳細は `@tuqulore-inc/eleventy-preset` の README を参照してください。

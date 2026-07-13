@@ -1,0 +1,121 @@
+export const data = {
+  layout: "post",
+  locale: "en",
+  title: "Templates",
+};
+
+# Templates
+
+This page covers the conventions for writing pages and partials under `src/`. It walks through how page data flows, how the `layout` property picks a parent, and how layout chaining is composed.
+
+## Passing page data with `export const data`
+
+MDX and JSX templates declare their Eleventy page data with an `export const data = { ... }` at the top of the file. This is the equivalent of a Markdown YAML frontmatter block.
+
+```mdx
+export const data = {
+  layout: "post",
+  title: "My first site",
+  description: "The first page built with the boilerplate",
+};
+
+# My first site
+
+The body starts here.
+```
+
+Markdown-style `---` frontmatter conflicts with MDX's JSX parsing, so the boilerplate standardizes on `export const data`. `.jsx` files use the same shape for the same reason.
+
+You can put any Eleventy page data inside `data`. `layout` is required under the preset, and `title` / `description` are read by many partials (like `ogp.mdx`).
+
+## Selecting a parent with `layout`
+
+Each page names its parent layout in `data.layout`. The value is a path relative to `_includes/`, without the extension.
+
+```mdx
+export const data = {
+  layout: "post", // uses src/_includes/post.mdx
+};
+```
+
+Parent layouts can carry their own `data.layout`, so layouts chain multiple levels deep.
+
+## Composing layout chains
+
+The scaffold defaults to a three-level chain:
+
+```
+src/index.mdx  →  src/_includes/post.mdx  →  src/_includes/base.mdx
+   (page)           (article wrapper)          (HTML skeleton)
+```
+
+Each layout receives the child's rendered HTML on `eleventy.content` and injects it with `dangerouslySetInnerHTML`, so the child's output slots into the parent's JSX tree.
+
+### Root layout (`_includes/base.mdx`)
+
+Owns the full HTML skeleton: `<html>`, `<head>`, `<body>`, and the `<main>` where child content goes.
+
+```mdx
+import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
+
+<html lang={eleventy.locale ?? "ja"}>
+  <head>
+    <title>
+      {eleventy.title && `${eleventy.title} | `}
+      {eleventy.site.name}
+    </title>
+    <link rel="stylesheet" href="/main.css" />
+  </head>
+  <body>
+    <main dangerouslySetInnerHTML={{ __html: eleventy.content }} />
+  </body>
+</html>
+```
+
+### Intermediate layout (`_includes/post.mdx`)
+
+Owns a content wrapper (`<article class="prose">` and so on) and picks `base` as its parent.
+
+```mdx
+import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
+
+export const data = {
+  layout: "base",
+};
+
+<article class="prose" dangerouslySetInnerHTML={{ __html: eleventy.content }} />
+```
+
+### Where the split usually falls
+
+- Keep a single root layout so the `<html>` skeleton is not duplicated.
+- Add intermediate layouts per page type (`post` for articles, `list` for index pages, and so on).
+- Have pages target intermediate layouts, not the root — the chain stays maintainable that way.
+
+## Slotting partials in
+
+MDX and JSX partials under `_includes/partials/` are `import`ed and used as JSX inside layouts.
+
+```mdx
+import Header from "./partials/header.mdx";
+import Footer from "./partials/footer.mdx";
+
+<Header />
+<main dangerouslySetInnerHTML={{ __html: eleventy.content }} />
+<Footer />
+```
+
+Partials read the values they need from their own props and from the `eleventy` singleton, described in [Data Access](/en/preset/data-access/). Layouts do not have to drill props down to them.
+
+## Slotting Islands in
+
+Anything you want to hydrate on the client goes under `src/**/*.client.jsx` and is embedded from MDX via `<Island>`.
+
+```mdx
+import { Island } from "@tuqulore-inc/eleventy-preset/island";
+import Counter from "./counter.client.jsx";
+
+<Island component={Counter} on="interaction" initial={5} />
+```
+
+The design of `<Island>` and guidance on granularity live in [Plugins / eleventy-plugin-preact-island](/en/plugins/eleventy-plugin-preact-island/).

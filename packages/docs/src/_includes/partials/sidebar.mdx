@@ -1,0 +1,45 @@
+import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
+
+<aside class="mb-8 md:mb-0 md:w-64 md:shrink-0">
+  <nav
+    aria-label={eleventy.locale === "en" ? "Documentation" : "ドキュメント"}
+    class="md:sticky md:top-20 md:py-6"
+  >
+    <ul class="space-y-4">
+      {(eleventy.nav[eleventy.locale ?? "ja"] ?? []).map((section) => (
+        <li key={section.name}>
+          {section.path ? (
+            <a
+              href={section.path}
+              aria-current={
+                eleventy.page.url === section.path ? "page" : undefined
+              }
+              class="block font-semibold aria-[current=page]:underline"
+            >
+              {section.name}
+            </a>
+          ) : (
+            <span class="block font-semibold">{section.name}</span>
+          )}
+          {section.children && (
+            <ul class="mt-2 ml-4 space-y-2 border-l pl-3">
+              {section.children.map((child) => (
+                <li key={child.path}>
+                  <a
+                    href={child.path}
+                    aria-current={
+                      eleventy.page.url === child.path ? "page" : undefined
+                    }
+                    class="block aria-[current=page]:underline"
+                  >
+                    {child.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </li>
+      ))}
+    </ul>
+  </nav>
+</aside>

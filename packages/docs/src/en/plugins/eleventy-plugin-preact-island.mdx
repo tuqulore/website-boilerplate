@@ -1,0 +1,138 @@
+export const data = {
+  layout: "post",
+  locale: "en",
+  title: "eleventy-plugin-preact-island",
+};
+
+# `@tuqulore-inc/eleventy-plugin-preact-island`
+
+This page covers the internal design and applied guidance for `@tuqulore-inc/eleventy-plugin-preact-island`, the plugin that drives Partial Hydration. For the API reference and installation, see the package README.
+
+## Why Partial Hydration
+
+The boilerplate serves the initial paint as static HTML and hydrates only the parts of the page that need client-side JavaScript. Re-rendering the whole page with Preact is unnecessary for most content sites.
+
+On content-heavy sites, most pages are static text and images. Loading a full SPA runtime on top of that hurts LCP and TTI just from the initial JS download and parse. Docs and article sites want to avoid that.
+
+Some pieces still need client JavaScript — a search form, a nav toggle, an embedded counter. Partial Hydration pulls those pieces out and hydrates them individually.
+
+## Why is-land
+
+Rolling Partial Hydration from scratch means writing initialization triggers (visible, idle, interaction) and bundle import ordering every time. [`@11ty/is-land`](https://github.com/11ty/is-land) provides these as a Web Component (`<is-land>`), and it composes cleanly with Eleventy.
+
+This plugin adopts is-land as-is and layers Preact-specific hydration logic and a JSX wrapper (`<Island>`) on top. is-land itself is not hidden — when you need a parameterized trigger (for example `on:media("(min-width: ...)")`), you can drop down to the raw `<is-land>` element.
+
+## The `.client.*` convention
+
+Client-side JavaScript lives under `src/**/*.client.{js,jsx,ts,tsx}`. Files with that sub-extension:
+
+- Get bundled with esbuild and emitted at `dist/<input-relative path>.client.js`.
+- Are excluded from Eleventy's template processing (they never render as pages).
+- Have their bundled URL resolved automatically when passed to `<Island component={...}>` on the SSR side.
+
+This is a convention that declares "which files are client-side" without any additional configuration. There is no glob list to maintain in the config.
+
+## What `<Island>` does
+
+`<Island>` is a wrapper that expresses both the SSR-side Preact render and the emitted `<is-land>` element in one JSX call.
+
+```jsx
+import { Island } from "@tuqulore-inc/eleventy-preset/island";
+import Counter from "./counter.client.jsx";
+
+<Island component={Counter} on="interaction" initial={5} />;
+```
+
+The same props flow to the SSR render and the client-side hydration. What the browser sees after hydration matches what SSR rendered.
+
+Props are serialized with [`devalue`](https://github.com/Rich-Harris/devalue), so `Date`, `Map`, `Set`, and other types that JSON drops survive the trip as actual JavaScript values.
+
+## Riding Eleventy's `pathPrefix`
+
+When you deploy to a subdirectory (for example GitHub Pages under `/repo/`), the `<is-land import="...">` URLs need to match that prefix. The plugin reads Eleventy's own [`pathPrefix`](https://www.11ty.dev/docs/config/#deploy-to-a-subdirectory-with-a-path-prefix) directly; there is no separate URL prefix option.
+
+By riding an existing Eleventy concept instead of adding another knob, the developer sets the value in one place.
+
+## `bundle: false` for external bundlers
+
+esbuild bundling is on by default (`bundle: true`). Pass `bundle: false` to switch it off — the plugin then only handles URL resolution, copying `is-land.js`, and injecting the setup script. You take responsibility for producing the bundle at the expected URL (`<pathPrefix><input-relative path>.client.js`).
+
+The point is: "zero-config out of the box, but replaceable when you need it." Changing bundling strategy does not force you to drop the plugin.
+
+## Deciding whether to use an Island at all
+
+Islands exist so you can hydrate the pieces that need JavaScript. If a piece does not need JavaScript, do not wrap it in one. If any of the following works, prefer it over an Island.
+
+- `<details>` / `<dialog>` and other HTML elements that stand on their own (accordions, modals)
+- CSS state changes with `:target` or `:has()`
+- Plain links and page navigation
+
+Ask "does this really need JavaScript?" first. On a docs site, where most reader interaction is search and navigation, the set of Island candidates ends up small on its own.
+
+## What to Island
+
+Island candidates share these traits:
+
+- **Holds state**: counters, forms, filter UIs, and so on.
+- **Reads external data**: search, fetch, lazy loading.
+- **Renders differently based on user interaction**: menu toggles, tab switching.
+
+Anything else — a logo, static prose, a link list — does not need to be an Island. The SSR-rendered HTML is enough.
+
+## Fine or coarse
+
+Making Islands smaller shrinks the hydrated JS per Island. The default is: hydrate the header menu, or the newsletter form in the footer, not the whole page.
+
+But if neighboring UIs share state (a filter and its result list, for example), put them in the same Island. Cross-Island state sharing is not something Preact props or Signals can express on their own.
+
+When in doubt, use "elements that touch the same state go into the same Island" as the tie-breaker.
+
+## Choosing a trigger
+
+The `on` prop on `<Island>` picks when hydration happens.
+
+<table>
+  <thead>
+    <tr>
+      <th>Value</th>
+      <th>Where it fits</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <code>interaction</code>
+      </td>
+      <td>
+        Wait until the user clicks or focuses. Fits most buttons and forms. This
+        is the default.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>visible</code>
+      </td>
+      <td>
+        Hydrate when the element scrolls into view. Fits interactive blocks
+        lower on the page.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>idle</code>
+      </td>
+      <td>
+        Hydrate once the browser is idle. Fits lightweight UI that has to work
+        right after the initial paint.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+The tie-breaker is "how much time does the user actually give us before touching this Island?" — delay the ones with more slack, hydrate early only the ones that need it.
+
+For parameterized triggers like `on:media("(min-width: 40rem)")`, skip `<Island>` and write the raw `<is-land>` element yourself. See the `@tuqulore-inc/eleventy-plugin-preact-island` README for details.
+
+## Match SSR and hydration
+
+Do not use non-deterministic values like `new Date()` or `Math.random()` in the initial render of an Island. SSR and the client produce different values, and hydration mismatches. Use deterministic values for the first render and reflect dynamic values inside `useEffect`.

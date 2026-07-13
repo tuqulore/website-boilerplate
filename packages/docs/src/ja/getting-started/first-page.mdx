@@ -1,0 +1,68 @@
+export const data = {
+  layout: "post",
+  locale: "ja",
+  title: "最初のページを書く",
+};
+
+# 最初のページを書く
+
+本ページは、scaffold 済みのプロジェクトで最初のページを書き換えるまでの流れを扱います。**MDX** (Markdown に JSX 記法を混ぜられる形式) に触れた経験がない読者を想定します。
+
+## 開発サーバを立ち上げたままにする
+
+作業を始める前に `pnpm dev` を起動しておきます。
+
+```shell
+pnpm dev
+```
+
+開発サーバは `src/` 配下のファイル変更を監視し、変更のたびにブラウザを自動リロードします。この後の編集は、保存するたびに画面へ反映されます。
+
+## トップページ (`src/index.mdx`) の中身
+
+scaffold 直後の `src/index.mdx` は次の骨格を持ちます。
+
+```mdx
+import { Island } from "@tuqulore-inc/eleventy-preset/island";
+import Clicker from "./clicker.client.jsx";
+
+export const data = {
+  layout: "post",
+  title: "ようこそ",
+};
+
+# ようこそ
+
+...
+```
+
+- `import` 行は、MDX の中で JSX として使う値を取り込むための宣言です。
+- `export const data` は Eleventy のページデータで、`layout` と `title` を渡します。
+- 空行以下の本文が Markdown にあたり、見出し、段落、リストがそのまま HTML に変換されます。
+
+## タイトルと本文を差し替える
+
+まず `export const data` の `title` と、H1 の本文を編集します。
+
+```mdx
+export const data = {
+  layout: "post",
+  title: "はじめてのサイト",
+};
+
+# はじめてのサイト
+
+このサイトは Eleventy と Preact で構築しています。
+```
+
+保存すると、ブラウザに戻った際に自動リロードされ、更新後のタイトルと本文が表示されます。
+
+## Island コンポーネントを外す
+
+scaffold には `<Island component={Clicker} />` というカウンターの例が入っています。これは **Partial Hydration** (初期表示は静的な HTML で、利用者が触ったときだけクライアント側のスクリプトを読み込む挙動) の実例です。docs 用途などで不要な場合は、対応する `import` 行と `<Island>` 行の両方を削除します。
+
+Partial Hydration の設計思想と使い所は [Plugins / eleventy-plugin-preact-island](/ja/plugins/eleventy-plugin-preact-island/) で扱います。
+
+## 次に読む
+
+scaffold されたディレクトリ構成の意味を掴んでおくと、次にどこを触ればよいかが早く分かります。[プロジェクト構成](/ja/getting-started/structure/) に進みます。

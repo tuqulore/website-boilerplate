@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Getting Started",
+    "path": "/ja/getting-started/",
+    "children": [
+      { "name": "インストール", "path": "/ja/getting-started/install/" },
+      {
+        "name": "最初のページを書く",
+        "path": "/ja/getting-started/first-page/"
+      },
+      { "name": "プロジェクト構成", "path": "/ja/getting-started/structure/" }
+    ]
+  },
+  { "name": "Architecture", "path": "/ja/architecture/" },
+  {
+    "name": "Preset の規約",
+    "path": "/ja/preset/",
+    "children": [
+      { "name": "ディレクトリ", "path": "/ja/preset/directory/" },
+      { "name": "テンプレート", "path": "/ja/preset/templates/" },
+      { "name": "Data Access", "path": "/ja/preset/data-access/" }
+    ]
+  },
+  {
+    "name": "Plugins",
+    "path": "/ja/plugins/",
+    "children": [
+      {
+        "name": "eleventy-plugin-preact",
+        "path": "/ja/plugins/eleventy-plugin-preact/"
+      },
+      {
+        "name": "eleventy-plugin-preact-island",
+        "path": "/ja/plugins/eleventy-plugin-preact-island/"
+      },
+      {
+        "name": "eleventy-plugin-postcss",
+        "path": "/ja/plugins/eleventy-plugin-postcss/"
+      }
+    ]
+  }
+]

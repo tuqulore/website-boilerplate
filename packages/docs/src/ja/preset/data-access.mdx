@@ -1,0 +1,144 @@
+export const data = {
+  layout: "post",
+  locale: "ja",
+  title: "Data Access",
+};
+
+# Data Access
+
+本ページは、テンプレートや partial から Eleventy のデータ (グローバルデータ、ページデータ、Eleventy 組み込みの page オブジェクト) にアクセスする書き方を扱います。プリセットは `eleventy` シングルトンを提供しており、レイアウトから partial まで props を渡し続ける必要をなくします。
+
+## `eleventy` シングルトン
+
+シングルトンは `@tuqulore-inc/eleventy-preset/eleventy` から import します。SSR 中に評価される JSX / MDX の中でだけ有効です。
+
+```jsx
+import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
+
+<title>
+  {eleventy.title} | {eleventy.site.name}
+</title>;
+```
+
+partial から使うときも、レイアウト側から props を渡す必要はありません。partial は自分で `eleventy` を import して直接読みます。
+
+```jsx
+import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
+
+<footer>
+  <p>&copy; {eleventy.site.author}</p>
+</footer>;
+```
+
+## 参照できるプロパティ
+
+<table>
+  <thead>
+    <tr>
+      <th>プロパティ</th>
+      <th>内容</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <code>eleventy.content</code>
+      </td>
+      <td>子テンプレートを描画した HTML</td>
+    </tr>
+    <tr>
+      <td>
+        <code>eleventy.title</code>, <code>eleventy.description</code>, etc.
+      </td>
+      <td>
+        <code>export const data</code> に書いた各値
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>eleventy.site</code>, <code>eleventy.nav</code>, etc.
+      </td>
+      <td>
+        グローバルデータ (<code>_data/</code> 配下) のトップレベルキー
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>eleventy.page</code>
+      </td>
+      <td>
+        Eleventy の{" "}
+        <a href="https://www.11ty.dev/docs/data-eleventy-supplied/#page-variable">
+          <code>page</code> 変数
+        </a>{" "}
+        (URL、日付など)
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>eleventy.locale</code>
+      </td>
+      <td>
+        <code>export const data.locale</code> に書いた値
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+`eleventy.content` は親レイアウトが子の描画結果を受け取るための箱です。中身は既に HTML 文字列なので、`dangerouslySetInnerHTML` で埋め込みます。JSX ツリーに直接埋めると再描画のコストを二重に払う形になります。
+
+## グローバルデータの書き方
+
+`src/_data/` に置いたファイルが、そのままシングルトンのトップレベルキーになります。
+
+```js
+// src/_data/site.js
+export default {
+  name: "本ボイラープレートのドキュメント",
+  description: "設計と使い方",
+  url: process.env.SITE_URL,
+  author: "tuqulore inc.",
+};
+```
+
+```jsx
+// テンプレートから
+<title>{eleventy.site.name}</title>
+```
+
+サブディレクトリを切ると、ネストしたキーになります。
+
+```
+src/_data/nav/ja.json
+src/_data/nav/en.json
+```
+
+```jsx
+{
+  eleventy.nav.ja.map((item) => <a href={item.path}>{item.name}</a>);
+}
+{
+  eleventy.nav.en.map((item) => <a href={item.path}>{item.name}</a>);
+}
+```
+
+現在のページの `locale` に応じてどちらを引くかは、テンプレート側で `eleventy.nav[eleventy.locale]` の形で分岐します。本ドキュメントの sidebar 実装がその例です。
+
+## SSR 中のみ有効
+
+`eleventy` シングルトンは SSR 中にだけ有効です。クライアント側で hydrate される Island からは参照できません。SSR 側で解決した値を Island に渡したいときは、`<Island>` の props として明示的に渡します。
+
+```jsx
+import { Island } from "@tuqulore-inc/eleventy-preset/island";
+import Nav from "./nav.client.jsx";
+
+<Island component={Nav} on="interaction" items={eleventy.nav.ja} />;
+```
+
+`<Island>` に渡した props は、SSR 側の描画とクライアント側の hydrate の両方に流れます。SSR で描いたマークアップとクライアントで hydrate した後の DOM が一致することが保証されます。
+
+## Island 内で SSR データを読みたい場合
+
+Island の中で `eleventy` を import して使うと、クライアント側では import 自体がエラーになります。SSR に依存する値は、常に `<Island>` の props 経由で受け渡すのが規約です。
+
+Island 内で完結する状態 (ユーザー入力、フェッチ結果) はコンポーネント内部の `useState` / `useEffect` で持ち、SSR 由来の初期値は props として受け取ります。

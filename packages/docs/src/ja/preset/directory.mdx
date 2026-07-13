@@ -1,0 +1,116 @@
+export const data = {
+  layout: "post",
+  locale: "ja",
+  title: "ディレクトリと命名",
+};
+
+# ディレクトリと命名
+
+本ページは、プリセットが持ち込むディレクトリ規約とファイル命名規約を扱います。scaffold されたプロジェクトはこの規約に従って配置されているため、そのまま書き足せます。
+
+## ディレクトリ構成
+
+scaffold 直後のディレクトリは次の通りです。プリセットが依存するものだけを列挙します。
+
+```
+.
+├── dist
+├── eleventy.config.js
+├── package.json
+└── src
+    ├── _data
+    ├── _includes
+    │   └── partials
+    └── public
+```
+
+`src/` 配下がすべての執筆・実装対象になり、`dist/` はビルド成果物、`eleventy.config.js` はプリセットを呼び出すだけの薄い層です。
+
+## `src/`
+
+Eleventy がテンプレートとして参照するルートです。プリセットが `setInputDirectory("src")` を内部で呼んでおり、この位置は上書きできません。ページの MDX、部品、静的アセット、グローバルデータをすべてここに置きます。
+
+## `src/_data/`
+
+[グローバルデータ](https://www.11ty.dev/docs/data-global/) を配置する場所です。ファイル名がデータキーになり、テンプレートから参照できます。scaffold には `site.js` (サイト全体のメタ情報) と `nav.json` (ナビゲーション定義) が入っています。
+
+サブディレクトリを切ると、その名前がネストしたキーになります。`_data/nav/ja.json` と `_data/nav/en.json` を置けば、テンプレートからは `nav.ja` / `nav.en` として参照できます。本ドキュメント自身は言語ごとに nav を分けたいのでこの形を採っています。
+
+## `src/_includes/`
+
+[レイアウトチェイニング](https://www.11ty.dev/docs/layout-chaining/) 用の [レイアウトテンプレート](https://www.11ty.dev/docs/layouts/) を置く場所です。ページの frontmatter や `export const data` で `layout: "..."` と指定した対象がここから探されます。
+
+慣例として、`_includes/base.mdx` に HTML の骨格、`_includes/post.mdx` に記事のラッパを置きます。使い方の詳細は [テンプレート](/ja/preset/templates/) を参照してください。
+
+## `src/_includes/partials/`
+
+テンプレートから呼び出す JSX / MDX の部品を置く場所です。scaffold には `header.mdx` `footer.mdx` `ogp.mdx` などが入っています。partial は Eleventy のテンプレートとしては扱われず、`import` して JSX 経由で使う形になります。
+
+## `src/public/`
+
+静的アセット (favicon、robots.txt、既に最適化済みの画像など) を置く場所です。ここの中身は build 時に `dist/` 直下へ丸ごとコピーされます。
+
+`src/public/` に置いたファイルは、後述する画像最適化の対象になりません。「そのまま出す」場所と「加工する」場所を分けるためです。
+
+## `dist/`
+
+ビルド成果物の出力先です。手で編集しません。`.gitignore` に含まれており、`pnpm clean` で削除されます。
+
+## ファイル命名規約
+
+`src/` 配下のファイル名には、次の規約があります。
+
+<table>
+  <thead>
+    <tr>
+      <th>拡張子</th>
+      <th>扱い</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <code>.mdx</code>
+      </td>
+      <td>Markdown に JSX を混ぜられるページテンプレート</td>
+    </tr>
+    <tr>
+      <td>
+        <code>.jsx</code>
+      </td>
+      <td>JSX テンプレート、または partial</td>
+    </tr>
+    <tr>
+      <td>
+        <code>.client.jsx</code> 他
+      </td>
+      <td>クライアント側で動かすコンポーネント (Island)</td>
+    </tr>
+    <tr>
+      <td>
+        <code>.css</code>
+      </td>
+      <td>PostCSS で処理されるスタイルシート</td>
+    </tr>
+    <tr>
+      <td>その他</td>
+      <td>Eleventy の既定に従って扱われるか、passthrough になる</td>
+    </tr>
+  </tbody>
+</table>
+
+`.client.` の副拡張子 (`.client.js`, `.client.jsx`, `.client.ts`, `.client.tsx`) が付いたファイルは:
+
+- esbuild で bundle されて `dist/<入力相対パス>.client.js` に出力されます。
+- Eleventy のテンプレート処理から除外され、ページとしては描画されません。
+- MDX から `<Island component={...}>` に渡した際、bundle 済みの URL が自動的に解決されます。
+
+「どのファイルがクライアント側で動くか」を追加設定なしに宣言する規約です。詳細は [Plugins / eleventy-plugin-preact-island](/ja/plugins/eleventy-plugin-preact-island/) を参照してください。
+
+## 画像最適化と静的アセット
+
+`src/**/*.{jpeg,jpg,png,webp,gif,tiff,avif,svg}` に置いた画像 (ただし `src/public/` を除く) は、`@11ty/eleventy-img` で最適化され、対応する `dist/` 配下へ書き出されます。
+
+一方、`src/public/` の中身はそのまま `dist/` 直下へコピーされ、加工されません。既に最適化済みの画像、favicon、`robots.txt` などをここに置きます。
+
+「そのまま出す」場所と「最適化を通す」場所を混ぜないことで、意図しない再エンコードや品質劣化を避けられます。
