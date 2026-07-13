@@ -234,6 +234,27 @@ describe("Island plugin importmap ↔ devalue バージョン自動検出", () =
     assert.ok(html.includes(`https://esm.sh/devalue@5.0.0"`));
     assert.strictEqual(warn.mock.callCount(), 0);
   });
+
+  // preactVersion と同じく `if (devalueVersion)` の truthy 判定にしてあるので、
+  // 空文字は「未指定と同じ扱い」= 自動検出フォールバックに落ちる。preact 側と
+  // 非対称に「空文字で latest 強制」を追加しないことをここで固定する。
+  it("devalueVersion に空文字を渡すと未指定と同じく自動検出でピン留めされる", (t) => {
+    const warn = t.mock.method(console, "warn");
+    const config = makeEleventyConfigStub({ pathPrefix: undefined });
+    preactIsland(config, { devalueVersion: "" });
+
+    const html = config._transform(
+      "preact-island-inject",
+      "<html><head></head><body></body></html>",
+      "dist/index.html",
+    );
+    const version = readInstalledDevalueVersion();
+    assert.ok(
+      html.includes(`https://esm.sh/devalue@${version}"`),
+      `expected empty string to fall through to auto-detected devalue@${version}, got: ${html}`,
+    );
+    assert.strictEqual(warn.mock.callCount(), 0);
+  });
 });
 
 describe("Island plugin bundle オプション", () => {
