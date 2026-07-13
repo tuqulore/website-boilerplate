@@ -1,0 +1,121 @@
+export const data = {
+  layout: "post",
+  locale: "ja",
+  title: "テンプレート",
+};
+
+# テンプレート
+
+本ページは、`src/` 配下のページと部品を書くときの規約を扱います。ページデータの受け渡し、`layout` プロパティによるレイアウトの指定、レイアウトチェイニングの組み方までを扱います。
+
+## `export const data` でページデータを渡す
+
+MDX と JSX のテンプレートは、ファイル先頭に `export const data = { ... }` を書くことで、Eleventy のページデータを渡します。Markdown の YAML frontmatter と等価な仕組みです。
+
+```mdx
+export const data = {
+  layout: "post",
+  title: "はじめてのサイト",
+  description: "本ボイラープレートで作った最初のページ",
+};
+
+# はじめてのサイト
+
+本文はここから書きます。
+```
+
+Markdown 用の `---` frontmatter は MDX の JSX パースと衝突するため、本ボイラープレートでは `export const data` に統一します。`.jsx` ファイルでも同じ書き方でページデータを渡せます。
+
+`data` の中身は Eleventy の任意のページデータをそのまま置けます。`layout` はプリセット下では必ず使う項目、`title` `description` は多くの partial (`ogp.mdx` など) が参照する項目です。
+
+## `layout` プロパティで親を指定する
+
+各ページは `data.layout` に親テンプレートの名前を書きます。値は `_includes/` からの相対パス (拡張子を除く) です。
+
+```mdx
+export const data = {
+  layout: "post", // src/_includes/post.mdx を親にする
+};
+```
+
+親テンプレートも `data.layout` を持てるため、複数段のチェーンが組めます。
+
+## レイアウトチェイニングの組み方
+
+scaffold のデフォルトは次の 3 段構成です。
+
+```
+src/index.mdx  →  src/_includes/post.mdx  →  src/_includes/base.mdx
+   (ページ)          (記事のラッパ)              (HTML の骨格)
+```
+
+各レイアウトは、子テンプレートから受け取った HTML を `eleventy.content` として持ちます。これを `dangerouslySetInnerHTML` で埋め込むことで、子の出力を親の JSX ツリーに差し込みます。
+
+### ルートレイアウト (`_includes/base.mdx`)
+
+HTML の全体骨格を担います。`<html>`, `<head>`, `<body>` を書き、`<main>` に子の内容を差し込みます。
+
+```mdx
+import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
+
+<html lang={eleventy.locale ?? "ja"}>
+  <head>
+    <title>
+      {eleventy.title && `${eleventy.title} | `}
+      {eleventy.site.name}
+    </title>
+    <link rel="stylesheet" href="/main.css" />
+  </head>
+  <body>
+    <main dangerouslySetInnerHTML={{ __html: eleventy.content }} />
+  </body>
+</html>
+```
+
+### 中間レイアウト (`_includes/post.mdx`)
+
+コンテンツのラッパ (`<article class="prose">` など) を担い、`base` を親に指定します。
+
+```mdx
+import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
+
+export const data = {
+  layout: "base",
+};
+
+<article class="prose" dangerouslySetInnerHTML={{ __html: eleventy.content }} />
+```
+
+### 使い分けの目安
+
+- ルートレイアウトは 1 つに集約し、`<html>` 骨格の重複を避けます。
+- 中間レイアウトはページ種別ごとに増やせます (記事は `post`、目次ページは `list` など)。
+- 各ページは中間レイアウトを指し、ルートレイアウトを直接指さない構成が保守しやすいです。
+
+## partial を差し込む
+
+`_includes/partials/` に置いた MDX / JSX は、レイアウトから `import` して JSX 経由で呼び出します。
+
+```mdx
+import Header from "./partials/header.mdx";
+import Footer from "./partials/footer.mdx";
+
+<Header />
+<main dangerouslySetInnerHTML={{ __html: eleventy.content }} />
+<Footer />
+```
+
+partial 側は自身の props と、[Data Access](/ja/preset/data-access/) で扱う `eleventy` シングルトンから必要な値を取ります。呼び出し側から props を渡していく必要はありません。
+
+## Island を差し込む
+
+クライアント側で動かしたい要素は、`src/**/*.client.jsx` に置き、MDX から `<Island>` で括って埋め込みます。
+
+```mdx
+import { Island } from "@tuqulore-inc/eleventy-preset/island";
+import Counter from "./counter.client.jsx";
+
+<Island component={Counter} on="interaction" initial={5} />
+```
+
+`<Island>` の設計と粒度の目安は [Plugins / eleventy-plugin-preact-island](/ja/plugins/eleventy-plugin-preact-island/) を参照してください。

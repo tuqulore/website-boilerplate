@@ -1,0 +1,22 @@
+export const data = {
+  layout: "post",
+  locale: "en",
+  title: "Preset Conventions",
+};
+
+# Preset Conventions
+
+This section covers the conventions you follow when writing a site with `@tuqulore-inc/eleventy-preset`. It stays on the "how you write" side; the implementation behind each convention is covered in [Plugins](/en/plugins/).
+
+## What is covered
+
+- [Directory & naming](/en/preset/directory/): `src/`, `dist/`, `_data/`, `_includes/`, `public/`, plus the `.mdx` / `.jsx` / `.client.jsx` naming rules and how static assets and image optimization are handled.
+- [Templates](/en/preset/templates/): `export const data`, the `layout` property, and how layout chaining is composed.
+- [Data Access](/en/preset/data-access/): the `eleventy` singleton for reading site / nav / page / title / content.
+
+## Elsewhere
+
+- API of `preset()` itself (the extend callback, what is included) lives in the `@tuqulore-inc/eleventy-preset` README.
+- The reasoning behind these conventions is in [Architecture](/en/architecture/).
+
+Individual sub-pages are still being translated. See the [Japanese section](/ja/preset/) for the full text.

@@ -1,0 +1,50 @@
+export const data = {
+  layout: "post",
+  locale: "ja",
+  title: "eleventy-plugin-preact",
+};
+
+# `@tuqulore-inc/eleventy-plugin-preact`
+
+本ページは、JSX / MDX を Eleventy のテンプレートとして扱う `@tuqulore-inc/eleventy-plugin-preact` の内部設計を扱います。API リファレンスとインストール手順はパッケージの README を参照してください。日常の書き方は [Preset の規約 / テンプレート](/ja/preset/templates/) を参照してください。
+
+## 何を SSR しているか
+
+本プラグインは、Eleventy のテンプレート形式として `.jsx` と `.mdx` を登録し、その両方を Preact のサーバサイドレンダラで HTML に変換します。JSX と MDX は Node.js のカスタムローダを通してモジュールとして読み込まれるため、テンプレートファイル自体を通常の import と同じ規則で扱えます。
+
+サーバ側で完結する処理はここまでです。クライアント側の JavaScript は Partial Hydration の層 ([eleventy-plugin-preact-island](/ja/plugins/eleventy-plugin-preact-island/)) が担い、本プラグイン自体は「HTML を返すだけ」の関心に閉じます。
+
+## なぜ Preact なのか
+
+本ボイラープレートは、SSR と Partial Hydration の両方で同じ UI ランタイムを使う設計を選んでいます。候補として React / Preact / Solid / Svelte がありましたが、次の理由で **Preact** を採用しています。
+
+- 単独の bundle が小さく、esm.sh などの CDN で配布できます。クライアント側は import map で `preact` を解決し、bundle サイズを最小化できます。
+- React 互換 API を持ち、JSX 記法や `useState` / `useEffect` などのフックがそのまま使えます。
+- SSR は `preact-render-to-string` で完結し、追加のランタイムサーバは要りません。
+- [`@11ty/is-land`](https://github.com/11ty/is-land) の初期化フックに接続しやすく、Partial Hydration の実装が薄く済みます。
+
+別ランタイムへ差し替える要求が出た場合は、preset ごと差し替える (フォークする) 想定です。1 つの preset に複数ランタイムを併存させる構造は取りません。
+
+## なぜ MDX を選んだのか
+
+ページ本体を書くフォーマットに Markdown だけを採用すると、動的なコンポーネント (Island) を差し込むために別ファイル・別テンプレート言語が必要になります。逆に JSX だけを採用すると、記事の本文で見出しや箇条書きを書くのが冗長になります。
+
+MDX は Markdown 8 割、JSX 2 割のバランスを 1 ファイルで表現できます。docs、記事、ランディングページのいずれでも同じ書き方で通せる点を優先しました。
+
+## `eleventy` シングルトンの提供
+
+本プラグインは、SSR 中に有効な `eleventy` シングルトンを提供します。テンプレートや partial から props を渡し続けなくても、`import` するだけでページデータやグローバルデータに触れます。
+
+シングルトンの中身と使い方は [Preset の規約 / Data Access](/ja/preset/data-access/) を参照してください。実装としては、Eleventy がテンプレートを描画するたびにシングルトンを差し替える方式を取っており、非同期並列描画のケースでも一貫性が保たれるように設計されています。
+
+## Layout Chaining の実装
+
+Eleventy の [Layout Chaining](https://www.11ty.dev/docs/layout-chaining/) は、本プラグインが MDX のローダを通して透過的にサポートします。子テンプレートの描画結果を親テンプレートの `eleventy.content` として受け渡す仕組みで、親側は `dangerouslySetInnerHTML` で HTML を差し込みます。
+
+MDX と JSX の書き分け、`export const data` の書き方は [Preset の規約 / テンプレート](/ja/preset/templates/) にまとめてあります。
+
+## 単体で使いたいときは
+
+`@tuqulore-inc/eleventy-plugin-preact` は、プリセットを介さずに単体でも導入できます。既存の Eleventy プロジェクトに JSX / MDX の SSR だけを足したい場合、この選択肢を取れます。
+
+その場合は Partial Hydration が付いてこないため、`<Island>` を使うと解決に失敗します。Island を併用したいときは `@tuqulore-inc/eleventy-plugin-preact-island` を一緒に登録するか、プリセット経由で使うのが早いです。詳細はパッケージの README を参照してください。

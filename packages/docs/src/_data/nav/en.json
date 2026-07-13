@@ -11,28 +11,32 @@
       { "name": "Project structure", "path": "/en/getting-started/structure/" }
     ]
   },
+  { "name": "Architecture", "path": "/en/architecture/" },
   {
-    "name": "Architecture",
-    "path": "/en/architecture/",
+    "name": "Preset Conventions",
+    "path": "/en/preset/",
     "children": [
-      { "name": "Preset", "path": "/en/architecture/preset/" },
+      { "name": "Directory", "path": "/en/preset/directory/" },
+      { "name": "Templates", "path": "/en/preset/templates/" },
+      { "name": "Data Access", "path": "/en/preset/data-access/" }
+    ]
+  },
+  {
+    "name": "Plugins",
+    "path": "/en/plugins/",
+    "children": [
       {
-        "name": "Partial Hydration",
-        "path": "/en/architecture/preact-island/"
+        "name": "eleventy-plugin-preact",
+        "path": "/en/plugins/eleventy-plugin-preact/"
       },
-      { "name": "PostCSS", "path": "/en/architecture/postcss/" },
-      { "name": "MDX", "path": "/en/architecture/mdx/" }
+      {
+        "name": "eleventy-plugin-preact-island",
+        "path": "/en/plugins/eleventy-plugin-preact-island/"
+      },
+      {
+        "name": "eleventy-plugin-postcss",
+        "path": "/en/plugins/eleventy-plugin-postcss/"
+      }
     ]
-  },
-  {
-    "name": "Recipes",
-    "path": "/en/recipes/",
-    "children": [
-      { "name": "Tailwind CSS", "path": "/en/recipes/tailwind/" },
-      { "name": "Island granularity", "path": "/en/recipes/island/" },
-      { "name": "Adding i18n", "path": "/en/recipes/i18n/" },
-      { "name": "Adding a plugin", "path": "/en/recipes/plugin/" }
-    ]
-  },
-  { "name": "Roadmap", "path": "/en/roadmap/" }
+  }
 ]

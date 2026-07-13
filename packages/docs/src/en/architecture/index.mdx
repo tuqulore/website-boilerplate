@@ -6,13 +6,59 @@ export const data = {
 
 # Architecture
 
-This chapter covers the internal design of the preset and its plugins. It targets developers who want to know why the scaffolded template looks the way it does.
+This page is an overview of the design that sits under the boilerplate. Day-to-day writing conventions are covered in [Preset Conventions](/en/preset/), and the internal design of each plugin is covered in [Plugins](/en/plugins/).
 
-The boilerplate stands on four layers:
+## What it targets
 
-- [Preset](/en/architecture/preset/): bundles three plugins and provides the single entry point into Eleventy.
-- [Partial Hydration](/en/architecture/preact-island/): keeps the initial paint as static HTML and only runs client JS where it is actually needed.
-- [PostCSS](/en/architecture/postcss/): drives PostCSS plugins such as Tailwind CSS through the Eleventy pipeline.
-- [MDX](/en/architecture/mdx/): describes the format that lets you mix JSX into Markdown.
+The boilerplate ships static HTML by default and only hydrates the parts of the page that need client-side JavaScript. It targets content-heavy sites — docs, articles, corporate sites, landing pages — where most of the initial paint is fully static.
 
-Individual pages are still being translated. See the [Japanese chapter](/ja/architecture/) for the full text.
+Full-page SPAs are not the goal. Hydrating every page front to back inflates the initial JS download and parse cost, hurting LCP and TTI on content sites.
+
+## The pieces
+
+The stack sits on four ingredients:
+
+- **Eleventy 3**: static site generator, providing file layout and template conventions.
+- **Preact 10**: server-side renderer and the client-side UI runtime.
+- **`@11ty/is-land`**: the Web Component (`<is-land>`) that drives Partial Hydration.
+- **PostCSS 8** (with Tailwind CSS): CSS processing.
+
+The boilerplate is a thin layer that wires these together as Eleventy plugins.
+
+## Package hierarchy
+
+```
+create-eleventy (CLI)
+        │
+        ▼  scaffold
+    eleventy-preset (aggregator)
+        │
+        ├── eleventy-plugin-preact         (SSR, JSX/MDX, layouts)
+        ├── eleventy-plugin-preact-island  (Partial Hydration, client bundle)
+        └── eleventy-plugin-postcss        (PostCSS pipeline)
+```
+
+The **preset** (`@tuqulore-inc/eleventy-preset`) is the core: it bundles three plugins and registers them with Eleventy. One line in `eleventy.config.js` and you have the whole convention-driven setup.
+
+## Key design decisions
+
+### The preset stays as an aggregator
+
+The preset holds no features of its own; it just composes three plugins. This keeps each plugin usable on its own, keeps testing and releases per plugin, and leaves room to fork a variant of the preset without touching the plugins.
+
+### `src/` and `dist/` are fixed
+
+The preset internally calls `setInputDirectory("src")` and `setOutputDirectory("dist")`; these are not customizable. Image optimization and `src/public/` passthrough rely on this shape. A project that needs `pages/` should fork the preset or compose the plugins directly.
+
+### Partial Hydration by default
+
+Preact + `@11ty/is-land` keep the initial paint as static HTML and hydrate only what is wrapped in `<Island>`. See [Plugins / eleventy-plugin-preact-island](/en/plugins/eleventy-plugin-preact-island/) for granularity guidance and the API surface.
+
+### i18n uses directory splits
+
+For multilingual sites, put pages under `src/ja/` `src/en/` and let Eleventy's directory structure map to URLs (`/ja/...`, `/en/...`). This documentation site itself uses that approach. URL helpers and translation key resolution are covered directly by [the official Eleventy i18n documentation](https://www.11ty.dev/docs/plugins/i18n/); the boilerplate does not add anything on top.
+
+## Next
+
+- Day-to-day writing conventions: [Preset Conventions](/en/preset/).
+- Per-plugin design and applied recipes: [Plugins](/en/plugins/).

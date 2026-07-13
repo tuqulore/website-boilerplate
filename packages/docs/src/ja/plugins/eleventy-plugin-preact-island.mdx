@@ -1,0 +1,106 @@
+export const data = {
+  layout: "post",
+  locale: "ja",
+  title: "eleventy-plugin-preact-island",
+};
+
+# `@tuqulore-inc/eleventy-plugin-preact-island`
+
+本ページは、Partial Hydration を担う `@tuqulore-inc/eleventy-plugin-preact-island` の内部設計と応用ケースを扱います。API リファレンスとインストール手順はパッケージの README を参照してください。
+
+## Partial Hydration を採用した理由
+
+本ボイラープレートは、初期表示を静的な HTML で返し、動的な UI が必要な箇所だけをクライアント側で hydrate する方針を取ります。全ページを Preact で再描画する必要はほとんどないためです。
+
+コンテンツ主体のサイトでは、大半のページが静的な文章と画像で完結します。この構造で SPA 相当のランタイムを常時読み込ませると、初期 JS のダウンロードとパースだけで LCP や TTI が悪化します。docs や記事サイトでは避けたい状態です。
+
+一方で、検索フォーム、ナビゲーションのトグル、埋め込みのカウンターなど、一部の要素はどうしてもクライアント側の JS を必要とします。これらを部分的に取り出し、その部分だけを hydrate するのが Partial Hydration です。
+
+## なぜ `is-land` を使うのか
+
+Partial Hydration を素朴に自作すると、初期化のトリガー (可視・アイドル・操作) や、bundle の import 順を毎回書き直すことになります。[`@11ty/is-land`](https://github.com/11ty/is-land) はこの部分を Web Components (`<is-land>`) の形で提供しており、Eleventy との相性も良好です。
+
+本プラグインは is-land をそのまま採用し、その上に Preact 固有の hydrate 手順と、`<Island>` という MDX / JSX から使いやすい JSX ラッパを重ねています。is-land 自体を隠さないので、パラメータ付きトリガー (例: `on:media("(min-width: ...)")`) が必要になったときは、素の `<is-land>` を直接書けます。
+
+## `.client.*` の規約
+
+クライアント側で動かす JavaScript は、`src/**/*.client.{js,jsx,ts,tsx}` の副拡張子で置きます。拡張子の付いたファイルは:
+
+- esbuild で bundle され、`dist/<入力相対パス>.client.js` に出力されます。
+- Eleventy のテンプレート処理から除外されます (ページとしてはレンダーされません)。
+- SSR 側で `<Island component={...}>` に渡した際、bundle 済みの URL が自動的に解決されます。
+
+「どのファイルがクライアント側なのか」を追加設定なしで宣言できる規約です。glob 一覧を config に書き足す必要がありません。
+
+## `<Island>` の役割
+
+`<Island>` は、SSR 側の Preact 描画と、`<is-land>` 要素の生成を一つの JSX で表せるラッパです。
+
+```jsx
+import { Island } from "@tuqulore-inc/eleventy-preset/island";
+import Counter from "./counter.client.jsx";
+
+<Island component={Counter} on="interaction" initial={5} />;
+```
+
+同じ props が SSR 側の描画とクライアント側の hydrate の両方に渡ります。SSR で描いたマークアップと hydrate した後の DOM が一致することが保証されます。
+
+props のシリアライズには [`devalue`](https://github.com/Rich-Harris/devalue) を使っており、`Date`、`Map`、`Set` のような JSON では失われる型もそのまま JavaScript の値として渡せます。
+
+## Eleventy の `pathPrefix` に乗る
+
+サブディレクトリ配下にデプロイする場合 (例: GitHub Pages で `/repo/` 以下)、`<is-land import="...">` の URL もそのプレフィックスに合わせる必要があります。本プラグインは Eleventy の [`pathPrefix`](https://www.11ty.dev/docs/config/#deploy-to-a-subdirectory-with-a-path-prefix) をそのまま読み取ります。個別のオプションで URL プレフィックスを渡す口は用意していません。
+
+「Eleventy が持っている概念に乗る」ことで、開発者は同じ設定を 1 か所にだけ書けば済みます。
+
+## `bundle: false` で外部バンドラに渡す
+
+esbuild による bundle は `bundle: true` (デフォルト) で動きます。別のバンドラを使いたい場合は `bundle: false` を渡すと、プラグインは URL 解決と `is-land.js` のコピー、setup スクリプトの注入だけを担うようになります。開発者は、期待される URL (`<pathPrefix><入力相対パス>.client.js`) に bundle を配置する責任を負います。
+
+「zero-config で動くが、必要なら差し替えられる」構成です。バンドル戦略が変わってもプラグイン全体を捨てずに済みます。
+
+## Island を使うかどうかの判断
+
+Island は「クライアント側の JavaScript が必要な要素だけを部分的に hydrate する」仕組みです。JavaScript が要らない要素には使いません。次のいずれかで済む場合、Island を使うより単純です。
+
+- `<details>` / `<dialog>` などの HTML 要素で完結する UI (アコーディオン、モーダル)
+- CSS の `:target` や `:has()` セレクタで表現できる状態遷移
+- リンクとページ遷移で済むフロー
+
+「JS がないと本当に困るか」を先に検討します。docs サイトのように読者が触るのは検索とナビゲーションのごく一部、というケースでは、Island の対象は自然と絞られます。
+
+## 何を Island 化するか
+
+Island 化の判断基準は以下です。
+
+- **状態を持つ**: カウンター、フォーム、フィルタ UI など。
+- **外部データを読む**: 検索、フェッチ、遅延読み込み。
+- **ユーザー操作で描画が変わる**: メニュートグル、タブ切替。
+
+このいずれにも当てはまらない要素 (ロゴ、静的なテキスト、リンク集など) は Island 化する必要がありません。SSR された HTML で完結します。
+
+## 粒度を細かくするか、粗くするか
+
+Island の単位を細かくすると、hydrate 対象の JS が小さくなります。ヘッダのメニューだけ、フッタのニュースレター登録フォームだけ、というふうにページの一部だけを Island 化するのが原則です。
+
+一方で、隣接した複数の UI が同じ状態を共有する場合 (フィルタとリストが連動するなど) は、その組を 1 つの Island としてまとめます。Island を跨いだ状態共有は、素の Preact の props や Signals では表現できないためです。
+
+粒度の判断で迷ったら、「同じ状態を触る要素は同じ Island に入れる」を目安にします。
+
+## トリガーを選ぶ
+
+`<Island>` の `on` 属性で、hydrate のタイミングを切り替えられます。
+
+| 値            | 使い所                                                                                          |
+| ------------- | ----------------------------------------------------------------------------------------------- |
+| `interaction` | クリック・フォーカスがあるまで待ちます。多くのボタンやフォームに向きます。デフォルト値。        |
+| `visible`     | ビューポートに入ったら hydrate します。ページ後半に置いたインタラクティブなブロックに向きます。 |
+| `idle`        | ブラウザがアイドルになったら hydrate します。初期表示直後に必ず動かしたい軽量な UI に向きます。 |
+
+判断基準は「利用者がその Island に触るまでにどれくらい猶予があるか」です。触るまで時間がある要素ほど遅らせ、初期表示直後に必要な要素ほど早めに hydrate します。
+
+パラメータ付きトリガー (`on:media("(min-width: 40rem)")` など) が必要な場合は、`<Island>` を使わずに素の `<is-land>` を直接書きます。詳細は `@tuqulore-inc/eleventy-plugin-preact-island` の README を参照してください。
+
+## SSR と一致させる
+
+Island の中で `new Date()` や `Math.random()` のような不確定な値を初回描画に使わないでください。SSR とクライアントで異なる値が生成され、hydrate 時に mismatch が起きます。初回描画は決定的な値だけを使い、動的な値は `useEffect` の中で反映するようにします。

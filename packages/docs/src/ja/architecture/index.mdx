@@ -6,13 +6,69 @@ export const data = {
 
 # Architecture
 
-本章は、本ボイラープレートを支えるプリセットとプラグイン群の内部設計を扱います。scaffold されたテンプレートが「なぜこの形になっているか」を知りたい開発者を想定します。
+本ページは、本ボイラープレートを支える全体設計を見取り図として扱います。個別の書き方は [Preset の規約](/ja/preset/) を、個々のプラグインの内部設計は [Plugins](/ja/plugins/) を参照してください。
 
-本ボイラープレートは、次の 4 つの層で成り立ちます。
+## 目指しているもの
 
-- [プリセット](/ja/architecture/preset/): 3 つのプラグインを束ね、Eleventy への入り口を提供します。
-- [Partial Hydration](/ja/architecture/preact-island/): Island コンポーネントで初期表示を静的な HTML に留め、必要なときだけクライアント側で動かします。
-- [PostCSS](/ja/architecture/postcss/): Tailwind CSS などの PostCSS プラグインを Eleventy のパイプラインで回します。
-- [MDX](/ja/architecture/mdx/): Markdown に JSX を混ぜて書ける形式を扱います。
+本ボイラープレートは、コンテンツ主体のサイトを **静的な HTML として配信し、必要な箇所だけをクライアント側で hydrate する** ことを既定にします。docs、記事サイト、コーポレートサイト、ランディングページなど、初期表示のほとんどが静的で完結する用途を想定します。
 
-順に読んでいけば、プリセットの入り口から Island のランタイムまでを通して把握できます。個別のプラグインだけを使いたい場合は、該当ページに直接進んでも構いません。
+全ページを SPA として動かす方針は取りません。全ページを常に hydrate すると、初期 JS のダウンロードとパースだけで LCP と TTI が悪化し、コンテンツ主体のサイトでは避けたい状態になります。
+
+## 採用している道具
+
+土台は次の 4 つの組み合わせです。
+
+- **Eleventy 3**: 静的サイトジェネレータ。ファイル配置とテンプレートの規約を提供します。
+- **Preact 10**: サーバサイドレンダリングとクライアント側の UI ランタイム。
+- **`@11ty/is-land`**: Partial Hydration を実現する Web Components (`<is-land>`)。
+- **PostCSS 8** (+ Tailwind CSS): CSS 処理。
+
+これらを Eleventy のプラグインとして組み合わせるための薄い層を、本ボイラープレートが提供します。
+
+## パッケージの階層
+
+```
+create-eleventy (CLI)
+        │
+        ▼  scaffold
+    eleventy-preset (aggregator)
+        │
+        ├── eleventy-plugin-preact         (SSR、JSX/MDX、レイアウト)
+        ├── eleventy-plugin-preact-island  (Partial Hydration、クライアントバンドル)
+        └── eleventy-plugin-postcss        (PostCSS 処理)
+```
+
+**プリセット** (`@tuqulore-inc/eleventy-preset`) が中核の役割を担い、3 つのプラグインを束ねて Eleventy に登録します。開発者は preset を 1 行呼ぶだけで、規約付きの初期構成が手に入ります。
+
+## 主要な設計判断
+
+### プリセットは aggregator に徹する
+
+プリセット本体には機能を持たせず、3 プラグインを組み合わせる役に徹します。理由は以下です。
+
+- 各プラグインを単体でも導入できる余地を残せます。preset を介さずに既存の Eleventy プロジェクトへ preact-island だけを足す、といった使い方が可能です。
+- プラグインごとに独立してテスト・リリースでき、破壊的変更を切り出せます。
+- Island を使わないサイトへ preset を分岐させたくなった場合も、プラグインが分離していれば影響範囲を絞れます。
+
+### `src/` と `dist/` を固定する
+
+プリセットは `setInputDirectory("src")` と `setOutputDirectory("dist")` を内部で呼び、この 2 つのディレクトリは上書きできません。画像最適化と `src/public/` の静的アセット処理がこの構造に依存しているためです。
+
+「入力先を `pages/` にしたい」といった要望は、プリセットをフォークするか、プラグインを直接組んで別のプリセットを作る方が明快です。プリセットは「1 つの規約」を提供する層と割り切っています。
+
+### Partial Hydration を既定にする
+
+Preact + `@11ty/is-land` の組み合わせで、SSR された HTML を初期表示にし、`<Island>` で括った箇所だけをクライアント側で hydrate します。全ページ SPA と、完全な静的サイトの中間として、実務でよく現れる要求に合わせています。
+
+Island の粒度、hydrate のトリガー、規約の詳細は [Plugins / eleventy-plugin-preact-island](/ja/plugins/eleventy-plugin-preact-island/) で扱います。
+
+### i18n はディレクトリ分割方式
+
+複数言語のサイトを作る場合、`src/ja/` `src/en/` のように言語別にサブディレクトリを切ります。Eleventy はディレクトリ構造をそのまま URL に反映するため、追加の設定なしで `/ja/...` `/en/...` に切れます。本ドキュメント自身もこの方式で日英対応しています。
+
+URL 生成のフィルタや翻訳キーの解決は [Eleventy 公式の i18n ドキュメント](https://www.11ty.dev/docs/plugins/i18n/) の内容がそのまま使えるため、本ボイラープレート側では独自の仕組みは持ちません。
+
+## 続きに読む
+
+- 開発者としてサイトを書くときの規約は [Preset の規約](/ja/preset/) を参照してください。
+- 各プラグインの内部設計と応用ケースは [Plugins](/ja/plugins/) を参照してください。

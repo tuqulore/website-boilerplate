@@ -11,28 +11,32 @@
       { "name": "プロジェクト構成", "path": "/ja/getting-started/structure/" }
     ]
   },
+  { "name": "Architecture", "path": "/ja/architecture/" },
   {
-    "name": "Architecture",
-    "path": "/ja/architecture/",
+    "name": "Preset の規約",
+    "path": "/ja/preset/",
     "children": [
-      { "name": "プリセット", "path": "/ja/architecture/preset/" },
+      { "name": "ディレクトリ", "path": "/ja/preset/directory/" },
+      { "name": "テンプレート", "path": "/ja/preset/templates/" },
+      { "name": "Data Access", "path": "/ja/preset/data-access/" }
+    ]
+  },
+  {
+    "name": "Plugins",
+    "path": "/ja/plugins/",
+    "children": [
       {
-        "name": "Partial Hydration",
-        "path": "/ja/architecture/preact-island/"
+        "name": "eleventy-plugin-preact",
+        "path": "/ja/plugins/eleventy-plugin-preact/"
       },
-      { "name": "PostCSS", "path": "/ja/architecture/postcss/" },
-      { "name": "MDX", "path": "/ja/architecture/mdx/" }
+      {
+        "name": "eleventy-plugin-preact-island",
+        "path": "/ja/plugins/eleventy-plugin-preact-island/"
+      },
+      {
+        "name": "eleventy-plugin-postcss",
+        "path": "/ja/plugins/eleventy-plugin-postcss/"
+      }
     ]
-  },
-  {
-    "name": "Recipes",
-    "path": "/ja/recipes/",
-    "children": [
-      { "name": "Tailwind CSS", "path": "/ja/recipes/tailwind/" },
-      { "name": "Island の粒度", "path": "/ja/recipes/island/" },
-      { "name": "i18n の足し方", "path": "/ja/recipes/i18n/" },
-      { "name": "プラグインを追加する", "path": "/ja/recipes/plugin/" }
-    ]
-  },
-  { "name": "Roadmap", "path": "/ja/roadmap/" }
+  }
 ]

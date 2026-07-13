@@ -1,0 +1,24 @@
+export const data = {
+  layout: "post",
+  locale: "en",
+  title: "Plugins",
+};
+
+# Plugins
+
+This section covers the internal design and applied recipes for the three Eleventy plugins the preset bundles. It stays on the "why we built it this way" and "how it actually runs" side; day-to-day writing conventions live in [Preset Conventions](/en/preset/).
+
+## The three plugins
+
+- [`@tuqulore-inc/eleventy-plugin-preact`](/en/plugins/eleventy-plugin-preact/): registers `.jsx` and `.mdx` as Eleventy template formats and renders them with Preact on the server.
+- [`@tuqulore-inc/eleventy-plugin-preact-island`](/en/plugins/eleventy-plugin-preact-island/): drives Partial Hydration, bundling `.client.*` with esbuild and hydrating with `<is-land>`.
+- [`@tuqulore-inc/eleventy-plugin-postcss`](/en/plugins/eleventy-plugin-postcss/): registers CSS as an Eleventy template format so PostCSS plugins (Tailwind CSS and friends) run inside the same pipeline.
+
+Each of these is installable on its own; the preset just composes them.
+
+## API reference and extending
+
+- Options and exported functions per plugin are in the corresponding package README.
+- To add another Eleventy plugin (RSS, syntax highlight, …) on top of the preset, pass an `extend` function to `preset()` and call `eleventyConfig.addPlugin`. See the `@tuqulore-inc/eleventy-preset` README for details.
+
+Individual sub-pages are still being translated. See the [Japanese section](/ja/plugins/) for the full text.
