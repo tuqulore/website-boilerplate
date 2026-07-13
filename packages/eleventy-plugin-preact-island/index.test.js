@@ -1,4 +1,5 @@
 import { createRequire } from "node:module";
+import path from "node:path";
 import { describe, it } from "node:test";
 import assert from "node:assert";
 import { readFileSync } from "node:fs";
@@ -48,11 +49,15 @@ function makeEleventyConfigStub({
   const eventHandlers = new Map();
   const ignoreAdds = [];
   const transforms = new Map();
+  const passthroughCopies = [];
   return {
     pathPrefix,
     directories: { input, output },
     versionCheck() {},
-    addPassthroughCopy() {},
+    addPassthroughCopy(arg) {
+      passthroughCopies.push(arg);
+    },
+    _passthroughCopies: passthroughCopies,
     addTransform(name, fn) {
       transforms.set(name, fn);
     },
@@ -297,5 +302,40 @@ describe("Island plugin ignore ルール (常時追加)", () => {
     assert.deepStrictEqual(config._ignoreAdds, [
       "./**/*.client.{js,jsx,ts,tsx}",
     ]);
+  });
+});
+
+describe("Island plugin is-land.js の passthrough copy ターゲット", () => {
+  // NOTE: ここは「dist の有無で書き出し結果が変わる」不具合の回帰テスト。
+  // ターゲットに "/" を渡すと Eleventy 側で末尾スラッシュが剥がれた結果
+  // クリーンビルド時に <outputDir> 自体がファイルに化ける。ターゲットは必ず
+  // 出力ファイル名を含む文字列 ("/is-land.js") でなければならない。
+  it("ターゲットが '/is-land.js' で addPassthroughCopy に登録される", () => {
+    const config = makeEleventyConfigStub();
+    preactIsland(config);
+
+    const entries = config._passthroughCopies.filter(
+      (arg) => arg && typeof arg === "object" && !Array.isArray(arg),
+    );
+    assert.strictEqual(entries.length, 1, "expected a single object-form copy");
+    const targets = Object.values(entries[0]);
+    assert.deepStrictEqual(targets, ["/is-land.js"]);
+    // NOTE: source 側は import.meta.resolve('@11ty/is-land/is-land.js') を
+    // url.fileURLToPath したパス。実体は pnpm store 等のインストール先で
+    // プロジェクトごとに値が変わる。Windows では path.sep が '\' なので
+    // 末尾一致ではなく path.basename でファイル名だけを固定する。
+    const [source] = Object.keys(entries[0]);
+    assert.strictEqual(path.basename(source), "is-land.js");
+  });
+
+  it("bundle: false でも is-land.js の passthrough copy は登録される", () => {
+    const config = makeEleventyConfigStub();
+    preactIsland(config, { bundle: false });
+
+    const entries = config._passthroughCopies.filter(
+      (arg) => arg && typeof arg === "object" && !Array.isArray(arg),
+    );
+    assert.strictEqual(entries.length, 1);
+    assert.deepStrictEqual(Object.values(entries[0]), ["/is-land.js"]);
   });
 });
