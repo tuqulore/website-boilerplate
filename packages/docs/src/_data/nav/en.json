@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Getting Started",
+    "path": "/en/getting-started/",
+    "children": [
+      { "name": "Installation", "path": "/en/getting-started/install/" },
+      {
+        "name": "Write your first page",
+        "path": "/en/getting-started/first-page/"
+      },
+      { "name": "Project structure", "path": "/en/getting-started/structure/" }
+    ]
+  },
+  { "name": "Architecture", "path": "/en/architecture/" },
+  { "name": "Recipes", "path": "/en/recipes/" },
+  { "name": "Roadmap", "path": "/en/roadmap/" }
+]
