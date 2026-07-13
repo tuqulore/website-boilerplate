@@ -1,10 +1,50 @@
 export const data = {
   layout: "post",
   locale: "en",
-  translated: false,
   title: "eleventy-plugin-preact",
 };
 
 # `@tuqulore-inc/eleventy-plugin-preact`
 
-Translation in progress. See the [Japanese version](/ja/plugins/eleventy-plugin-preact/) for now.
+This page covers the internal design of `@tuqulore-inc/eleventy-plugin-preact`, the plugin that treats JSX and MDX as Eleventy templates. For the API reference and installation, see the package README. For day-to-day writing conventions, see [Preset Conventions / Templates](/en/preset/templates/).
+
+## What it renders on the server
+
+The plugin registers `.jsx` and `.mdx` as Eleventy template formats and renders both through Preact's server-side renderer. JSX and MDX files are loaded via Node.js custom loaders, so the template files themselves behave like normal ES modules.
+
+The plugin stops here. Everything client-side — bundling, is-land wiring, hydration — is the job of [eleventy-plugin-preact-island](/en/plugins/eleventy-plugin-preact-island/). This plugin only produces HTML.
+
+## Why Preact
+
+The boilerplate uses the same UI runtime for SSR and Partial Hydration. React, Preact, Solid, and Svelte were all on the table; **Preact** wins for the following reasons.
+
+- The bundle is small enough to serve from a CDN like esm.sh. Browsers resolve `preact` through an import map, keeping the client bundle minimal.
+- Its React-compatible API means JSX and `useState` / `useEffect` work as expected.
+- SSR is handled by `preact-render-to-string` and needs no runtime server — everything runs inside the Eleventy build.
+- [`@11ty/is-land`](https://github.com/11ty/is-land)'s init hook composes cleanly with Preact, so the Partial Hydration layer stays thin.
+
+If you need a different runtime, the plan is to fork the preset rather than support multiple runtimes side by side. A single preset does not try to be neutral about which UI library it renders with.
+
+## Why MDX
+
+If pages were written in Markdown only, dropping a dynamic component (an Island) would require another template language and another file. If pages were written in JSX only, headings and lists would become verbose.
+
+MDX lets you write roughly 80% Markdown and 20% JSX in one file. Docs, articles, and landing pages all fit the same authoring model — that is the trade-off this plugin optimizes for.
+
+## The `eleventy` singleton
+
+The plugin exposes a singleton, valid during SSR, that any template or partial can `import` to read page data and global data without prop drilling.
+
+See [Preset Conventions / Data Access](/en/preset/data-access/) for the shape of the singleton and how to use it. Internally, the plugin swaps the singleton per template render, so parallel async rendering stays consistent.
+
+## Layout chaining
+
+Eleventy's [Layout Chaining](https://www.11ty.dev/docs/layout-chaining/) is handled transparently by the MDX loader. The parent layout receives the child's rendered HTML through `eleventy.content` and injects it via `dangerouslySetInnerHTML`.
+
+The writing side of layout chaining, `export const data`, and the split between MDX and JSX are all covered in [Preset Conventions / Templates](/en/preset/templates/).
+
+## Using it without the preset
+
+`@tuqulore-inc/eleventy-plugin-preact` is installable on its own. If you have an existing Eleventy project and only want JSX/MDX SSR, this is a valid path.
+
+Note that Partial Hydration is not included in that setup — using `<Island>` will fail to resolve. To combine both, either register `@tuqulore-inc/eleventy-plugin-preact-island` alongside this one, or use the preset. See the package README for details.
