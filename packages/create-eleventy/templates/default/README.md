@@ -48,7 +48,7 @@ They are read in that order; later values win. Put values that should not be com
 3. .env.local
 4. .env.production.local
 
-They are read in that order; later values win. Put values that should not be committed into `.env.production` or `.env.production.local`.
+They are read in that order; later values win. Put values that should not be committed into `.env.local` or `.env.production.local`.
 
 ## Libraries used
 

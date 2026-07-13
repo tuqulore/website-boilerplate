@@ -45,9 +45,11 @@ The plugin reads Eleventy's input/output directories (`eleventyConfig.directorie
 #### `preactVersion`
 
 - Type: `string`
-- Default: `""` (latest)
+- Default: auto-detected from the installed `preact` (falls back to the esm.sh latest with a warning if `preact` cannot be resolved)
 
-Preact version to fetch from the esm.sh CDN.
+Preact version to fetch from the esm.sh CDN. Normally you do not need to set this — the plugin reads the version of `preact` installed in your project (from `preact/package.json`) and pins the CDN URL to it, so the runtime stays in sync with the SSR/bundle side.
+
+Set this only to force the CDN to a different version than the installed one — for example, an emergency rollback of the runtime without touching `package.json`.
 
 ```javascript
 eleventyConfig.addPlugin(preactIsland, {

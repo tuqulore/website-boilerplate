@@ -32,9 +32,9 @@ Eleventy's template input root. The preset internally calls `setInputDirectory("
 
 ## `src/_data/`
 
-Where [global data](https://www.11ty.dev/docs/data-global/) goes. The file name becomes the data key, readable from any template. The scaffold includes `site.js` (site-wide metadata) and `nav/` (per-language navigation).
+Where [global data](https://www.11ty.dev/docs/data-global/) goes. The file name becomes the data key, readable from any template. The scaffold includes `site.js` (site-wide metadata) and `nav.json` (navigation).
 
-Sub-directories become nested keys. Placing `_data/nav/ja.json` and `_data/nav/en.json` exposes them as `nav.ja` and `nav.en`.
+Sub-directories become nested keys. Placing `_data/nav/ja.json` and `_data/nav/en.json` exposes them as `nav.ja` and `nav.en`. This documentation itself uses that layout to keep navigation per language.
 
 ## `src/_includes/`
 

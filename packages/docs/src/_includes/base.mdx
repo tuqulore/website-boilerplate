@@ -20,7 +20,7 @@ import Footer from "./partials/footer.mdx";
       href="#main"
       class="jumpu-button sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50"
     >
-      本文へスキップ
+      {eleventy.locale === "en" ? "Skip to main content" : "本文へスキップ"}
     </a>
     <Header />
     <div class="mx-auto mb-4 max-w-6xl gap-8 px-4 md:flex">
