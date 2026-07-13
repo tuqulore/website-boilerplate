@@ -1,4 +1,5 @@
 import { createRequire } from "node:module";
+import path from "node:path";
 import { describe, it } from "node:test";
 import assert from "node:assert";
 import { h } from "preact";
@@ -242,13 +243,12 @@ describe("Island plugin is-land.js の passthrough copy ターゲット", () => 
     assert.strictEqual(entries.length, 1, "expected a single object-form copy");
     const targets = Object.values(entries[0]);
     assert.deepStrictEqual(targets, ["/is-land.js"]);
-    // NOTE: source 側は require.resolve('@11ty/is-land/is-land.js') に依存するため
-    // パス自体は絶対パスであることだけを確認する (プロジェクトによって値が変わる)。
+    // NOTE: source 側は import.meta.resolve('@11ty/is-land/is-land.js') を
+    // url.fileURLToPath したパス。実体は pnpm store 等のインストール先で
+    // プロジェクトごとに値が変わる。Windows では path.sep が '\' なので
+    // 末尾一致ではなく path.basename でファイル名だけを固定する。
     const [source] = Object.keys(entries[0]);
-    assert.ok(
-      source.endsWith("/is-land.js"),
-      `unexpected source path: ${source}`,
-    );
+    assert.strictEqual(path.basename(source), "is-land.js");
   });
 
   it("bundle: false でも is-land.js の passthrough copy は登録される", () => {
