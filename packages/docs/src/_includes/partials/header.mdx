@@ -10,9 +10,23 @@ export function switchLocale(url, target) {
     <a class="flex-shrink-0" href="/">
       {eleventy.site[eleventy.locale ?? "ja"].name}
     </a>
-    <nav class="ml-auto flex gap-4">
-      <a href={switchLocale(eleventy.page.url, "ja")}>日本語</a>
-      <a href={switchLocale(eleventy.page.url, "en")}>English</a>
-    </nav>
+    <div class="ml-auto flex items-center gap-4">
+      <nav
+        aria-label={eleventy.locale === "en" ? "Language" : "言語"}
+        class="flex gap-4"
+      >
+        <a href={switchLocale(eleventy.page.url, "ja")}>日本語</a>
+        <a href={switchLocale(eleventy.page.url, "en")}>English</a>
+      </nav>
+      <a
+        href="https://github.com/tuqulore/website-boilerplate"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="GitHub"
+        class="inline-flex items-center"
+      >
+        <span class="icon-[mdi--github] h-6 w-6" aria-hidden="true"></span>
+      </a>
+    </div>
   </div>
 </header>
