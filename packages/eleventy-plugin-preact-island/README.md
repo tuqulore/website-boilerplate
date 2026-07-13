@@ -42,7 +42,7 @@ That's it. Author client components as `src/**/*.client.jsx` (or `.tsx` / `.js` 
 2. **Ignores** those files as Eleventy templates (they're client entries, not pages). This ignore rule is always added, independent of `bundle`.
 3. **Copies `is-land.js`** from `@11ty/is-land` to the output directory.
 4. **Injects scripts** before `</head>`:
-   - Import map for is-land and Preact (from esm.sh CDN)
+   - Import map for is-land, Preact, and `@preact/signals` (from esm.sh CDN). `@preact/signals` is resolved via the import map so every island bundle shares a single signals instance and preact `options` patch — bundling it per entry would replicate the patch and trip the runtime `Cycle detected` guard.
    - Development-only WebSocket hook for rehydration after hot reload
    - is-land setup script with `Island.addInitType("preact", mount)`
 5. **Wires the URL resolver** so `<Island>` on the SSR side emits the same URL the bundler produced. Client entries must use the `.client.{js,jsx,ts,tsx}` sub-extension and live under the input directory.
