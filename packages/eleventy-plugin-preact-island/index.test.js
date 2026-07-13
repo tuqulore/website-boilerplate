@@ -1,9 +1,12 @@
+import { createRequire } from "node:module";
 import { describe, it } from "node:test";
 import assert from "node:assert";
 import { h } from "preact";
 import { render } from "preact-render-to-string";
 import preactIsland from "./index.js";
 import { Island, clientComponent } from "./island.js";
+
+const require = createRequire(import.meta.url);
 
 /**
  * Minimal UserConfig stub carrying only what the plugin actually reads.
@@ -133,6 +136,47 @@ describe("Island plugin importmap ↔ Eleventy pathPrefix", () => {
       "dist/index.html",
     );
     assert.match(html, /"is-land": "\/is-land\.js"/);
+  });
+});
+
+describe("Island plugin importmap ↔ preact バージョン自動検出", () => {
+  it("preactVersion 未指定時は importmap がインストール済 preact のバージョンで pin される", () => {
+    const config = makeEleventyConfigStub({ pathPrefix: undefined });
+    preactIsland(config);
+
+    const html = config._transform(
+      "preact-island-inject",
+      "<html><head></head><body></body></html>",
+      "dist/index.html",
+    );
+    // テスト側でもプラグインと同じ peer 依存の preact を参照するので値は一致する
+    const { version } = require("preact/package.json");
+    assert.ok(
+      html.includes(`https://esm.sh/preact@${version}"`),
+      `expected importmap to pin preact to @${version}, got: ${html}`,
+    );
+    assert.ok(
+      html.includes(`https://esm.sh/preact@${version}/hooks?external=preact`),
+    );
+    assert.ok(
+      html.includes(
+        `https://esm.sh/preact@${version}/jsx-runtime?external=preact`,
+      ),
+    );
+  });
+
+  it("preactVersion 指定時は指定値が優先され、警告は出ない", (t) => {
+    const warn = t.mock.method(console, "warn");
+    const config = makeEleventyConfigStub({ pathPrefix: undefined });
+    preactIsland(config, { preactVersion: "10.20.0" });
+
+    const html = config._transform(
+      "preact-island-inject",
+      "<html><head></head><body></body></html>",
+      "dist/index.html",
+    );
+    assert.ok(html.includes(`https://esm.sh/preact@10.20.0"`));
+    assert.strictEqual(warn.mock.callCount(), 0);
   });
 });
 

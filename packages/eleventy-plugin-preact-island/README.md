@@ -52,9 +52,17 @@ That's it. Author client components as `src/**/*.client.jsx` (or `.tsx` / `.js` 
 ### `preactVersion`
 
 - Type: `string`
-- Default: `""` (latest)
+- Default: auto-detected from the installed `preact` (falls back to esm.sh
+  latest with a warning if `preact` cannot be resolved)
 
-Specify the Preact version to use from esm.sh CDN.
+Normally you do not need to set this. The plugin reads the version of `preact`
+installed in your project (from `preact/package.json`) and pins the esm.sh
+import-map URLs to it, so the CDN runtime stays in sync with the SSR/bundle
+side by default.
+
+Set this only to force the CDN side to a different version than the installed
+one (e.g., an emergency rollback of the runtime without touching your
+`package.json`).
 
 ```javascript
 eleventyConfig.addPlugin(preactIsland, {
