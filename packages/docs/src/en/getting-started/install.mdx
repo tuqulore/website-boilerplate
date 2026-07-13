@@ -1,0 +1,52 @@
+export const data = {
+  layout: "post",
+  locale: "en",
+  title: "Installation",
+};
+
+# Installation
+
+This page walks through the prerequisites and steps to scaffold a new site with the boilerplate, ending with a local dev server running.
+
+## Prerequisites
+
+Two things are required:
+
+- Node.js on the Active LTS release line
+- pnpm
+
+Node.js targets the [Active LTS](https://github.com/nodejs/release#release-schedule) release line. The scaffolded project declares `engines.node` as `>=20`.
+
+pnpm is the package manager the boilerplate is built around at both scaffold and development time; npm and yarn are not supported. If pnpm is not installed yet, see the [official install guide](https://pnpm.io/installation).
+
+## Scaffold a site
+
+Create a new site with the CLI `@tuqulore-inc/create-eleventy`.
+
+```shell
+pnpm create @tuqulore-inc/eleventy my-project
+```
+
+Replace `my-project` with the directory name you want. To pin the template explicitly, pass `-t`.
+
+```shell
+pnpm create @tuqulore-inc/eleventy my-project -t default
+```
+
+The only template currently shipped is `default`. It sets up Eleventy, Preact, and Tailwind CSS together.
+
+## Install dependencies and start the dev server
+
+Move into the scaffolded directory, install dependencies, and start the dev server.
+
+```shell
+cd my-project
+pnpm install
+pnpm dev
+```
+
+`pnpm dev` starts the Eleventy dev server on `http://localhost:8080/`. It watches source files and reloads the browser automatically on changes.
+
+## Next
+
+Once the site is up, continue with the "Write your first page" page (translation in progress; see the [Japanese page](/ja/getting-started/first-page/) for now) to replace the scaffold placeholder. To grasp the directory layout first, jump to the "Project structure" page (translation in progress; see the [Japanese page](/ja/getting-started/structure/) for now).

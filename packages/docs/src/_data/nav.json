@@ -1,5 +1,15 @@
 [
-  { "name": "Getting Started", "path": "/ja/getting-started/" },
+  {
+    "name": "Getting Started",
+    "children": [
+      { "name": "インストール", "path": "/ja/getting-started/install/" },
+      {
+        "name": "最初のページを書く",
+        "path": "/ja/getting-started/first-page/"
+      },
+      { "name": "プロジェクト構成", "path": "/ja/getting-started/structure/" }
+    ]
+  },
   { "name": "Architecture", "path": "/ja/architecture/" },
   { "name": "Recipes", "path": "/ja/recipes/" },
   { "name": "Roadmap", "path": "/ja/roadmap/" }

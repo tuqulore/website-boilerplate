@@ -1,0 +1,55 @@
+export const data = {
+  layout: "post",
+  locale: "ja",
+  title: "プロジェクト構成",
+};
+
+# プロジェクト構成
+
+本ページは、scaffold されたプロジェクトのディレクトリ構成と、それぞれの役割を扱う。編集したい対象がどこにあるかを掴むための地図。
+
+## 全体像
+
+scaffold 直後のディレクトリ構成は次の通り。
+
+```
+.
+├── dist
+├── eleventy.config.js
+├── package.json
+└── src
+    ├── _data
+    ├── _includes
+    │   └── partials
+    └── public
+```
+
+`src/` 配下がすべての執筆・実装対象。`dist/` はビルド成果物、`eleventy.config.js` は Eleventy 設定 (**プリセット** を呼び出すだけの薄い層) になる。
+
+## dist
+
+ビルド成果物の出力先。手で編集しない。`.gitignore` に含まれる。
+
+## src
+
+Eleventy がテンプレートとして参照するルート。ページの MDX、部品、静的アセット、グローバルデータをすべてここに置く。
+
+## src/\_data
+
+[グローバルデータ](https://www.11ty.dev/docs/data-global/) を配置する場所。ファイル名がデータキーになり、テンプレートから参照できる。scaffold には `site.js` (サイト全体のメタ情報) と `nav.json` (ナビゲーション定義) が入っている。
+
+## src/\_includes
+
+[レイアウトチェイニング](https://www.11ty.dev/docs/layout-chaining/) 用の [レイアウトテンプレート](https://www.11ty.dev/docs/layouts/) を置く場所。ページの frontmatter や `export const data` で `layout: "..."` と指定した対象がここから探される。scaffold の `base.mdx` は HTML 骨格を、`post.mdx` は記事の見た目のラッパを担う。
+
+## src/\_includes/partials
+
+テンプレートから呼び出す JSX コンポーネントと MDX テンプレートを置く場所。scaffold には `header.mdx` `footer.mdx` `ogp.mdx` が入っている。
+
+## src/public
+
+静的アセット (favicon、robots.txt、画像など) を置く場所。ここの中身は build 時に `dist/` 直下に丸ごとコピーされる。
+
+## 次に読む
+
+構成が掴めたら、Architecture 章 (整備中) に進んで **プリセット** の設計を追う。scaffold されたテンプレートの各機能がどこで組み立てられているかがわかる。
