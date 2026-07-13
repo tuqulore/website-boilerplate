@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "@11ty/is-land": "^5.0.0",
+    "devalue": "^5.8.1",
     "esbuild": "^0.28.0",
     "fast-glob": "^3.3.3"
   },

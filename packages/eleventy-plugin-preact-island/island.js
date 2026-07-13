@@ -1,4 +1,5 @@
 import { h } from "preact";
+import { stringify } from "devalue";
 
 let currentResolver = null;
 
@@ -57,7 +58,7 @@ export function clientComponent(Component, moduleUrl) {
 export function Island({ component, on = "interaction", ...props }) {
   // Drop children explicitly. Preact folds JSX children into props.children,
   // and Island's contract is that SSR content comes from `component`; letting
-  // children fall through would leak Preact VNodes into the JSON-serialized
+  // children fall through would leak Preact VNodes into the devalue-serialized
   // `props` attribute on <is-land> and into the client hydration payload.
   delete props.children;
   if (typeof component !== "function") {
@@ -87,10 +88,12 @@ export function Island({ component, on = "interaction", ...props }) {
   const importUrl = currentResolver(moduleUrl);
   let serializedProps;
   try {
-    serializedProps = JSON.stringify(props);
+    serializedProps = stringify(props);
   } catch (cause) {
+    const path = typeof cause?.path === "string" ? cause.path : "";
+    const location = path ? ` at \`${path}\`` : "";
     throw new Error(
-      `Island: failed to JSON.stringify props for hydration of ${component.name || "anonymous component"} (${importUrl}). Ensure all Island props are JSON-serializable.`,
+      `Island: failed to devalue.stringify props for hydration of ${component.name || "anonymous component"} (${importUrl})${location}. Ensure all Island props are devalue-serializable (Date, Map, Set, RegExp, BigInt, undefined, NaN/Infinity, and cycles are OK; functions, symbols, DOM nodes, and unregistered class instances are not).`,
       { cause },
     );
   }
