@@ -2,8 +2,12 @@ import type { UserConfig } from "@11ty/eleventy";
 
 export interface PluginOptions {
   /**
-   * Preact version for esm.sh CDN (e.g., "10.26.4").
-   * If not specified, the latest version will be used.
+   * Override the Preact version used in the esm.sh CDN URL (e.g., "10.26.4").
+   *
+   * Defaults to the version of `preact` installed in the host project
+   * (auto-detected from `preact/package.json`), so the CDN runtime stays in
+   * sync with the SSR/bundle side by default. Set this only to force the CDN
+   * side to a different version than the installed one.
    */
   preactVersion?: string;
   /**

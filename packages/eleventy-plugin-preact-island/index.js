@@ -1,8 +1,25 @@
+import { createRequire } from "node:module";
 import url from "node:url";
 import * as esbuild from "esbuild";
 import fg from "fast-glob";
 import { _setClientModuleResolver } from "./island.js";
 import { createClientModuleResolver, normalizeUrlPrefix } from "./resolver.js";
+
+const require = createRequire(import.meta.url);
+
+// NOTE: peer で入っている preact の package.json から version を取り、
+// import map の esm.sh URL に反映するための解決子。プロセス中に実体が
+// 入れ替わることは無いのでモジュールロード時に一度だけ評価する。
+// 解決に失敗するのは peer が意図的に入っていない (bundle: false 運用等)
+// 例外的なケース。呼び出し側でフォールバックする。
+const resolveInstalledPreactVersion = () => {
+  try {
+    return require("preact/package.json").version;
+  } catch {
+    return null;
+  }
+};
+const installedPreactVersion = resolveInstalledPreactVersion();
 
 /**
  * Eleventy plugin for Preact partial hydration with is-land.
@@ -22,7 +39,10 @@ import { createClientModuleResolver, normalizeUrlPrefix } from "./resolver.js";
  *
  * @param {import("@11ty/eleventy").UserConfig} eleventyConfig
  * @param {Object} [pluginOptions]
- * @param {string} [pluginOptions.preactVersion] - Preact version for esm.sh CDN
+ * @param {string} [pluginOptions.preactVersion] - Override the Preact version
+ *   used in the esm.sh CDN URL. Defaults to the version of `preact` installed
+ *   in the host project (auto-detected from `preact/package.json`). Set this
+ *   only to force the CDN side to a different version than the installed one.
  * @param {boolean} [pluginOptions.bundle=true] - Bundle client entries with
  *   esbuild. Set to `false` to bring your own bundler; the ignore rule,
  *   resolver wiring, is-land.js copy, and script injection stay active.
@@ -34,7 +54,24 @@ export default function (eleventyConfig, pluginOptions = {}) {
     console.log(`[eleventy-plugin-preact-island] WARN: ${e.message}`);
   }
 
-  const { preactVersion = "", bundle = true } = pluginOptions;
+  const { preactVersion, bundle = true } = pluginOptions;
+
+  // 優先順位:
+  //  1. ユーザ指定があればそれを尊重 (CDN 側だけ差し替えたい高度な用途)。
+  //  2. インストール済 preact のバージョンを自動検出できたらそれで pin。
+  //  3. どちらも無い場合は latest フォールバックにするが、SSR/CSR の
+  //     バージョンドリフトが復活するので登録時に一度だけ警告する。
+  let resolvedPreactVersion;
+  if (preactVersion) {
+    resolvedPreactVersion = preactVersion;
+  } else if (installedPreactVersion) {
+    resolvedPreactVersion = installedPreactVersion;
+  } else {
+    resolvedPreactVersion = "";
+    console.warn(
+      "[eleventy-plugin-preact-island] WARN: could not resolve the installed preact version; falling back to latest via esm.sh. Install `preact` (>=10) to pin the CDN version.",
+    );
+  }
 
   // Ride on Eleventy's own input/output directories (normalized, e.g. "./src/").
   const inputDir = eleventyConfig.directories.input;
@@ -105,7 +142,7 @@ export default function (eleventyConfig, pluginOptions = {}) {
   eleventyConfig.addPassthroughCopy({
     [url.fileURLToPath(import.meta.resolve("@11ty/is-land/is-land.js"))]: "/",
   });
-  const preactSuffix = preactVersion ? `@${preactVersion}` : "";
+  const preactSuffix = resolvedPreactVersion ? `@${resolvedPreactVersion}` : "";
 
   const generateImportMap = () => `<script type="importmap">
 {
