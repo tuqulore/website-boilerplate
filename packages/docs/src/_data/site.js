@@ -5,9 +5,16 @@ if (!process.env.SITE_URL) {
 }
 
 export default {
-  description:
-    "Website を構築するときに便利な設計と実装のセット。tuqulore が現場で蓄えたものをボイラープレートとしてまとめ、公開しています。",
-  name: "Website Boilerplate",
+  ja: {
+    name: "Website Boilerplate",
+    description:
+      "Website を構築するときに便利な設計と実装のセット。tuqulore が現場で蓄えたものをボイラープレートとしてまとめ、公開しています。",
+  },
+  en: {
+    name: "Website Boilerplate",
+    description:
+      "Design and implementation patterns for building websites. Published by tuqulore as a boilerplate.",
+  },
   url: process.env.SITE_URL,
   author: "tuqulore inc.",
 };
