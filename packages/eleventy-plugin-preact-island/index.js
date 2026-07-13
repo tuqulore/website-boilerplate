@@ -122,7 +122,12 @@ export default function (eleventyConfig, pluginOptions = {}) {
       const options = {
         bundle: true,
         entryPoints,
-        external: ["preact"],
+        // NOTE: `@preact/signals` は preact の `options` オブジェクトを patch する。
+        // client bundle ごとに signals を同梱すると patch と signal graph が bundle
+        // 数ぶん複製されて Cycle detected を誤発火する。external + import map で
+        // 単一インスタンスに寄せる。`@preact/signals-core` も signals が外部参照
+        // する前提で同様に external 化する。
+        external: ["preact", "@preact/signals", "@preact/signals-core"],
         format: "esm",
         jsx: "automatic",
         jsxImportSource: "preact",
@@ -150,7 +155,9 @@ export default function (eleventyConfig, pluginOptions = {}) {
     "is-land": "${urlPrefix}is-land.js",
     "preact": "https://esm.sh/preact${preactSuffix}",
     "preact/hooks": "https://esm.sh/preact${preactSuffix}/hooks?external=preact",
-    "preact/jsx-runtime": "https://esm.sh/preact${preactSuffix}/jsx-runtime?external=preact"
+    "preact/jsx-runtime": "https://esm.sh/preact${preactSuffix}/jsx-runtime?external=preact",
+    "@preact/signals": "https://esm.sh/@preact/signals?external=preact,preact/hooks",
+    "@preact/signals-core": "https://esm.sh/@preact/signals-core"
   }
 }
 </script>`;

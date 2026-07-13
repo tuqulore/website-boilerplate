@@ -1,26 +1,31 @@
 import { clientComponent } from "@tuqulore-inc/eleventy-preset/island";
-import { useState, useRef, useEffect } from "preact/hooks";
+import { useSignal, useSignalEffect } from "@preact/signals";
+import { useRef } from "preact/hooks";
 import slugify from "slugify";
 import { twMerge } from "tailwind-merge";
 
 function MenuList(props) {
-  const [open, setOpen] = useState(false);
-  const [visible, setVisible] = useState(open);
-  const handleTransitionStart = () => open && setVisible(true);
-  const handleTransitionEnd = () => !open && setVisible(false);
+  const open = useSignal(false);
+  const visible = useSignal(open.value);
+  const handleTransitionStart = () => {
+    if (open.value) visible.value = true;
+  };
+  const handleTransitionEnd = () => {
+    if (!open.value) visible.value = false;
+  };
   const ref = useRef(null);
   const buttonRef = useRef(null);
   const slug = `${slugify(props.item.name)}-${props.index}`;
-  useEffect(() => {
-    if (!open) return;
+  useSignalEffect(() => {
+    if (!open.value) return;
     const clickHandler = (e) => {
       if (ref.current?.contains(e.target)) return;
-      setOpen(false);
+      open.value = false;
     };
     const keyHandler = (e) => {
       if (e.key !== "Escape") return;
       if (!ref.current?.contains(e.target)) return;
-      setOpen(false);
+      open.value = false;
       buttonRef.current?.focus();
     };
     document.addEventListener("click", clickHandler);
@@ -29,23 +34,23 @@ function MenuList(props) {
       document.removeEventListener("click", clickHandler);
       document.removeEventListener("keydown", keyHandler);
     };
-  }, [open]);
+  });
   return (
     <div
       ref={ref}
       onFocusOut={(e) => {
         if (ref.current?.contains(e.relatedTarget)) return;
-        setOpen(false);
+        open.value = false;
       }}
     >
       <button
         id={`nav-button-${slug}`}
         ref={buttonRef}
         aria-controls={`nav-menu-${slug}`}
-        aria-expanded={open}
+        aria-expanded={open.value}
         class="jumpu-text-button"
         type="button"
-        onClick={() => setOpen(!open)}
+        onClick={() => (open.value = !open.value)}
       >
         {props.item.name}
       </button>
@@ -55,8 +60,8 @@ function MenuList(props) {
         class={twMerge(
           "jumpu-card absolute top-full left-1/2 max-h-[50vh] -translate-x-1/2 overflow-y-auto p-2",
           "translate-y-2 transition duration-75 ease-in-out",
-          !open && "translate-y-[2.5%] scale-95 opacity-0",
-          open || visible ? "visible" : "invisible",
+          !open.value && "translate-y-[2.5%] scale-95 opacity-0",
+          open.value || visible.value ? "visible" : "invisible",
         )}
         onTransitionStart={handleTransitionStart}
         onTransitionEnd={handleTransitionEnd}

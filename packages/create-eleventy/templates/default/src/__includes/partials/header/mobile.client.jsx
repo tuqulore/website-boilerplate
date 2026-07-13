@@ -1,20 +1,21 @@
 import { clientComponent } from "@tuqulore-inc/eleventy-preset/island";
-import { useEffect, useRef, useState } from "preact/hooks";
+import { useSignal, useSignalEffect } from "@preact/signals";
+import { useRef } from "preact/hooks";
 import { twMerge } from "tailwind-merge";
 
 function Mobile(props) {
-  const [open, setOpen] = useState(false);
+  const open = useSignal(false);
   const openButtonRef = useRef(null);
   const closeButtonRef = useRef(null);
-  useEffect(() => {
-    if (!open) return;
+  useSignalEffect(() => {
+    if (!open.value) return;
     closeButtonRef.current?.focus();
     // NOTE: メニュー表示中は背景 (html) のスクロールを止め、モバイルで
     // メニューをスクロールしたつもりが背後のページも動く事故を防ぐ。
     document.documentElement.classList.add("overflow-hidden");
     const handler = (e) => {
       if (e.key !== "Escape") return;
-      setOpen(false);
+      open.value = false;
       openButtonRef.current?.focus();
     };
     document.addEventListener("keydown", handler);
@@ -22,29 +23,31 @@ function Mobile(props) {
       document.removeEventListener("keydown", handler);
       document.documentElement.classList.remove("overflow-hidden");
     };
-  }, [open]);
+  });
   return (
     <div class={props.class}>
       <button
         id="nav-button-mobile"
         ref={openButtonRef}
         aria-controls="nav-menu-mobile"
-        aria-expanded={open}
-        aria-label={open ? "Close navigation menu" : "Open navigation menu"}
+        aria-expanded={open.value}
+        aria-label={
+          open.value ? "Close navigation menu" : "Open navigation menu"
+        }
         class="jumpu-icon-button h-12 w-12 text-2xl"
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => (open.value = !open.value)}
       >
         <span class="icon-[material-symbols--menu]"></span>
       </button>
       <nav
         id="nav-menu-mobile"
         aria-label="Global navigation"
-        inert={!open}
+        inert={!open.value}
         class={twMerge(
           "fixed top-0 left-0 h-screen w-screen overflow-y-auto overscroll-contain bg-white",
           "transition duration-150 ease-in-out",
-          open ? "translate-x-0" : "translate-x-full",
+          open.value ? "translate-x-0" : "translate-x-full",
         )}
       >
         <button
@@ -53,7 +56,7 @@ function Mobile(props) {
           aria-label="Close navigation menu"
           type="button"
           onClick={() => {
-            setOpen(false);
+            open.value = false;
             openButtonRef.current?.focus();
           }}
         >
