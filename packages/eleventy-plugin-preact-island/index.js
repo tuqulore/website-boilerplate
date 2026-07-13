@@ -195,9 +195,17 @@ export default function (eleventyConfig, pluginOptions = {}) {
     });
   }
 
-  // Copy is-land.js to output directory
+  // Copy is-land.js to output directory.
+  // NOTE: ターゲットは必ず出力ファイル名 (`/is-land.js`) を渡す。`"/"` を渡すと
+  // Eleventy の TemplatePassthrough.getOutputPath が末尾スラッシュを剥がして
+  // `<outputDir>` に潰し、その後の「dest がディレクトリなら dest/basename に書く」
+  // 分岐が dest の存在有無に依存する (recursive-copy に単一ファイル → 未存在パスを
+  // 渡すとリネームとして解釈される) ため、クリーンビルドでは `<outputDir>` 自体が
+  // is-land.js の中身を持つファイルに化ける。importmap 側 (`${urlPrefix}is-land.js`)
+  // と揃えて確定名にすることでこの罠を回避する。
   eleventyConfig.addPassthroughCopy({
-    [url.fileURLToPath(import.meta.resolve("@11ty/is-land/is-land.js"))]: "/",
+    [url.fileURLToPath(import.meta.resolve("@11ty/is-land/is-land.js"))]:
+      "/is-land.js",
   });
   const preactSuffix = resolvedPreactVersion ? `@${resolvedPreactVersion}` : "";
   const devalueSuffix = resolvedDevalueVersion
