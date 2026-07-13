@@ -1,6 +1,7 @@
 import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
 import Ogp from "./partials/ogp.mdx";
 import Header from "./partials/header.mdx";
+import Sidebar from "./partials/sidebar.mdx";
 import Footer from "./partials/footer.mdx";
 
 <html lang={eleventy.locale ?? "ja"}>
@@ -22,11 +23,14 @@ import Footer from "./partials/footer.mdx";
       本文へスキップ
     </a>
     <Header />
-    <main
-      id="main"
-      class="mx-auto mb-4 min-h-[60vh] max-w-6xl px-4"
-      dangerouslySetInnerHTML={{ __html: eleventy.content }}
-    ></main>
+    <div class="mx-auto mb-4 max-w-6xl gap-8 px-4 md:flex">
+      <Sidebar />
+      <main
+        id="main"
+        class="min-h-[60vh] flex-1"
+        dangerouslySetInnerHTML={{ __html: eleventy.content }}
+      ></main>
+    </div>
     <Footer />
   </body>
 </html>

@@ -1,6 +1,7 @@
 [
   {
     "name": "Getting Started",
+    "path": "/ja/getting-started/",
     "children": [
       { "name": "インストール", "path": "/ja/getting-started/install/" },
       {
