@@ -4,11 +4,11 @@ Eleventy preset for building static sites with Preact JSX/MDX templates, Partial
 
 ## Documentation
 
-Design rationale, day-to-day writing conventions, and applied recipes live at [website.tuqulore.pages.dev](https://website.tuqulore.pages.dev/). See especially:
+Design rationale, day-to-day writing conventions, and applied recipes live at [website.tuqulore.workers.dev](https://website.tuqulore.workers.dev/). See especially:
 
-- [Architecture](https://website.tuqulore.pages.dev/en/architecture/) — the overall design and key trade-offs.
-- [Preset Conventions](https://website.tuqulore.pages.dev/en/preset/) — writing conventions (directory layout, templates, data access).
-- [Plugins](https://website.tuqulore.pages.dev/en/plugins/) — internal design of the plugins this preset bundles.
+- [Architecture](https://website.tuqulore.workers.dev/en/architecture/) — the overall design and key trade-offs.
+- [Preset Conventions](https://website.tuqulore.workers.dev/en/preset/) — writing conventions (directory layout, templates, data access).
+- [Plugins](https://website.tuqulore.workers.dev/en/plugins/) — internal design of the plugins this preset bundles.
 
 ## Installation
 
@@ -78,11 +78,11 @@ Returns an Eleventy configuration function that registers the three plugins abov
 
 ### `import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy"`
 
-Re-exports the SSR-side singleton from [@tuqulore-inc/eleventy-plugin-preact](../eleventy-plugin-preact) for reading page data and global data without prop drilling. See [Preset Conventions / Data Access](https://website.tuqulore.pages.dev/en/preset/data-access/) for the shape and usage.
+Re-exports the SSR-side singleton from [@tuqulore-inc/eleventy-plugin-preact](../eleventy-plugin-preact) for reading page data and global data without prop drilling. See [Preset Conventions / Data Access](https://website.tuqulore.workers.dev/en/preset/data-access/) for the shape and usage.
 
 ### `import { Island, clientComponent } from "@tuqulore-inc/eleventy-preset/island"`
 
-Re-exports from [@tuqulore-inc/eleventy-plugin-preact-island](../eleventy-plugin-preact-island) for authoring Partial Hydration. See [Plugins / eleventy-plugin-preact-island](https://website.tuqulore.pages.dev/en/plugins/eleventy-plugin-preact-island/) for the design and that package's README for the full API.
+Re-exports from [@tuqulore-inc/eleventy-plugin-preact-island](../eleventy-plugin-preact-island) for authoring Partial Hydration. See [Plugins / eleventy-plugin-preact-island](https://website.tuqulore.workers.dev/en/plugins/eleventy-plugin-preact-island/) for the design and that package's README for the full API.
 
 ## Requirements
 
