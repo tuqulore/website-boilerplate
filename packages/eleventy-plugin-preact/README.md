@@ -2,7 +2,7 @@
 
 Eleventy plugin for Preact server-side rendering with JSX/TSX/MDX support.
 
-This plugin registers `.jsx`, `.tsx`, and `.mdx` as Eleventy template formats and renders them to HTML with Preact. JSX/TSX/TS files are transpiled by [`oxc-transform`](https://oxc.rs/) (Rust) — no Babel in the SSR pipeline.
+This plugin registers `.jsx`, `.tsx`, and `.mdx` as Eleventy template formats and renders them to HTML with Preact. JSX/TSX/TS files are transpiled by [`oxc-transform`](https://oxc.rs/) (Rust) and MDX is compiled by [Sätteri](https://github.com/bruits/satteri) (Rust) — no Babel or `@mdx-js/*` in the SSR pipeline.
 
 ## Documentation
 
@@ -51,6 +51,34 @@ export const data = { title: "Hello" };
 export default function Hello({ name }: Props) {
   return <h1>Hello, {name}!</h1>;
 }
+```
+
+## MDX
+
+MDX files are compiled by Sätteri with the following features enabled by default:
+
+- **GFM** — tables, task lists, strikethrough, footnotes.
+- **Heading anchors** — every `<h1>`–`<h6>` receives an `id` slugged by [`github-slugger`](https://github.com/Flet/github-slugger), with the same repeat-suffix behaviour (`hello`, `hello-1`, `hello-2`).
+- **YAML frontmatter** — the block between `---` fences is parsed as YAML and forwarded to Eleventy's data cascade as `export const data = { ... }`. Combining YAML frontmatter with a hand-authored `export const data = { ... }` in the same file is rejected — pick one.
+
+```mdx
+---
+title: Getting Started
+layout: post
+---
+
+# Getting Started
+
+- [x] Install the plugin
+- [ ] Ship the site
+```
+
+Or use the module-level export (still supported, and required for files whose data references JS values):
+
+```mdx
+export const data = { title: "Getting Started", layout: "post" };
+
+# Getting Started
 ```
 
 ## API
