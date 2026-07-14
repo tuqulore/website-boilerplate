@@ -6,7 +6,7 @@ import { pathToFileURL } from "node:url";
 import { render } from "preact-render-to-string";
 import { load } from "./loaders/jsx.js";
 
-describe("jsx loader", () => {
+describe("SSR loader (oxc)", () => {
   // bare specifier（preact/jsx-runtime）を解決できるよう
   // 一時ファイルはこのパッケージ配下に作る
   let dir;
@@ -100,8 +100,95 @@ describe("jsx loader", () => {
     });
   });
 
-  describe("JSX以外のファイル", () => {
-    it(".jsx以外のfile: URLはnextLoadに委譲される", async () => {
+  describe("TSX/TSファイルの変換", () => {
+    it(".tsx が型注釈を剥がし preact/jsx-runtime を import する", async () => {
+      const file = path.join(dir, "typed.tsx");
+      await fs.writeFile(
+        file,
+        [
+          "type Props = { name: string };",
+          "export const Hello = ({ name }: Props) => <p>Hello, {name}!</p>;",
+          "",
+        ].join("\n"),
+      );
+
+      const result = await load(pathToFileURL(file).href, {}, () => {
+        assert.fail("nextLoad should not be called for .tsx files");
+      });
+
+      const source = String(result.source);
+      assert.match(source, /["']preact\/jsx(-dev)?-runtime["']/);
+      // 型宣言と型注釈が剥がされている
+      assert.doesNotMatch(source, /type\s+Props\b/);
+      assert.doesNotMatch(source, /:\s*Props/);
+      // JSX 構文自体は残っていない
+      assert.doesNotMatch(source, /<p/);
+    });
+
+    it(".ts で型注釈のみ剥がされ JSX 変換は入らない", async () => {
+      const file = path.join(dir, "utility.ts");
+      await fs.writeFile(
+        file,
+        "export const add = (a: number, b: number): number => a + b;\n",
+      );
+
+      const result = await load(pathToFileURL(file).href, {}, () => {
+        assert.fail("nextLoad should not be called for .ts files");
+      });
+
+      const source = String(result.source);
+      // 型注釈が剥がれている
+      assert.doesNotMatch(source, /:\s*number/);
+      // JSX 用の import は生成されない
+      assert.doesNotMatch(source, /preact\/jsx-runtime/);
+    });
+
+    it("型の食い違いを含む .tsx でも transpile が止まらない", async () => {
+      const file = path.join(dir, "type-error.tsx");
+      await fs.writeFile(
+        file,
+        [
+          "type Props = { name: string };",
+          // 型的には嘘だが transpile-only なので通過する
+          "const bad: Props = { name: 42 as unknown as string };",
+          "export const Bad = () => <span>{bad.name}</span>;",
+          "",
+        ].join("\n"),
+      );
+
+      const result = await load(pathToFileURL(file).href, {}, () => {
+        assert.fail("nextLoad should not be called for .tsx files");
+      });
+
+      assert.strictEqual(result.format, "module");
+      assert.match(String(result.source), /preact\/jsx-runtime/);
+    });
+
+    it("スペースを含む .tsx パスでもソースマップの sources に生パスが載る", async () => {
+      const file = path.join(dir, "typed with space.tsx");
+      await fs.writeFile(
+        file,
+        "export const A = (): unknown => <div>hi</div>;\n",
+      );
+
+      const result = await load(pathToFileURL(file).href, {}, () => {
+        assert.fail("nextLoad should not be called for .tsx files");
+      });
+
+      const base64 = String(result.source).match(
+        /sourceMappingURL=data:application\/json;base64,(\S+)/,
+      )?.[1];
+      const map = JSON.parse(Buffer.from(base64, "base64").toString());
+
+      assert.ok(
+        map.sources.some((source) => source.includes("typed with space.tsx")),
+        `sources should contain the decoded path: ${JSON.stringify(map.sources)}`,
+      );
+    });
+  });
+
+  describe("透過的な pass-through", () => {
+    it(".jsx/.tsx/.ts 以外の file: URL は nextLoad に委譲される", async () => {
       const sentinel = { format: "module", source: "" };
       const href = pathToFileURL(path.join(dir, "plain.js")).href;
       const context = {};
@@ -115,7 +202,16 @@ describe("jsx loader", () => {
       assert.strictEqual(result, sentinel);
     });
 
-    it("file:以外のURLはnextLoadに委譲される", async () => {
+    it(".mdx は jsx loader ではなく nextLoad に委譲される", async () => {
+      const sentinel = { format: "module", source: "" };
+      const href = pathToFileURL(path.join(dir, "post.mdx")).href;
+
+      const result = await load(href, {}, () => sentinel);
+
+      assert.strictEqual(result, sentinel);
+    });
+
+    it("file: 以外の URL は nextLoad に委譲される", async () => {
       const sentinel = { format: "module", source: "" };
       const href = "node:fs";
 

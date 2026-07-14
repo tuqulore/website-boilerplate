@@ -48,9 +48,8 @@
     "test": "node --test"
   },
   "dependencies": {
-    "@babel/core": "^8.0.1",
-    "@babel/preset-react": "^8.0.1",
     "@mdx-js/node-loader": "^3.1.0",
+    "oxc-transform": "^0.139.0",
     "preact-render-to-string": "^6.5.13"
   },
   "devDependencies": {

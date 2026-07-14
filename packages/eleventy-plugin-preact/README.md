@@ -1,8 +1,8 @@
 # @tuqulore-inc/eleventy-plugin-preact
 
-Eleventy plugin for Preact server-side rendering with JSX/MDX support.
+Eleventy plugin for Preact server-side rendering with JSX/TSX/MDX support.
 
-This plugin registers `.jsx` and `.mdx` as Eleventy template formats and renders them to HTML with Preact.
+This plugin registers `.jsx`, `.tsx`, and `.mdx` as Eleventy template formats and renders them to HTML with Preact. JSX/TSX/TS files are transpiled by [`oxc-transform`](https://oxc.rs/) (Rust) — no Babel in the SSR pipeline.
 
 ## Documentation
 
@@ -27,11 +27,31 @@ export default function (eleventyConfig) {
 
 ## What it does
 
-1. Adds `.jsx` and `.mdx` as Eleventy template formats.
+1. Adds `.jsx`, `.tsx`, and `.mdx` as Eleventy template formats.
 2. Renders Preact components to HTML with `preact-render-to-string`.
-3. Registers Node.js loaders for JSX and MDX at module load time.
+3. Registers Node.js loaders for JSX/TSX/TS and MDX at module load time.
 
 Client-side bundling and Partial Hydration are handled by [@tuqulore-inc/eleventy-plugin-preact-island](../eleventy-plugin-preact-island). Register the two side by side, or use [@tuqulore-inc/eleventy-preset](../eleventy-preset), which composes both.
+
+## TypeScript
+
+`.tsx` and `.ts` files are accepted transparently. The SSR loader strips type annotations and lowers JSX to Preact's automatic runtime with fixed options — `runtime: "automatic"`, `importSource: "preact"`. No `tsconfig.json` is required and none is read.
+
+- `.tsx` — first-class template format; strips types and compiles JSX.
+- `.ts` — accepted as an import target (utility modules, MDX imports); strips types only.
+- Type checking is not the plugin's responsibility. Run `tsc --noEmit` (or your editor's TypeScript service) separately.
+- Parser-recovery diagnostics below `"Error"` severity do not abort the transform, so a type mistake never breaks the build — matching the behaviour of `esbuild --loader=tsx` and `@babel/preset-typescript`.
+
+```tsx
+// src/hello.tsx
+type Props = { name: string };
+
+export const data = { title: "Hello" };
+
+export default function Hello({ name }: Props) {
+  return <h1>Hello, {name}!</h1>;
+}
+```
 
 ## API
 
@@ -45,7 +65,7 @@ The SSR-side singleton. Exposes `content`, `title`, `description`, `site`, `nav`
 
 ## Requirements
 
-- Node.js 20 or higher
+- Node.js 24.11 or higher
 - Eleventy 3.0 or higher
 - Preact 10 or higher
 

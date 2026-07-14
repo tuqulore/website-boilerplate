@@ -15,11 +15,12 @@ module.register(
 );
 
 /**
- * Eleventy plugin for Preact server-side rendering with JSX/MDX support.
+ * Eleventy plugin for Preact server-side rendering with JSX/TSX/MDX support.
  *
- * SSR only: registers `.jsx` / `.mdx` template formats and renders Preact
- * components to HTML using preact-render-to-string. Client-side bundling and
- * partial hydration are handled by `@tuqulore-inc/eleventy-plugin-preact-island`.
+ * SSR only: registers `.jsx` / `.tsx` / `.mdx` template formats and renders
+ * Preact components to HTML using preact-render-to-string. Client-side
+ * bundling and partial hydration are handled by
+ * `@tuqulore-inc/eleventy-plugin-preact-island`.
  *
  * @param {import("@11ty/eleventy").UserConfig} eleventyConfig
  */
@@ -30,11 +31,9 @@ export default function (eleventyConfig) {
     console.log(`[eleventy-plugin-preact] WARN: ${e.message}`);
   }
 
-  // Add JSX and MDX as template formats
-  eleventyConfig.addTemplateFormats(["jsx", "mdx"]);
+  eleventyConfig.addTemplateFormats(["jsx", "tsx", "mdx"]);
 
-  // Add extension handler for JSX and MDX
-  eleventyConfig.addExtension(["jsx", "mdx"], {
+  eleventyConfig.addExtension(["jsx", "tsx", "mdx"], {
     key: "11ty.js",
     compile: () => {
       return async function (data) {
