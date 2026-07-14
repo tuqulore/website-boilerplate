@@ -39,18 +39,26 @@ const loadEleventyEventBus = async () => {
 };
 
 // トップレベルの `import ... from "..."` から specifier を抽出。JSX/MDX 両方対応。
-// 複数行 import (destructuring 改行) も /[\s\S]+?/ で吸収。`import "..."`
-// (副作用のみ) はグラフに乗せる意味がないので無視。dynamic import() も対象外。
-const IMPORT_RE = /^import\s+(?:[\s\S]+?\s+from\s+)?["']([^"']+)["']/gm;
-const parseTemplateImports = (content) => {
+// side-effect only の `import "..."` と、`from` 句を伴う通常の import を alternation
+// で並べる。前者を先に試すのは、後者の `[\s\S]+?` が非貪欲でも複数行にまたがって
+// 次の import 文まで巻き込みうる (`import "a"\nimport X from "b"` を 1 個の import と
+// 誤検出) ため。両者を独立に書き分けることで境界を明確にする。dynamic import() や
+// `import.meta.*` は対象外 (top-level static import だけを追跡)。
+//
+// NOTE: `/g` 付き regex を関数外に置くと `lastIndex` が呼び出し間で残り、直前呼び出し
+// が途中で bail out した際に次回の抽出が壊れる。RegExp 生成コストは無視できるので、
+// 関数内で毎回生成する。
+export const _parseTemplateImports = (content) => {
+  const re =
+    /^import\s+(?:["']([^"']+)["']|[\s\S]+?\s+from\s+["']([^"']+)["'])/gm;
   const specs = [];
   let m;
-  while ((m = IMPORT_RE.exec(content)) !== null) specs.push(m[1]);
+  while ((m = re.exec(content)) !== null) specs.push(m[1] ?? m[2]);
   return specs;
 };
 
 // 相対 specifier を絶対 `.jsx`/`.mdx` パスに解決。npm パッケージや解決失敗時は null。
-const resolveTemplateImport = (specifier, fromFile) => {
+export const _resolveTemplateImport = (specifier, fromFile) => {
   if (!specifier.startsWith("./") && !specifier.startsWith("../")) return null;
   const base = path.resolve(path.dirname(fromFile), specifier);
   if (/\.(jsx|mdx)$/.test(base) && fs.existsSync(base)) return base;
@@ -64,7 +72,7 @@ const resolveTemplateImport = (specifier, fromFile) => {
 // 変更時に「その ancestor だけ」を invalidate する用途。ES import 経由のみ辿る
 // (layout 参照は data cascade 経由なので Eleventy が cacheBust:true で fresh に
 // 再評価するため、ここで追跡する必要は無い)。
-const buildReverseDeps = (files) => {
+export const _buildReverseDeps = (files) => {
   const forward = new Map();
   for (const f of files) {
     let content;
@@ -77,8 +85,8 @@ const buildReverseDeps = (files) => {
     forward.set(
       f,
       new Set(
-        parseTemplateImports(content)
-          .map((s) => resolveTemplateImport(s, f))
+        _parseTemplateImports(content)
+          .map((s) => _resolveTemplateImport(s, f))
           .filter(Boolean),
       ),
     );
@@ -97,6 +105,19 @@ const buildReverseDeps = (files) => {
     }
   }
   return reverse;
+};
+
+// 変更ファイル群 + それらの ancestor を invalidate 対象の Set にまとめる純関数。
+// beforeWatch handler から実 EventBus とは切り離して呼べるようにテストしやすくした。
+export const _computeInvalidationSet = (changedTemplates, reverseDeps) => {
+  const s = new Set();
+  for (const changed of changedTemplates) {
+    const abs = path.resolve(changed);
+    s.add(abs);
+    const ancestors = reverseDeps.get(abs);
+    if (ancestors) for (const a of ancestors) s.add(a);
+  }
+  return s;
 };
 
 /**
@@ -144,14 +165,8 @@ export default function (eleventyConfig) {
       ignore: ["**/node_modules/**"],
       absolute: true,
     });
-    const reverse = buildReverseDeps(allFiles);
-    const toInvalidate = new Set();
-    for (const changed of templateChanges) {
-      const abs = path.resolve(changed);
-      toInvalidate.add(abs);
-      const ancestors = reverse.get(abs);
-      if (ancestors) for (const a of ancestors) toInvalidate.add(a);
-    }
+    const reverse = _buildReverseDeps(allFiles);
+    const toInvalidate = _computeInvalidationSet(templateChanges, reverse);
     eventBus.emit("eleventy.importCacheReset", toInvalidate);
   });
 
