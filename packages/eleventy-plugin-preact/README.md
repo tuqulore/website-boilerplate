@@ -93,7 +93,7 @@ The SSR-side singleton. Exposes `content`, `title`, `description`, `site`, `nav`
 
 ## Requirements
 
-- Node.js 24.11 or higher
+- Node.js 20.19+ or 22.12+ (matches `oxc-transform`'s engines requirement)
 - Eleventy 3.0 or higher
 - Preact 10 or higher
 
