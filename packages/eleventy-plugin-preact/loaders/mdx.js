@@ -2,6 +2,7 @@
  * @typedef {import('node:module').LoadHookContext} LoadHookContext
  * @typedef {import('node:module').LoadFnOutput} LoadFnOutput
  * @typedef {import('node:module').LoadHook} LoadHookType
+ * @typedef {Parameters<LoadHookType>[2]} NextLoad
  */
 
 import fs from "node:fs/promises";
