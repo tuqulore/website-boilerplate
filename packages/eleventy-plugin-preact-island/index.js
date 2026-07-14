@@ -212,10 +212,17 @@ export default function (eleventyConfig, pluginOptions = {}) {
     ? `@${resolvedDevalueVersion}`
     : "";
 
+  // NOTE: is-land は import されたモジュール末尾で `Island.define()` を呼び、
+  // その時点の `Island.attributePrefix` (デフォルト "on:") で customElements を
+  // 登録する。inline setup script 側で `land-on:` に差し替えても connectedCallback
+  // は既に走り終わっているため間に合わない。is-land 公式の `?nodefine` query
+  // (`if (!(new URL(import.meta.url)).searchParams.has("nodefine")) Island.define()`)
+  // で auto-define を抑止し、setup script 側で prefix を仕込んでから
+  // `Island.define()` を明示的に呼ぶ。
   const generateImportMap = () => `<script type="importmap">
 {
   "imports": {
-    "is-land": "${urlPrefix}is-land.js",
+    "is-land": "${urlPrefix}is-land.js?nodefine",
     "preact": "https://esm.sh/preact${preactSuffix}",
     "preact/hooks": "https://esm.sh/preact${preactSuffix}/hooks?external=preact",
     "preact/jsx-runtime": "https://esm.sh/preact${preactSuffix}/jsx-runtime?external=preact",
@@ -271,11 +278,15 @@ window.__eleventyRehydrate = () => {
 };`
         : "";
 
+    // NOTE: importmap 側で is-land を `?nodefine` 経由に固定してあるので、
+    // ここで attributePrefix を差し替え → initType 登録 → 明示 `Island.define()`
+    // の順に呼ぶ。順序を崩すと connectedCallback が旧 prefix (`on:`) を見て
+    // 「条件属性なし = 即 hydrate」と判定し、`on="interaction"` 等の遅延指定が
+    // 効かなくなる。
     return `<script type="module">
 import { Island } from "is-land";
 import { h, hydrate } from "preact";
 import { parse } from "devalue";
-Island.attributePrefix = "land-on:";
 
 const mount = async (target) => {
   try {
@@ -288,7 +299,9 @@ const mount = async (target) => {
   }
 };
 
+Island.attributePrefix = "land-on:";
 Island.addInitType("preact", mount);
+Island.define();
 ${rehydrateScript}
 </script>`;
   };
