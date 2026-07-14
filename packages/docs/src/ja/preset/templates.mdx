@@ -24,7 +24,7 @@ export const data = {
 本文はここから書きます。
 ```
 
-Markdown 用の `---` frontmatter は MDX の JSX パースと衝突するため、本ボイラープレートでは `export const data` に統一します。`.jsx` ファイルでも同じ書き方でページデータを渡せます。
+MDX 側は `---` で挟む YAML frontmatter も受け付けますが、`.jsx` / `.tsx` と一貫した書き方を優先するため、本ボイラープレートは `export const data` に統一します。`.jsx` / `.tsx` ファイルでも同じ書き方でページデータを渡せます。
 
 `data` の中身は Eleventy の任意のページデータをそのまま置けます。`layout` はプリセット下では必ず使う項目、`title` `description` は多くの partial (`ogp.mdx` など) が参照する項目です。
 

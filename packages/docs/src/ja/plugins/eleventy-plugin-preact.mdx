@@ -6,11 +6,11 @@ export const data = {
 
 # `@tuqulore-inc/eleventy-plugin-preact`
 
-本ページは、JSX / MDX を Eleventy のテンプレートとして扱う `@tuqulore-inc/eleventy-plugin-preact` の内部設計を扱います。API リファレンスとインストール手順はパッケージの README を参照してください。日常の書き方は [Preset の規約 / テンプレート](/ja/preset/templates/) を参照してください。
+本ページは、JSX / TSX / MDX を Eleventy のテンプレートとして扱う `@tuqulore-inc/eleventy-plugin-preact` の内部設計を扱います。API リファレンスとインストール手順はパッケージの README を参照してください。日常の書き方は [Preset の規約 / テンプレート](/ja/preset/templates/) を参照してください。
 
 ## 何を SSR しているか
 
-本プラグインは、Eleventy のテンプレート形式として `.jsx` と `.mdx` を登録し、その両方を Preact のサーバサイドレンダラで HTML に変換します。JSX と MDX は Node.js のカスタムローダを通してモジュールとして読み込まれるため、テンプレートファイル自体を通常の import と同じ規則で扱えます。
+本プラグインは、Eleventy のテンプレート形式として `.jsx` / `.tsx` / `.mdx` を登録し、そのすべてを Preact のサーバサイドレンダラで HTML に変換します。JSX / TSX / MDX はいずれも Node.js のカスタムローダを通してモジュールとして読み込まれるため、テンプレートファイル自体を通常の import と同じ規則で扱えます。`.ts` はテンプレートとしては登録しませんが、テンプレートやコンポーネントから import する対象として同じローダで解決します。
 
 サーバ側で完結する処理はここまでです。クライアント側の JavaScript は Partial Hydration の層 ([eleventy-plugin-preact-island](/ja/plugins/eleventy-plugin-preact-island/)) が担い、本プラグイン自体は「HTML を返すだけ」の関心に閉じます。
 
@@ -30,6 +30,16 @@ export const data = {
 ページ本体を書くフォーマットに Markdown だけを採用すると、動的なコンポーネント (Island) を差し込むために別ファイル・別テンプレート言語が必要になります。逆に JSX だけを採用すると、記事の本文で見出しや箇条書きを書くのが冗長になります。
 
 MDX は Markdown 8 割、JSX 2 割のバランスを 1 ファイルで表現できます。docs、記事、ランディングページのいずれでも同じ書き方で通せる点を優先しました。
+
+## トランスフォーム層に Rust を選ぶ
+
+Preact と MDX という UI 側の選択を決めた後、それらを Node.js から読み込む変換層に何を置くかが残ります。本プラグインは、JSX / TSX / TS のトランスパイルに [`oxc-transform`](https://oxc.rs/) を、MDX のコンパイルに [Sätteri](https://github.com/bruits/satteri) を採用しています。どちらも Rust 実装で、napi 経由のネイティブ束縛として Node.js から呼び出せます。
+
+JSX / TSX / TS 側の変換は、以前は `@babel/core` と `@babel/preset-react` に任せていました。Babel は依存パッケージが多く、また 1 ファイルずつ順に変換する SSR ローダの用途では速度が伸びません。`oxc-transform` はプロセス境界を越えない関数呼び出しで完結し、同じ用途で数十倍高速に動きます。JSX ランタイムを `runtime: "automatic"`, `importSource: "preact"` に固定し、プラグイン側で常に同じオプションを渡します。ここは Eleventy 公式が推奨する `tsx` ラッパ (中身は esbuild) を採らなかった理由でもあります。`tsx` は利用者の `tsconfig.json` を読み、`allowJs` の設定次第で `.jsx` と `.tsx` の JSX ランタイムが食い違うことがあります。プラグイン側でオプションを固定すれば、この不整合は構造的に発生しません。
+
+MDX 側は、以前は `@mdx-js/node-loader` を経由して `@mdx-js/mdx` に GFM / frontmatter / heading anchor などの remark プラグインを積んで実現していました。unified のパイプラインはプラグインごとに構文木を全走査するため、プラグインが増えるほど直線的に遅くなります。Sätteri は Rust 側で構文木を一度だけ作り、JS プラグインには「タグ名でフィルタ済みのノード」だけを渡す設計です。同じ機能セットで比較して MDX コンパイルの実測が桁違いに速くなり、`remark-gfm` / `remark-frontmatter` / `remark-mdx-frontmatter` / `rehype-slug` / `rehype-autolink-headings` を積み上げる必要も消えます。GFM と YAML frontmatter は組み込みで有効になり、見出しの `id` 付与だけ本プラグインが薄い HAST プラグインを持ちます。
+
+この置き換えの結果、`.tsx` / `.ts` を SSR で扱えるようになり、`.client.tsx` はクライアントで動くが SSR では読めないという拡張子の非対称を解消できました。`.jsx` / `.tsx` / `.ts` / `.mdx` はすべて同じローダ経路に乗ります。MDX の YAML frontmatter も動く状態になりましたが、`.jsx` / `.tsx` と一貫した書き方を優先するため、本ボイラープレートでの規約は引き続き `export const data = { ... }` です。詳細は [Preset の規約 / テンプレート](/ja/preset/templates/) に整理しています。
 
 ## `eleventy` シングルトンの提供
 

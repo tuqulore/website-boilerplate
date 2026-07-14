@@ -24,7 +24,7 @@ export const data = {
 The body starts here.
 ```
 
-Markdown-style `---` frontmatter conflicts with MDX's JSX parsing, so the boilerplate standardizes on `export const data`. `.jsx` files use the same shape for the same reason.
+MDX also accepts YAML frontmatter between `---` fences, but the boilerplate keeps `export const data` as the single convention so `.jsx` / `.tsx` files share the same shape.
 
 You can put any Eleventy page data inside `data`. `layout` is required under the preset, and `title` / `description` are read by many partials (like `ogp.mdx`).
 

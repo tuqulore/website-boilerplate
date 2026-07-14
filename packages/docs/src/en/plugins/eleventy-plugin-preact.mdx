@@ -6,11 +6,11 @@ export const data = {
 
 # `@tuqulore-inc/eleventy-plugin-preact`
 
-This page covers the internal design of `@tuqulore-inc/eleventy-plugin-preact`, the plugin that treats JSX and MDX as Eleventy templates. For the API reference and installation, see the package README. For day-to-day writing conventions, see [Preset Conventions / Templates](/en/preset/templates/).
+This page covers the internal design of `@tuqulore-inc/eleventy-plugin-preact`, the plugin that treats JSX, TSX, and MDX as Eleventy templates. For the API reference and installation, see the package README. For day-to-day writing conventions, see [Preset Conventions / Templates](/en/preset/templates/).
 
 ## What it renders on the server
 
-The plugin registers `.jsx` and `.mdx` as Eleventy template formats and renders both through Preact's server-side renderer. JSX and MDX files are loaded via Node.js custom loaders, so the template files themselves behave like normal ES modules.
+The plugin registers `.jsx`, `.tsx`, and `.mdx` as Eleventy template formats and renders all of them through Preact's server-side renderer. Templates are loaded via Node.js custom loaders, so the files themselves behave like normal ES modules. `.ts` is not registered as a template format, but the same loader handles it so templates and components can import `.ts` utilities on the SSR side.
 
 The plugin stops here. Everything client-side — bundling, is-land wiring, hydration — is the job of [eleventy-plugin-preact-island](/en/plugins/eleventy-plugin-preact-island/). This plugin only produces HTML.
 
@@ -30,6 +30,16 @@ If you need a different runtime, the plan is to fork the preset rather than supp
 If pages were written in Markdown only, dropping a dynamic component (an Island) would require another template language and another file. If pages were written in JSX only, headings and lists would become verbose.
 
 MDX lets you write roughly 80% Markdown and 20% JSX in one file. Docs, articles, and landing pages all fit the same authoring model — that is the trade-off this plugin optimizes for.
+
+## A Rust transform layer
+
+Once Preact and MDX were set on the UI side, the remaining decision was what to put in the transform layer that Node loads them through. This plugin uses [`oxc-transform`](https://oxc.rs/) for JSX/TSX/TS transpilation and [Sätteri](https://github.com/bruits/satteri) for MDX compilation. Both are written in Rust and exposed to Node.js as native bindings via napi.
+
+JSX/TSX/TS used to go through `@babel/core` with `@babel/preset-react`. Babel carries a heavy dependency tree, and its throughput does not scale well in an SSR loader that transforms one file at a time. `oxc-transform` never crosses a process boundary — it is a plain function call — and finishes the same workload in a fraction of the time. The plugin pins the JSX runtime to `runtime: "automatic"`, `importSource: "preact"` and always passes those options, which is also why the Eleventy-recommended `tsx` wrapper (esbuild underneath) was not chosen. `tsx` reads the user's `tsconfig.json`, and depending on `allowJs` it can transpile `.jsx` and `.tsx` under different JSX runtimes in the same project. Fixing the options in the plugin removes that inconsistency by construction.
+
+MDX used to go through `@mdx-js/node-loader` into `@mdx-js/mdx` with a stack of remark plugins for GFM, frontmatter, and heading anchors. The unified pipeline walks the syntax tree once per plugin, so latency grows with every plugin added. Sätteri builds the tree once on the Rust side and only hands JS plugins the nodes that pass a tag-name filter. With the same feature set, MDX compilation ends up an order of magnitude faster, and `remark-gfm` / `remark-frontmatter` / `remark-mdx-frontmatter` / `rehype-slug` / `rehype-autolink-headings` disappear from the dependency graph. GFM and YAML frontmatter come built in; the plugin only ships a thin HAST plugin that assigns heading `id`s.
+
+The upshot is that `.tsx` and `.ts` now work on the SSR side, so the earlier asymmetry — `.client.tsx` bundled for the client but unreadable during SSR — is gone. `.jsx`, `.tsx`, `.ts`, and `.mdx` all go through the same loader chain. YAML frontmatter also works in MDX now, but the boilerplate convention is still `export const data = { ... }` so `.jsx`/`.tsx`/`.mdx` share the same page-data shape. Details live in [Preset Conventions / Templates](/en/preset/templates/).
 
 ## The `eleventy` singleton
 
