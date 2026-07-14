@@ -1,5 +1,8 @@
+import fs from "node:fs";
 import module from "node:module";
+import path from "node:path";
 import url from "node:url";
+import fg from "fast-glob";
 import render from "preact-render-to-string";
 import { jsx } from "preact/jsx-runtime";
 import { _runWithEleventyData } from "./eleventy.js";
@@ -13,6 +16,27 @@ module.register(
   import.meta.resolve("./loaders/jsx.js"),
   url.pathToFileURL("./"),
 );
+
+// NOTE: Eleventy の import cache 無効化 (`eleventy.importCacheReset`) を発火する
+// EventBus は package の `exports` に無いため、`import.meta.resolve` で本体を辿って
+// 相対パスで到達する内部依存。将来 EventBus.js が移動 (`src/` 配下から外れる) すると
+// ここが解決失敗するので、その場合は WARN を出して invalidate を諦める。fix の目的は
+// 「layout/partial 経由で import された `.client.jsx` を編集したとき、cached な
+// 中間 MDX/JSX モジュールを Node の ESM cache から落として fresh に再評価させる」で、
+// JavaScriptDependencies.getDependencies が `.jsx/.mdx` を辿らない (public docs にも
+// 記載無し) ため、依存グラフ経路では代替できない。
+const loadEleventyEventBus = async () => {
+  try {
+    const eleventyMainUrl = import.meta.resolve("@11ty/eleventy");
+    const eleventyPkgDir = path.dirname(url.fileURLToPath(eleventyMainUrl));
+    const eventBusPath = path.join(eleventyPkgDir, "EventBus.js");
+    if (!fs.existsSync(eventBusPath)) return null;
+    const mod = await import(url.pathToFileURL(eventBusPath).href);
+    return mod.default ?? null;
+  } catch {
+    return null;
+  }
+};
 
 /**
  * Eleventy plugin for Preact server-side rendering with JSX/MDX support.
@@ -32,6 +56,36 @@ export default function (eleventyConfig) {
 
   // Add JSX and MDX as template formats
   eleventyConfig.addTemplateFormats(["jsx", "mdx"]);
+
+  // watch/serve 時、`.jsx`/`.mdx` (レイアウトや partial を含む) の変更で src 配下の全
+  // template モジュールを Node の ESM cache から invalidate する。これがないと layout /
+  // partial 経由で import されている `.client.jsx` を編集しても中間モジュールが cache に
+  // 残ったままで SSR HTML が古いまま出る (詳細は上の EventBus ロードコメント参照)。
+  //
+  // NOTE: 対象を「変更に関係する ancestor だけ」に絞り込むには MDX/JSX の import 静的解析
+  // が要る。src ツリーは通常 十〜数十ファイル規模なので brute-force で十分と判断。
+  //
+  // NOTE: `eleventy.beforeWatch` は watch/serve の 2 回目以降のビルド前にのみ発火 (初回
+  // ビルドや --serve 無しの単発ビルドでは発火しない) ため、production `pnpm build` には
+  // 影響しない。
+  let eventBusPromise = null;
+  eleventyConfig.on("eleventy.beforeWatch", async (changedFiles) => {
+    if (!changedFiles?.some((f) => /\.(jsx|mdx)$/.test(f))) return;
+    eventBusPromise ??= loadEleventyEventBus();
+    const eventBus = await eventBusPromise;
+    if (!eventBus) {
+      console.warn(
+        "[eleventy-plugin-preact] WARN: could not load @11ty/eleventy EventBus; SSR module cache will not be invalidated. Layout/partial changes may not reflect in dev HMR.",
+      );
+      return;
+    }
+    const inputDir = eleventyConfig.directories.input;
+    const files = await fg([`${inputDir}**/*.{jsx,mdx}`], {
+      ignore: ["**/node_modules/**"],
+      absolute: true,
+    });
+    eventBus.emit("eleventy.importCacheReset", new Set(files));
+  });
 
   // Add extension handler for JSX and MDX
   eleventyConfig.addExtension(["jsx", "mdx"], {
