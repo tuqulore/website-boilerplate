@@ -73,8 +73,21 @@ export async function load(href, context, nextLoad) {
         `[eleventy-plugin-preact] ${url.pathname}: cannot combine YAML frontmatter with an \`export const data\` declaration. Use one or the other.`,
       );
     }
-    const parsed = parseYaml(out.frontmatter.value) ?? {};
-    prelude = `export const data = ${JSON.stringify(parsed)};\n`;
+    const parsed = parseYaml(out.frontmatter.value);
+    // Reject non-mapping YAML (strings, arrays, numbers). Eleventy's data
+    // cascade expects `data` to be a plain object; anything else would
+    // silently corrupt page data and mislead readers of the README.
+    if (
+      parsed !== null &&
+      parsed !== undefined &&
+      (typeof parsed !== "object" || Array.isArray(parsed))
+    ) {
+      const shape = Array.isArray(parsed) ? "array" : typeof parsed;
+      throw new Error(
+        `[eleventy-plugin-preact] ${url.pathname}: YAML frontmatter must be an object (mapping), got ${shape}.`,
+      );
+    }
+    prelude = `export const data = ${JSON.stringify(parsed ?? {})};\n`;
   }
 
   return {

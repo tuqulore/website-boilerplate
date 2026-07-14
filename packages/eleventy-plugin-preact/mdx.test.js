@@ -208,6 +208,37 @@ describe("MDX loader (satteri)", () => {
       );
     });
 
+    it("front matter が文字列など mapping でない場合は throw", async () => {
+      const file = await writeMdx(
+        "scalar-fm.mdx",
+        ["---", "just a string", "---", "", "# Body", ""].join("\n"),
+      );
+
+      await assert.rejects(loadMdx(file), /must be an object \(mapping\)/);
+    });
+
+    it("front matter が配列の場合は throw", async () => {
+      const file = await writeMdx(
+        "array-fm.mdx",
+        ["---", "- a", "- b", "---", "", "# Body", ""].join("\n"),
+      );
+
+      await assert.rejects(
+        loadMdx(file),
+        /must be an object \(mapping\), got array/,
+      );
+    });
+
+    it("front matter が `null` の場合は data を空オブジェクトとして prepend する", async () => {
+      const file = await writeMdx(
+        "null-fm.mdx",
+        ["---", "null", "---", "", "# Body", ""].join("\n"),
+      );
+
+      const result = await loadMdx(file);
+      assert.match(String(result.source), /^export const data = \{\};/);
+    });
+
     it("front matter を持つ MDX を import すると data として取り出せる", async () => {
       const file = await writeMdx(
         "importable.mdx",
