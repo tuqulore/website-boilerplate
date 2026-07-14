@@ -6,6 +6,7 @@
  */
 
 import fs from "node:fs/promises";
+import { fileURLToPath } from "node:url";
 import GithubSlugger from "github-slugger";
 import { defineHastPlugin, mdxToJs } from "satteri";
 import { parse as parseYaml } from "yaml";
@@ -63,6 +64,7 @@ export async function load(href, context, nextLoad) {
     return nextLoad(href, context);
   }
 
+  const filename = fileURLToPath(url);
   const source = await fs.readFile(url, "utf8");
   const out = await mdxToJs(source, { ...MDX_OPTIONS, fileURL: url });
 
@@ -70,7 +72,7 @@ export async function load(href, context, nextLoad) {
   if (out.frontmatter?.value) {
     if (USER_DATA_EXPORT_RE.test(out.code)) {
       throw new Error(
-        `[eleventy-plugin-preact] ${url.pathname}: cannot combine YAML frontmatter with an \`export const data\` declaration. Use one or the other.`,
+        `[eleventy-plugin-preact] ${filename}: cannot combine YAML frontmatter with an \`export const data\` declaration. Use one or the other.`,
       );
     }
     const parsed = parseYaml(out.frontmatter.value);
@@ -84,7 +86,7 @@ export async function load(href, context, nextLoad) {
     ) {
       const shape = Array.isArray(parsed) ? "array" : typeof parsed;
       throw new Error(
-        `[eleventy-plugin-preact] ${url.pathname}: YAML frontmatter must be an object (mapping), got ${shape}.`,
+        `[eleventy-plugin-preact] ${filename}: YAML frontmatter must be an object (mapping), got ${shape}.`,
       );
     }
     prelude = `export const data = ${JSON.stringify(parsed ?? {})};\n`;

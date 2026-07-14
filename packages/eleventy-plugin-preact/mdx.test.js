@@ -239,6 +239,19 @@ describe("MDX loader (satteri)", () => {
       assert.match(String(result.source), /^export const data = \{\};/);
     });
 
+    it("throw メッセージ内のパスは URL エンコードされず生パスで出る", async () => {
+      const file = await writeMdx(
+        "with space.mdx",
+        ["---", "just a string", "---", "", "# Body", ""].join("\n"),
+      );
+
+      await assert.rejects(loadMdx(file), (err) => {
+        assert.match(err.message, /with space\.mdx/);
+        assert.doesNotMatch(err.message, /with%20space/);
+        return true;
+      });
+    });
+
     it("front matter を持つ MDX を import すると data として取り出せる", async () => {
       const file = await writeMdx(
         "importable.mdx",
