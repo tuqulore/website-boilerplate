@@ -38,6 +38,67 @@ const loadEleventyEventBus = async () => {
   }
 };
 
+// トップレベルの `import ... from "..."` から specifier を抽出。JSX/MDX 両方対応。
+// 複数行 import (destructuring 改行) も /[\s\S]+?/ で吸収。`import "..."`
+// (副作用のみ) はグラフに乗せる意味がないので無視。dynamic import() も対象外。
+const IMPORT_RE = /^import\s+(?:[\s\S]+?\s+from\s+)?["']([^"']+)["']/gm;
+const parseTemplateImports = (content) => {
+  const specs = [];
+  let m;
+  while ((m = IMPORT_RE.exec(content)) !== null) specs.push(m[1]);
+  return specs;
+};
+
+// 相対 specifier を絶対 `.jsx`/`.mdx` パスに解決。npm パッケージや解決失敗時は null。
+const resolveTemplateImport = (specifier, fromFile) => {
+  if (!specifier.startsWith("./") && !specifier.startsWith("../")) return null;
+  const base = path.resolve(path.dirname(fromFile), specifier);
+  if (/\.(jsx|mdx)$/.test(base) && fs.existsSync(base)) return base;
+  for (const ext of [".mdx", ".jsx"]) {
+    if (fs.existsSync(base + ext)) return base + ext;
+  }
+  return null;
+};
+
+// 「ファイル X → X を transitive に import している .jsx/.mdx の集合」の逆辺グラフ。
+// 変更時に「その ancestor だけ」を invalidate する用途。ES import 経由のみ辿る
+// (layout 参照は data cascade 経由なので Eleventy が cacheBust:true で fresh に
+// 再評価するため、ここで追跡する必要は無い)。
+const buildReverseDeps = (files) => {
+  const forward = new Map();
+  for (const f of files) {
+    let content;
+    try {
+      content = fs.readFileSync(f, "utf8");
+    } catch {
+      forward.set(f, new Set());
+      continue;
+    }
+    forward.set(
+      f,
+      new Set(
+        parseTemplateImports(content)
+          .map((s) => resolveTemplateImport(s, f))
+          .filter(Boolean),
+      ),
+    );
+  }
+  const reverse = new Map(files.map((f) => [f, new Set()]));
+  for (const [parent, deps] of forward) {
+    const seen = new Set();
+    const stack = [...deps];
+    while (stack.length) {
+      const child = stack.pop();
+      if (seen.has(child)) continue;
+      seen.add(child);
+      reverse.get(child)?.add(parent);
+      const next = forward.get(child);
+      if (next) for (const d of next) stack.push(d);
+    }
+  }
+  return reverse;
+};
+
 /**
  * Eleventy plugin for Preact server-side rendering with JSX/MDX support.
  *
@@ -57,20 +118,19 @@ export default function (eleventyConfig) {
   // Add JSX and MDX as template formats
   eleventyConfig.addTemplateFormats(["jsx", "mdx"]);
 
-  // watch/serve 時、`.jsx`/`.mdx` (レイアウトや partial を含む) の変更で src 配下の全
-  // template モジュールを Node の ESM cache から invalidate する。これがないと layout /
-  // partial 経由で import されている `.client.jsx` を編集しても中間モジュールが cache に
-  // 残ったままで SSR HTML が古いまま出る (詳細は上の EventBus ロードコメント参照)。
+  // watch/serve 時、`.jsx`/`.mdx` の変更で「変更ファイル + それを transitive に
+  // import している .jsx/.mdx (ancestor)」を Node の ESM cache から invalidate する。
+  // これがないと layout/partial 経由で import されている `.client.jsx` を編集しても
+  // 中間モジュールが cache に残ったままで SSR HTML が古いまま出る (詳細は上の
+  // EventBus ロードコメント参照)。
   //
-  // NOTE: 対象を「変更に関係する ancestor だけ」に絞り込むには MDX/JSX の import 静的解析
-  // が要る。src ツリーは通常 十〜数十ファイル規模なので brute-force で十分と判断。
-  //
-  // NOTE: `eleventy.beforeWatch` は watch/serve の 2 回目以降のビルド前にのみ発火 (初回
-  // ビルドや --serve 無しの単発ビルドでは発火しない) ため、production `pnpm build` には
-  // 影響しない。
+  // NOTE: `eleventy.beforeWatch` は watch/serve の 2 回目以降のビルド前にのみ発火
+  // (初回ビルドや --serve 無しの単発ビルドでは発火しない) ため、production `pnpm build`
+  // には影響しない。
   let eventBusPromise = null;
   eleventyConfig.on("eleventy.beforeWatch", async (changedFiles) => {
-    if (!changedFiles?.some((f) => /\.(jsx|mdx)$/.test(f))) return;
+    const templateChanges = changedFiles?.filter((f) => /\.(jsx|mdx)$/.test(f));
+    if (!templateChanges?.length) return;
     eventBusPromise ??= loadEleventyEventBus();
     const eventBus = await eventBusPromise;
     if (!eventBus) {
@@ -80,11 +140,19 @@ export default function (eleventyConfig) {
       return;
     }
     const inputDir = eleventyConfig.directories.input;
-    const files = await fg([`${inputDir}**/*.{jsx,mdx}`], {
+    const allFiles = await fg([`${inputDir}**/*.{jsx,mdx}`], {
       ignore: ["**/node_modules/**"],
       absolute: true,
     });
-    eventBus.emit("eleventy.importCacheReset", new Set(files));
+    const reverse = buildReverseDeps(allFiles);
+    const toInvalidate = new Set();
+    for (const changed of templateChanges) {
+      const abs = path.resolve(changed);
+      toInvalidate.add(abs);
+      const ancestors = reverse.get(abs);
+      if (ancestors) for (const a of ancestors) toInvalidate.add(a);
+    }
+    eventBus.emit("eleventy.importCacheReset", toInvalidate);
   });
 
   // Add extension handler for JSX and MDX
