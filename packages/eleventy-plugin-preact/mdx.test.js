@@ -162,6 +162,52 @@ describe("MDX loader (satteri)", () => {
       await assert.rejects(loadMdx(file), /export const data/);
     });
 
+    it("コードフェンス内の export const data は誤検知しない", async () => {
+      const file = await writeMdx(
+        "fenced.mdx",
+        [
+          "---",
+          "title: Hello",
+          "---",
+          "",
+          "# Example",
+          "",
+          "```js",
+          "export const data = { title: 'shown as code' };",
+          "```",
+          "",
+        ].join("\n"),
+      );
+
+      const result = await loadMdx(file);
+      // front matter の値だけが export され、コードフェンス内の値は
+      // 実行文にならないので prepend の対象にもならない。
+      assert.match(
+        String(result.source),
+        /^export const data = \{"title":"Hello"\};/,
+      );
+    });
+
+    it("インラインコードスパン内の export const data も誤検知しない", async () => {
+      const file = await writeMdx(
+        "inline.mdx",
+        [
+          "---",
+          "title: Hello",
+          "---",
+          "",
+          "Use `export const data` to declare page data.",
+          "",
+        ].join("\n"),
+      );
+
+      const result = await loadMdx(file);
+      assert.match(
+        String(result.source),
+        /^export const data = \{"title":"Hello"\};/,
+      );
+    });
+
     it("front matter を持つ MDX を import すると data として取り出せる", async () => {
       const file = await writeMdx(
         "importable.mdx",

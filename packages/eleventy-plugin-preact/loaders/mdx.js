@@ -37,7 +37,10 @@ const MDX_OPTIONS = {
 
 // NOTE: prepending `export const data = ...` from YAML frontmatter would
 // duplicate a user-authored `export const data = ...` in the MDX body and
-// break the ESM parse. Reject the combination early with a clearer message.
+// break the ESM parse. Match against Sätteri's compiled output — not the raw
+// MDX source — so that occurrences inside fenced code blocks or inline code
+// spans (which never become real ESM exports) are not mistaken for a real
+// module-level export.
 const USER_DATA_EXPORT_RE = /^\s*export\s+const\s+data\s*=/m;
 
 /**
@@ -64,7 +67,7 @@ export async function load(href, context, nextLoad) {
 
   let prelude = "";
   if (out.frontmatter?.value) {
-    if (USER_DATA_EXPORT_RE.test(source)) {
+    if (USER_DATA_EXPORT_RE.test(out.code)) {
       throw new Error(
         `[eleventy-plugin-preact] ${url.pathname}: cannot combine YAML frontmatter with an \`export const data\` declaration. Use one or the other.`,
       );
