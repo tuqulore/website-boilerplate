@@ -118,9 +118,15 @@ describe("Island", () => {
     _setClientModuleResolver(() => "/x.client.js");
     const X = clientComponent(() => null, "file:///proj/src/x.client.jsx");
     const html = render(h(Island, { component: X, on: "interaction" }));
-    assert.match(html, /<is-land land-on:interaction /);
-    assert.doesNotMatch(html, /land-on:interaction="true"/);
-    assert.doesNotMatch(html, /land-on:interaction="[^"]/);
+    // is-land start tag 内で `land-on:interaction` が値なし属性として存在すること
+    // だけを検証する。属性の並び順に依存しないよう、直後に空白/`/`/`>` (= 属性
+    // 値が続かない) が来ることのみを要求する。
+    assert.match(
+      html,
+      /<is-land\b[^>]*\bland-on:interaction(?=[\s/>])/,
+      "land-on:interaction が is-land 開始タグ内に値なし属性として現れていない",
+    );
+    assert.doesNotMatch(html, /land-on:interaction=/);
   });
 
   it("component が渡されていない (または関数でない) 場合は TypeError", () => {
