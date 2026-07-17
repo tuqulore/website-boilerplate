@@ -211,6 +211,15 @@ describe("SSR loader (oxc)", () => {
       assert.strictEqual(result, sentinel);
     });
 
+    it(".d.ts は型宣言のみなので変換せず nextLoad に委譲される", async () => {
+      const sentinel = { format: "module", source: "" };
+      const href = pathToFileURL(path.join(dir, "types.d.ts")).href;
+
+      const result = await load(href, {}, () => sentinel);
+
+      assert.strictEqual(result, sentinel);
+    });
+
     it("file: 以外の URL は nextLoad に委譲される", async () => {
       const sentinel = { format: "module", source: "" };
       const href = "node:fs";

@@ -10,6 +10,10 @@ import { fileURLToPath } from "node:url";
 import { transformSync } from "oxc-transform";
 
 const TRANSFORM_RE = /\.(jsx|tsx|ts)$/;
+// 型宣言だけの `.d.ts` は runtime import 対象ではない (Node で読んでも実行される
+// コードが無い) ので、`.ts` のマッチから外して nextLoad に委譲する。`index.js` 側の
+// watch invalidation でも同じ理由で `.d.ts` を除外している。
+const DTS_RE = /\.d\.ts$/;
 
 /** @type {import("oxc-transform").TransformOptions} */
 const OPTIONS = {
@@ -33,7 +37,11 @@ const OPTIONS = {
 export async function load(href, context, nextLoad) {
   const url = new URL(href);
 
-  if (url.protocol !== "file:" || !TRANSFORM_RE.test(url.pathname)) {
+  if (
+    url.protocol !== "file:" ||
+    !TRANSFORM_RE.test(url.pathname) ||
+    DTS_RE.test(url.pathname)
+  ) {
     return nextLoad(href, context);
   }
 
