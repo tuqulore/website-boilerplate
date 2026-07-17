@@ -6,7 +6,7 @@ This plugin registers `.jsx`, `.tsx`, and `.mdx` as Eleventy template formats an
 
 ## Documentation
 
-The design rationale (why Preact, why MDX, layout chaining) lives at [Plugins / eleventy-plugin-preact](https://website.tuqulore.workers.dev/en/plugins/eleventy-plugin-preact/). The writing conventions (`export const data`, `layout`, the `eleventy` singleton) live at [Preset Conventions](https://website.tuqulore.workers.dev/en/preset/).
+The design rationale (why Preact, why MDX, layout chaining) lives at [Plugins / eleventy-plugin-preact](https://website.tuqulore.workers.dev/en/plugins/eleventy-plugin-preact/). The writing conventions (frontmatter, `layout`, the `eleventy` singleton) live at [Preset Conventions](https://website.tuqulore.workers.dev/en/preset/).
 
 ## Installation
 
@@ -59,12 +59,12 @@ MDX files are compiled by Sätteri with the following features enabled by defaul
 
 - **GFM** — tables, task lists, strikethrough, footnotes.
 - **Heading anchors** — every `<h1>`–`<h6>` receives an `id` slugged by [`github-slugger`](https://github.com/Flet/github-slugger), with the same repeat-suffix behaviour (`hello`, `hello-1`, `hello-2`).
-- **YAML frontmatter** — the block between `---` fences is parsed as YAML and forwarded to Eleventy's data cascade as `export const data = { ... }`. Combining YAML frontmatter with a hand-authored `export const data = { ... }` in the same file is rejected — pick one.
+- **YAML frontmatter** — the block between `---` fences at the top of the file is parsed as YAML and forwarded to Eleventy's data cascade. This is the recommended way to declare page data in MDX.
 
 ```mdx
 ---
-title: Getting Started
 layout: post
+title: Getting Started
 ---
 
 # Getting Started
@@ -73,7 +73,7 @@ layout: post
 - [ ] Ship the site
 ```
 
-Or use the module-level export (still supported, and required for files whose data references JS values):
+A file-level `export const data = { ... }` is also accepted, and is required when the page data references JS values that YAML can't express. Combining it with frontmatter in the same file is rejected as a duplicate export — pick one.
 
 ```mdx
 export const data = { title: "Getting Started", layout: "post" };

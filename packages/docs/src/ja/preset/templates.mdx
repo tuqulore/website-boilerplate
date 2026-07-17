@@ -1,44 +1,46 @@
-export const data = {
-  layout: "post",
-  locale: "ja",
-  title: "テンプレート",
-};
+---
+layout: post
+locale: ja
+title: テンプレート
+---
 
 # テンプレート
 
 本ページは、`src/` 配下のページと部品を書くときの規約を扱います。ページデータの受け渡し、`layout` プロパティによるレイアウトの指定、レイアウトチェイニングの組み方までを扱います。
 
-## `export const data` でページデータを渡す
+## YAML frontmatter でページデータを渡す
 
-MDX と JSX のテンプレートは、ファイル先頭に `export const data = { ... }` を書くことで、Eleventy のページデータを渡します。Markdown の YAML frontmatter と等価な仕組みです。
+MDX テンプレートは、ファイル先頭の `---` フェンスで囲んだ YAML block に Eleventy のページデータを書きます。Markdown 界隈で見慣れた frontmatter そのままの形です。
 
 ```mdx
-export const data = {
-  layout: "post",
-  title: "はじめてのサイト",
-  description: "本ボイラープレートで作った最初のページ",
-};
+---
+layout: post
+title: はじめてのサイト
+description: 本ボイラープレートで作った最初のページ
+---
 
 # はじめてのサイト
 
 本文はここから書きます。
 ```
 
-MDX 側は `---` で挟む YAML frontmatter も受け付けますが、`.jsx` / `.tsx` と一貫した書き方を優先するため、本ボイラープレートは `export const data` に統一します。`.jsx` / `.tsx` ファイルでも同じ書き方でページデータを渡せます。
+YAML でスカラ・マッピング・配列で表現できる値はそのまま置けます。`layout` はプリセット下では必ず使う項目、`title` `description` は多くの partial (`ogp.mdx` など) が参照する項目です。
 
-`data` の中身は Eleventy の任意のページデータをそのまま置けます。`layout` はプリセット下では必ず使う項目、`title` `description` は多くの partial (`ogp.mdx` など) が参照する項目です。
+MDX プロセッサ (Sätteri) が frontmatter を YAML としてパースし、プラグイン側で Eleventy の 11ty.js テンプレートに `export const data = ...` として引き渡します。`data` を直接読み出す仕組みなので、ページ側からは Eleventy 標準の frontmatter と同じ感覚で扱えます。
+
+`.jsx` / `.tsx` テンプレートは JSX 構文の都合で `---` を書けないため、これらのみ従来通り `export const data = { ... }` を使います。MDX 側でも `export const data` を書けますが、frontmatter と併用すると重複 export になるため、いずれか片方に絞ります。
 
 ## `layout` プロパティで親を指定する
 
-各ページは `data.layout` に親テンプレートの名前を書きます。値は `_includes/` からの相対パス (拡張子を除く) です。
+各ページは frontmatter の `layout` に親テンプレートの名前を書きます。値は `_includes/` からの相対パス (拡張子を除く) です。
 
 ```mdx
-export const data = {
-  layout: "post", // src/_includes/post.mdx を親にする
-};
+---
+layout: post # src/_includes/post.mdx を親にする
+---
 ```
 
-親テンプレートも `data.layout` を持てるため、複数段のチェーンが組めます。
+親テンプレートも `layout` を持てるため、複数段のチェーンが組めます。
 
 ## レイアウトチェイニングの組み方
 
@@ -77,11 +79,11 @@ import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
 コンテンツのラッパ (`<article class="prose">` など) を担い、`base` を親に指定します。
 
 ```mdx
-import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
+---
+layout: base
+---
 
-export const data = {
-  layout: "base",
-};
+import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
 
 <article class="prose" dangerouslySetInnerHTML={{ __html: eleventy.content }} />
 ```

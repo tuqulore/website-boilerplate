@@ -1,8 +1,8 @@
-export const data = {
-  layout: "post",
-  locale: "en",
-  title: "eleventy-plugin-preact",
-};
+---
+layout: post
+locale: en
+title: eleventy-plugin-preact
+---
 
 # `@tuqulore-inc/eleventy-plugin-preact`
 
@@ -39,7 +39,7 @@ JSX/TSX/TS used to go through `@babel/core` with `@babel/preset-react`. Babel ca
 
 MDX used to go through `@mdx-js/node-loader` into `@mdx-js/mdx` with a stack of remark plugins for GFM, frontmatter, and heading anchors. The unified pipeline walks the syntax tree once per plugin, so latency grows with every plugin added. Sätteri builds the tree once on the Rust side and only hands JS plugins the nodes that pass a tag-name filter. With the same feature set, MDX compilation ends up an order of magnitude faster, and `remark-gfm` / `remark-frontmatter` / `remark-mdx-frontmatter` / `rehype-slug` / `rehype-autolink-headings` disappear from the dependency graph. GFM and YAML frontmatter come built in; the plugin only ships a thin HAST plugin that assigns heading `id`s.
 
-The upshot is that `.tsx` and `.ts` now work on the SSR side, so the earlier asymmetry — `.client.tsx` bundled for the client but unreadable during SSR — is gone. `.jsx`, `.tsx`, `.ts`, and `.mdx` all go through the same loader chain. YAML frontmatter also works in MDX now, but the boilerplate convention is still `export const data = { ... }` so `.jsx`/`.tsx`/`.mdx` share the same page-data shape. Details live in [Preset Conventions / Templates](/en/preset/templates/).
+The upshot is that `.tsx` and `.ts` now work on the SSR side, so the earlier asymmetry — `.client.tsx` bundled for the client but unreadable during SSR — is gone. `.jsx`, `.tsx`, `.ts`, and `.mdx` all go through the same loader chain. MDX page data now flows through the built-in YAML frontmatter that Sätteri already parses, while `.jsx` / `.tsx` keep the `export const data = { ... }` shape because JSX parsing rules do not allow a `---` fence. Details live in [Preset Conventions / Templates](/en/preset/templates/).
 
 ## The `eleventy` singleton
 
@@ -51,7 +51,7 @@ See [Preset Conventions / Data Access](/en/preset/data-access/) for the shape of
 
 Eleventy's [Layout Chaining](https://www.11ty.dev/docs/layout-chaining/) is handled transparently by the MDX loader. The parent layout receives the child's rendered HTML through `eleventy.content` and injects it via `dangerouslySetInnerHTML`.
 
-The writing side of layout chaining, `export const data`, and the split between MDX and JSX are all covered in [Preset Conventions / Templates](/en/preset/templates/).
+The writing side of layout chaining, page data, and the split between MDX and JSX are all covered in [Preset Conventions / Templates](/en/preset/templates/).
 
 ## Using it without the preset
 

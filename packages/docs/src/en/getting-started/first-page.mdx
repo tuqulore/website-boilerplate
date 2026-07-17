@@ -1,8 +1,8 @@
-export const data = {
-  layout: "post",
-  locale: "en",
-  title: "Write your first page",
-};
+---
+layout: post
+locale: en
+title: Write your first page
+---
 
 # Write your first page
 
@@ -23,32 +23,32 @@ The dev server watches `src/` and reloads the browser on every change, so edits 
 The scaffolded `src/index.mdx` has this outline:
 
 ```mdx
+---
+layout: post
+title: Welcome
+---
+
 import { Island } from "@tuqulore-inc/eleventy-preset/island";
 import Clicker from "./clicker.client.jsx";
-
-export const data = {
-  layout: "post",
-  title: "Welcome",
-};
 
 # Welcome
 
 ...
 ```
 
+- The YAML block fenced by `---` at the top of the file is the Eleventy page data (frontmatter) — here it sets `layout` and `title`.
 - The `import` lines pull in values used as JSX inside MDX.
-- `export const data` is the Eleventy page data — here it sets `layout` and `title`.
 - Everything after the blank line is Markdown: headings, paragraphs, and lists render to HTML as-is.
 
 ## Replacing the title and body
 
-Start by editing `title` inside `export const data` and the H1 body.
+Start by editing `title` in the frontmatter and the H1 body.
 
 ```mdx
-export const data = {
-  layout: "post",
-  title: "My first site",
-};
+---
+layout: post
+title: My first site
+---
 
 # My first site
 

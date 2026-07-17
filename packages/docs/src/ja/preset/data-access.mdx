@@ -1,8 +1,8 @@
-export const data = {
-  layout: "post",
-  locale: "ja",
-  title: "Data Access",
-};
+---
+layout: post
+locale: ja
+title: Data Access
+---
 
 # Data Access
 
@@ -50,9 +50,7 @@ import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
       <td>
         <code>eleventy.title</code>, <code>eleventy.description</code>, etc.
       </td>
-      <td>
-        <code>export const data</code> に書いた各値
-      </td>
+      <td>frontmatter に書いた各値</td>
     </tr>
     <tr>
       <td>
@@ -79,7 +77,7 @@ import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
         <code>eleventy.locale</code>
       </td>
       <td>
-        <code>export const data.locale</code> に書いた値
+        frontmatter の <code>locale</code> フィールドに書いた値
       </td>
     </tr>
   </tbody>

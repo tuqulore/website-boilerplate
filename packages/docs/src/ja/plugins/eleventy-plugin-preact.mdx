@@ -1,8 +1,8 @@
-export const data = {
-  layout: "post",
-  locale: "ja",
-  title: "eleventy-plugin-preact",
-};
+---
+layout: post
+locale: ja
+title: eleventy-plugin-preact
+---
 
 # `@tuqulore-inc/eleventy-plugin-preact`
 
@@ -39,7 +39,7 @@ JSX / TSX / TS 側の変換は、以前は `@babel/core` と `@babel/preset-reac
 
 MDX 側は、以前は `@mdx-js/node-loader` を経由して `@mdx-js/mdx` に GFM / frontmatter / heading anchor などの remark プラグインを積んで実現していました。unified のパイプラインはプラグインごとに構文木を全走査するため、プラグインが増えるほど直線的に遅くなります。Sätteri は Rust 側で構文木を一度だけ作り、JS プラグインには「タグ名でフィルタ済みのノード」だけを渡す設計です。同じ機能セットで比較して MDX コンパイルの実測が桁違いに速くなり、`remark-gfm` / `remark-frontmatter` / `remark-mdx-frontmatter` / `rehype-slug` / `rehype-autolink-headings` を積み上げる必要も消えます。GFM と YAML frontmatter は組み込みで有効になり、見出しの `id` 付与だけ本プラグインが薄い HAST プラグインを持ちます。
 
-この置き換えの結果、`.tsx` / `.ts` を SSR で扱えるようになり、`.client.tsx` はクライアントで動くが SSR では読めないという拡張子の非対称を解消できました。`.jsx` / `.tsx` / `.ts` / `.mdx` はすべて同じローダ経路に乗ります。MDX の YAML frontmatter も動く状態になりましたが、`.jsx` / `.tsx` と一貫した書き方を優先するため、本ボイラープレートでの規約は引き続き `export const data = { ... }` です。詳細は [Preset の規約 / テンプレート](/ja/preset/templates/) に整理しています。
+この置き換えの結果、`.tsx` / `.ts` を SSR で扱えるようになり、`.client.tsx` はクライアントで動くが SSR では読めないという拡張子の非対称を解消できました。`.jsx` / `.tsx` / `.ts` / `.mdx` はすべて同じローダ経路に乗ります。MDX ページのページデータは YAML frontmatter で渡す規約に切り替え、Sätteri が組み込みで扱う frontmatter block をそのまま利用します。`.jsx` / `.tsx` は JSX 構文の都合で `---` を書けないため、こちらは従来通り `export const data = { ... }` を使います。詳細は [Preset の規約 / テンプレート](/ja/preset/templates/) に整理しています。
 
 ## `eleventy` シングルトンの提供
 
@@ -51,7 +51,7 @@ MDX 側は、以前は `@mdx-js/node-loader` を経由して `@mdx-js/mdx` に G
 
 Eleventy の [Layout Chaining](https://www.11ty.dev/docs/layout-chaining/) は、本プラグインが MDX のローダを通して透過的にサポートします。子テンプレートの描画結果を親テンプレートの `eleventy.content` として受け渡す仕組みで、親側は `dangerouslySetInnerHTML` で HTML を差し込みます。
 
-MDX と JSX の書き分け、`export const data` の書き方は [Preset の規約 / テンプレート](/ja/preset/templates/) にまとめてあります。
+MDX と JSX の書き分け、ページデータの書き方は [Preset の規約 / テンプレート](/ja/preset/templates/) にまとめてあります。
 
 ## 単体で使いたいときは
 

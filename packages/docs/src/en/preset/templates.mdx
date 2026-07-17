@@ -1,44 +1,46 @@
-export const data = {
-  layout: "post",
-  locale: "en",
-  title: "Templates",
-};
+---
+layout: post
+locale: en
+title: Templates
+---
 
 # Templates
 
 This page covers the conventions for writing pages and partials under `src/`. It walks through how page data flows, how the `layout` property picks a parent, and how layout chaining is composed.
 
-## Passing page data with `export const data`
+## Passing page data with YAML frontmatter
 
-MDX and JSX templates declare their Eleventy page data with an `export const data = { ... }` at the top of the file. This is the equivalent of a Markdown YAML frontmatter block.
+MDX templates declare their Eleventy page data in a YAML block fenced by `---` at the very top of the file — the same shape you would expect from any Markdown frontmatter.
 
 ```mdx
-export const data = {
-  layout: "post",
-  title: "My first site",
-  description: "The first page built with the boilerplate",
-};
+---
+layout: post
+title: My first site
+description: The first page built with the boilerplate
+---
 
 # My first site
 
 The body starts here.
 ```
 
-MDX also accepts YAML frontmatter between `---` fences, but the boilerplate keeps `export const data` as the single convention so `.jsx` / `.tsx` files share the same shape.
+Any value expressible as YAML scalars, mappings, or sequences goes in as-is. `layout` is required under the preset, and `title` / `description` are read by many partials (like `ogp.mdx`).
 
-You can put any Eleventy page data inside `data`. `layout` is required under the preset, and `title` / `description` are read by many partials (like `ogp.mdx`).
+Behind the scenes the MDX processor (Sätteri) parses the frontmatter and the plugin hands it to Eleventy's 11ty.js template as `export const data = ...`, so pages read exactly like any other Eleventy frontmatter-driven page.
+
+`.jsx` / `.tsx` templates cannot use `---` fences because of JSX parsing rules, so they keep the `export const data = { ... }` form. MDX files may also use `export const data`, but combining it with frontmatter in the same file is rejected as a duplicate export — pick one.
 
 ## Selecting a parent with `layout`
 
-Each page names its parent layout in `data.layout`. The value is a path relative to `_includes/`, without the extension.
+Each page names its parent layout in the `layout` field. The value is a path relative to `_includes/`, without the extension.
 
 ```mdx
-export const data = {
-  layout: "post", // uses src/_includes/post.mdx
-};
+---
+layout: post # uses src/_includes/post.mdx
+---
 ```
 
-Parent layouts can carry their own `data.layout`, so layouts chain multiple levels deep.
+Parent layouts can carry their own `layout`, so layouts chain multiple levels deep.
 
 ## Composing layout chains
 
@@ -77,11 +79,11 @@ import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
 Owns a content wrapper (`<article class="prose">` and so on) and picks `base` as its parent.
 
 ```mdx
-import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
+---
+layout: base
+---
 
-export const data = {
-  layout: "base",
-};
+import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
 
 <article class="prose" dangerouslySetInnerHTML={{ __html: eleventy.content }} />
 ```
