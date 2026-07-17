@@ -78,6 +78,8 @@ describe("_resolveTemplateImport", () => {
     await fs.mkdir(path.join(dir, "sub"), { recursive: true });
     await fs.writeFile(path.join(dir, "target.mdx"), "");
     await fs.writeFile(path.join(dir, "target.jsx"), "");
+    await fs.writeFile(path.join(dir, "target.tsx"), "");
+    await fs.writeFile(path.join(dir, "only-tsx.tsx"), "");
     await fs.writeFile(path.join(dir, "sub", "child.mdx"), "");
   });
 
@@ -93,12 +95,28 @@ describe("_resolveTemplateImport", () => {
     );
   });
 
+  it(".tsx を含む拡張子付き相対パスも解決する", () => {
+    const from = path.join(dir, "parent.mdx");
+    assert.strictEqual(
+      _resolveTemplateImport("./target.tsx", from),
+      path.join(dir, "target.tsx"),
+    );
+  });
+
   it("拡張子なし相対パスは .mdx を優先して解決する", () => {
     const from = path.join(dir, "parent.mdx");
-    // target.mdx と target.jsx が両方あるが .mdx が優先
+    // target.mdx / target.jsx / target.tsx が全部あるが .mdx が優先
     assert.strictEqual(
       _resolveTemplateImport("./target", from),
       path.join(dir, "target.mdx"),
+    );
+  });
+
+  it("拡張子なし相対パスが .tsx にしか無い場合は .tsx にフォールバックする", () => {
+    const from = path.join(dir, "parent.mdx");
+    assert.strictEqual(
+      _resolveTemplateImport("./only-tsx", from),
+      path.join(dir, "only-tsx.tsx"),
     );
   });
 
