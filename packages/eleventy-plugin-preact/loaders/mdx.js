@@ -89,7 +89,12 @@ export async function load(href, context, nextLoad) {
         `[eleventy-plugin-preact] ${filename}: YAML frontmatter must be an object (mapping), got ${shape}.`,
       );
     }
-    prelude = `export const data = ${JSON.stringify(parsed ?? {})};\n`;
+    // NOTE: object literal で吐くと `__proto__` キーが JS の prototype 書き換え
+    // 特別扱いを受け、`data.__proto__` が own property にならず prototype に
+    // silently 差し込まれる (`Object.getPrototypeOf(data)` が汚染される)。
+    // `JSON.parse` は `__proto__` を通常のキーとして扱うので、そちらに寄せる。
+    const json = JSON.stringify(parsed ?? {});
+    prelude = `export const data = JSON.parse(${JSON.stringify(json)});\n`;
   }
 
   return {

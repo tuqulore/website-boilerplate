@@ -130,10 +130,11 @@ describe("MDX loader (satteri)", () => {
       const result = await loadMdx(file);
       const source = String(result.source);
 
-      assert.match(
-        source,
-        /^export const data = \{"title":"Hello","tags":\["a11y","web"\]\};/,
-      );
+      // prototype pollution 回避のため object literal ではなく JSON.parse 経路
+      assert.match(source, /^export const data = JSON\.parse\("\{/);
+      // 文字列リテラルの中に frontmatter の値が JSON エスケープ形式で入る
+      assert.match(source, /\\"title\\":\\"Hello\\"/);
+      assert.match(source, /\\"tags\\":\[\\"a11y\\",\\"web\\"\]/);
     });
 
     it("front matter が無い場合は export const data を追加しない", async () => {
@@ -184,7 +185,7 @@ describe("MDX loader (satteri)", () => {
       // 実行文にならないので prepend の対象にもならない。
       assert.match(
         String(result.source),
-        /^export const data = \{"title":"Hello"\};/,
+        /^export const data = JSON\.parse\("\{\\"title\\":\\"Hello\\"\}"\);/,
       );
     });
 
@@ -204,7 +205,7 @@ describe("MDX loader (satteri)", () => {
       const result = await loadMdx(file);
       assert.match(
         String(result.source),
-        /^export const data = \{"title":"Hello"\};/,
+        /^export const data = JSON\.parse\("\{\\"title\\":\\"Hello\\"\}"\);/,
       );
     });
 
@@ -236,7 +237,43 @@ describe("MDX loader (satteri)", () => {
       );
 
       const result = await loadMdx(file);
-      assert.match(String(result.source), /^export const data = \{\};/);
+      assert.match(
+        String(result.source),
+        /^export const data = JSON\.parse\("\{\}"\);/,
+      );
+    });
+
+    it("frontmatter の `__proto__` キーは prototype を汚染せず own property になる", async () => {
+      const file = await writeMdx(
+        "proto.mdx",
+        [
+          "---",
+          "__proto__:",
+          "  poisoned: true",
+          "title: Safe",
+          "---",
+          "",
+          "# Body",
+          "",
+        ].join("\n"),
+      );
+
+      const result = await loadMdx(file);
+      const compiled = path.join(dir, "proto.compiled.mjs");
+      await fs.writeFile(compiled, result.source);
+      const mod = await import(pathToFileURL(compiled).href);
+
+      // prototype が書き換わっていないこと (JSON.parse 経路なら null-prototype
+      // または Object.prototype のまま)。「poisoned」が prototype chain 経由で
+      // 見えていたら pollution している。
+      const proto = Object.getPrototypeOf(mod.data);
+      assert.ok(
+        proto === null || proto === Object.prototype || !("poisoned" in proto),
+        `data prototype must not carry \`poisoned\`; got ${JSON.stringify(proto)}`,
+      );
+      // __proto__ は own property として保持される
+      assert.strictEqual(Object.hasOwn(mod.data, "__proto__"), true);
+      assert.strictEqual(mod.data.title, "Safe");
     });
 
     it("throw メッセージ内のパスは URL エンコードされず生パスで出る", async () => {
