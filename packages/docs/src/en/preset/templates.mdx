@@ -26,7 +26,7 @@ The body starts here.
 
 Any value expressible as YAML scalars, mappings, or sequences goes in as-is. `layout` is required under the preset, and `title` / `description` are read by many partials (like `ogp.mdx`).
 
-Behind the scenes the MDX processor (Sätteri) parses the frontmatter and the plugin hands it to Eleventy's 11ty.js template as `export const data = ...`, so pages read exactly like any other Eleventy frontmatter-driven page.
+Behind the scenes the MDX processor (Sätteri) is only responsible for detecting the leading `---` fence and extracting the frontmatter block; the YAML inside is parsed by this plugin (via the `yaml` package). The parsed result is handed to Eleventy's 11ty.js template as `export const data = ...`, so pages read exactly like any other Eleventy frontmatter-driven page.
 
 `.jsx` / `.tsx` templates cannot use `---` fences because of JSX parsing rules, so they keep the `export const data = { ... }` form. MDX files may also use `export const data`, but combining it with frontmatter in the same file is rejected as a duplicate export — pick one.
 

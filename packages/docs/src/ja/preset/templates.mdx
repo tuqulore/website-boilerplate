@@ -26,7 +26,7 @@ description: 本ボイラープレートで作った最初のページ
 
 YAML でスカラ・マッピング・配列で表現できる値はそのまま置けます。`layout` はプリセット下では必ず使う項目、`title` `description` は多くの partial (`ogp.mdx` など) が参照する項目です。
 
-MDX プロセッサ (Sätteri) が frontmatter を YAML としてパースし、プラグイン側で Eleventy の 11ty.js テンプレートに `export const data = ...` として引き渡します。`data` を直接読み出す仕組みなので、ページ側からは Eleventy 標準の frontmatter と同じ感覚で扱えます。
+MDX プロセッサ (Sätteri) は先頭の `---` フェンスを検出して frontmatter block を切り出すところまでを担い、その内側を YAML としてパースするのは本プラグインの担当です (依存の `yaml` パッケージを使います)。パース結果は Eleventy の 11ty.js テンプレートに `export const data = ...` として引き渡され、ページ側からは Eleventy 標準の frontmatter と同じ感覚で扱えます。
 
 `.jsx` / `.tsx` テンプレートは JSX 構文の都合で `---` を書けないため、これらのみ従来通り `export const data = { ... }` を使います。MDX 側でも `export const data` を書けますが、frontmatter と併用すると重複 export になるため、いずれか片方に絞ります。
 
