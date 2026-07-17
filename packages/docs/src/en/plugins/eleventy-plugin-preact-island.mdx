@@ -131,6 +131,8 @@ The `on` prop on `<Island>` picks when hydration happens.
 
 The tie-breaker is "how much time does the user actually give us before touching this Island?" — delay the ones with more slack, hydrate early only the ones that need it.
 
+The `on` prop is typed as `IslandOn = "interaction" | "visible" | "idle" | (string & {})`. Editor autocompletion shows the three primary values above; the `(string & {})` branch keeps the escape hatch open, so `<Island on="load" ... />` and `<Island on="save-data" ... />` also type-check and are forwarded to is-land as-is. The runtime accepts anything matching `/^[A-Za-z0-9_-]+$/`.
+
 For parameterized triggers like `on:media("(min-width: 40rem)")`, skip `<Island>` and write the raw `<is-land>` element yourself. See the `@tuqulore-inc/eleventy-plugin-preact-island` README for details.
 
 ## Match SSR and hydration

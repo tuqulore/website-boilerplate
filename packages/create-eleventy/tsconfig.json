@@ -1,0 +1,5 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "include": ["index.js", "eslint.config.js"],
+  "exclude": ["**/*.test.js", "templates"]
+}

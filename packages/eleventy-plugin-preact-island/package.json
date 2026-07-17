@@ -39,7 +39,8 @@
   ],
   "scripts": {
     "lint": "eslint --fix .",
-    "test": "node --test"
+    "test": "node --test",
+    "test:types": "tsd"
   },
   "dependencies": {
     "@11ty/is-land": "^5.0.0",
@@ -48,10 +49,14 @@
     "fast-glob": "^3.3.3"
   },
   "devDependencies": {
+    "@11ty/eleventy": "^3.1.2",
     "@tuqulore-inc/eslint-config": "workspace:*",
+    "@types/node": "^24.0.0",
     "eslint": "^10.0.0",
     "preact": "^10.26.4",
-    "preact-render-to-string": "^6.5.13"
+    "preact-render-to-string": "^6.5.13",
+    "tsd": "^0.32.0",
+    "typescript": "^7.0.0"
   },
   "peerDependencies": {
     "@11ty/eleventy": ">=3.0.0",
@@ -62,5 +67,17 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "tsd": {
+    "directory": "test-d",
+    "compilerOptions": {
+      "strict": true,
+      "moduleResolution": "bundler",
+      "module": "esnext",
+      "target": "es2022",
+      "jsx": "react-jsx",
+      "jsxImportSource": "preact",
+      "noUncheckedIndexedAccess": true
+    }
   }
 }

@@ -87,8 +87,9 @@ export async function load(href, context, nextLoad) {
     try {
       parsed = parseYaml(out.frontmatter.value);
     } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
       throw new Error(
-        `[eleventy-plugin-preact] ${filename}: failed to parse YAML frontmatter: ${e.message}`,
+        `[eleventy-plugin-preact] ${filename}: failed to parse YAML frontmatter: ${message}`,
         { cause: e },
       );
     }

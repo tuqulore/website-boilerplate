@@ -12,5 +12,7 @@ jobs:
     steps:
       - uses: tuqulore/.github/setup@11aae4eb6384c34e47e7ab530576d416ec9ff007 # main
       - run: pnpm lint
+      - run: pnpm typecheck
       - run: pnpm -r test
+      - run: pnpm test:types
       - uses: tuqulore/.github/format@11aae4eb6384c34e47e7ab530576d416ec9ff007 # main
