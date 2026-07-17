@@ -209,6 +209,27 @@ describe("MDX loader (satteri)", () => {
       );
     });
 
+    it("不正な YAML はプラグイン名 + ファイル名でラップして throw する", async () => {
+      // `[foo` は不完全なフローシーケンスで YAMLParseError を起こす
+      const file = await writeMdx(
+        "broken-yaml.mdx",
+        ["---", "title: [foo", "---", "", "# Body", ""].join("\n"),
+      );
+
+      await assert.rejects(loadMdx(file), (err) => {
+        assert.match(
+          err.message,
+          /\[eleventy-plugin-preact\].*broken-yaml\.mdx.*failed to parse YAML frontmatter/,
+        );
+        // 原因の元 error は cause に載っている
+        assert.ok(
+          err.cause,
+          "original YAMLParseError should be exposed as `cause`",
+        );
+        return true;
+      });
+    });
+
     it("front matter が文字列など mapping でない場合は throw", async () => {
       const file = await writeMdx(
         "scalar-fm.mdx",

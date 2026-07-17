@@ -75,7 +75,19 @@ export async function load(href, context, nextLoad) {
         `[eleventy-plugin-preact] ${filename}: cannot combine YAML frontmatter with an \`export const data\` declaration. Use one or the other.`,
       );
     }
-    const parsed = parseYaml(out.frontmatter.value);
+    // `parseYaml` は行番号付きの YAMLParseError を投げるが、それ単体では
+    // どのファイルの frontmatter で失敗したかが分からない。プラグイン名 +
+    // ファイル名でラップして、他の throw と同じ粒度でトラブルシュートできる
+    // ようにする。原因の元 error は `cause` に載せて残す。
+    let parsed;
+    try {
+      parsed = parseYaml(out.frontmatter.value);
+    } catch (e) {
+      throw new Error(
+        `[eleventy-plugin-preact] ${filename}: failed to parse YAML frontmatter: ${e.message}`,
+        { cause: e },
+      );
+    }
     // Reject non-mapping YAML (strings, arrays, numbers). Eleventy's data
     // cascade expects `data` to be a plain object; anything else would
     // silently corrupt page data and mislead readers of the README.
