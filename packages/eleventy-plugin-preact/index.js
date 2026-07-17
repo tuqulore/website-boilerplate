@@ -7,7 +7,7 @@ import render from "preact-render-to-string";
 import { jsx } from "preact/jsx-runtime";
 import { _runWithEleventyData } from "./eleventy.js";
 
-// Register Node.js loaders for JSX/MDX support
+// Register Node.js loaders for JSX/TSX/MDX support
 module.register(
   import.meta.resolve("./loaders/mdx.js"),
   url.pathToFileURL("./"),
@@ -38,7 +38,7 @@ const loadEleventyEventBus = async () => {
   }
 };
 
-// トップレベルの `import ... from "..."` から specifier を抽出。JSX/MDX 両方対応。
+// トップレベルの `import ... from "..."` から specifier を抽出。JSX/TSX/MDX 対応。
 // side-effect only の `import "..."` と、`from` 句を伴う通常の import を alternation
 // で並べる。前者を先に試すのは、後者の `[\s\S]+?` が非貪欲でも複数行にまたがって
 // 次の import 文まで巻き込みうる (`import "a"\nimport X from "b"` を 1 個の import と
@@ -57,21 +57,28 @@ export const _parseTemplateImports = (content) => {
   return specs;
 };
 
-// 相対 specifier を絶対 `.jsx`/`.mdx` パスに解決。npm パッケージや解決失敗時は null。
+// 相対 specifier を絶対 `.jsx`/`.tsx`/`.ts`/`.mdx` パスに解決。
+// npm パッケージや解決失敗時は null。`.d.ts` は型宣言のみで runtime import に
+// ならないので fallback には含めない (`import x from "./types"` を `.d.ts` に
+// 解決すると Node が runtime エラーを吐く)。明示的な `./x.d.ts` も除外する。
+//
+// NOTE: `.js` / `.mjs` は Eleventy 本体の `JavaScriptDependencies` +
+// `dependency-tree-esm` が扱う。ここで重複追跡する必要は無い。
 export const _resolveTemplateImport = (specifier, fromFile) => {
   if (!specifier.startsWith("./") && !specifier.startsWith("../")) return null;
   const base = path.resolve(path.dirname(fromFile), specifier);
-  if (/\.(jsx|mdx)$/.test(base) && fs.existsSync(base)) return base;
-  for (const ext of [".mdx", ".jsx"]) {
+  if (/\.d\.ts$/.test(base)) return null;
+  if (/\.(jsx|tsx|ts|mdx)$/.test(base) && fs.existsSync(base)) return base;
+  for (const ext of [".mdx", ".jsx", ".tsx", ".ts"]) {
     if (fs.existsSync(base + ext)) return base + ext;
   }
   return null;
 };
 
-// 「ファイル X → X を transitive に import している .jsx/.mdx の集合」の逆辺グラフ。
-// 変更時に「その ancestor だけ」を invalidate する用途。ES import 経由のみ辿る
-// (layout 参照は data cascade 経由なので Eleventy が cacheBust:true で fresh に
-// 再評価するため、ここで追跡する必要は無い)。
+// 「ファイル X → X を transitive に import している .jsx/.tsx/.ts/.mdx の集合」の
+// 逆辺グラフ。変更時に「その ancestor だけ」を invalidate する用途。ES import 経由
+// のみ辿る (layout 参照は data cascade 経由なので Eleventy が cacheBust:true で
+// fresh に再評価するため、ここで追跡する必要は無い)。
 export const _buildReverseDeps = (files) => {
   const forward = new Map();
   for (const f of files) {
@@ -121,11 +128,12 @@ export const _computeInvalidationSet = (changedTemplates, reverseDeps) => {
 };
 
 /**
- * Eleventy plugin for Preact server-side rendering with JSX/MDX support.
+ * Eleventy plugin for Preact server-side rendering with JSX/TSX/MDX support.
  *
- * SSR only: registers `.jsx` / `.mdx` template formats and renders Preact
- * components to HTML using preact-render-to-string. Client-side bundling and
- * partial hydration are handled by `@tuqulore-inc/eleventy-plugin-preact-island`.
+ * SSR only: registers `.jsx` / `.tsx` / `.mdx` template formats and renders
+ * Preact components to HTML using preact-render-to-string. Client-side
+ * bundling and partial hydration are handled by
+ * `@tuqulore-inc/eleventy-plugin-preact-island`.
  *
  * @param {import("@11ty/eleventy").UserConfig} eleventyConfig
  */
@@ -136,21 +144,24 @@ export default function (eleventyConfig) {
     console.log(`[eleventy-plugin-preact] WARN: ${e.message}`);
   }
 
-  // Add JSX and MDX as template formats
-  eleventyConfig.addTemplateFormats(["jsx", "mdx"]);
+  eleventyConfig.addTemplateFormats(["jsx", "tsx", "mdx"]);
 
-  // watch/serve 時、`.jsx`/`.mdx` の変更で「変更ファイル + それを transitive に
-  // import している .jsx/.mdx (ancestor)」を Node の ESM cache から invalidate する。
-  // これがないと layout/partial 経由で import されている `.client.jsx` を編集しても
-  // 中間モジュールが cache に残ったままで SSR HTML が古いまま出る (詳細は上の
-  // EventBus ロードコメント参照)。
+  // watch/serve 時、`.jsx`/`.tsx`/`.ts`/`.mdx` の変更で「変更ファイル + それを
+  // transitive に import している .jsx/.tsx/.ts/.mdx (ancestor)」を Node の ESM
+  // cache から invalidate する。これがないと layout/partial 経由で import されている
+  // `.client.jsx` を編集しても中間モジュールが cache に残ったままで SSR HTML が
+  // 古いまま出る (詳細は上の EventBus ロードコメント参照)。`.d.ts` は型宣言のみで
+  // runtime に影響しないので除外する。`.js` / `.mjs` は Eleventy 本体の
+  // `JavaScriptDependencies` が自前で追跡するのでここでは扱わない。
   //
   // NOTE: `eleventy.beforeWatch` は watch/serve の 2 回目以降のビルド前にのみ発火
   // (初回ビルドや --serve 無しの単発ビルドでは発火しない) ため、production `pnpm build`
   // には影響しない。
   let eventBusPromise = null;
   eleventyConfig.on("eleventy.beforeWatch", async (changedFiles) => {
-    const templateChanges = changedFiles?.filter((f) => /\.(jsx|mdx)$/.test(f));
+    const templateChanges = changedFiles?.filter(
+      (f) => /\.(jsx|tsx|ts|mdx)$/.test(f) && !/\.d\.ts$/.test(f),
+    );
     if (!templateChanges?.length) return;
     eventBusPromise ??= loadEleventyEventBus();
     const eventBus = await eventBusPromise;
@@ -161,8 +172,8 @@ export default function (eleventyConfig) {
       return;
     }
     const inputDir = eleventyConfig.directories.input;
-    const allFiles = await fg([`${inputDir}**/*.{jsx,mdx}`], {
-      ignore: ["**/node_modules/**"],
+    const allFiles = await fg([`${inputDir}**/*.{jsx,tsx,ts,mdx}`], {
+      ignore: ["**/node_modules/**", "**/*.d.ts"],
       absolute: true,
     });
     const reverse = _buildReverseDeps(allFiles);
@@ -170,8 +181,7 @@ export default function (eleventyConfig) {
     eventBus.emit("eleventy.importCacheReset", toInvalidate);
   });
 
-  // Add extension handler for JSX and MDX
-  eleventyConfig.addExtension(["jsx", "mdx"], {
+  eleventyConfig.addExtension(["jsx", "tsx", "mdx"], {
     key: "11ty.js",
     compile: () => {
       return async function (data) {

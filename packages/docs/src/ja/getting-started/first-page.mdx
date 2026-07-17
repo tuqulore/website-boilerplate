@@ -1,8 +1,8 @@
-export const data = {
-  layout: "post",
-  locale: "ja",
-  title: "最初のページを書く",
-};
+---
+layout: post
+locale: ja
+title: 最初のページを書く
+---
 
 # 最初のページを書く
 
@@ -23,32 +23,32 @@ pnpm dev
 scaffold 直後の `src/index.mdx` は次の骨格を持ちます。
 
 ```mdx
+---
+layout: post
+title: ようこそ
+---
+
 import { Island } from "@tuqulore-inc/eleventy-preset/island";
 import Clicker from "./clicker.client.jsx";
-
-export const data = {
-  layout: "post",
-  title: "ようこそ",
-};
 
 # ようこそ
 
 ...
 ```
 
+- ファイル先頭の `---` で囲んだ YAML block は Eleventy のページデータ (frontmatter) で、`layout` と `title` を渡します。
 - `import` 行は、MDX の中で JSX として使う値を取り込むための宣言です。
-- `export const data` は Eleventy のページデータで、`layout` と `title` を渡します。
 - 空行以下の本文が Markdown にあたり、見出し、段落、リストがそのまま HTML に変換されます。
 
 ## タイトルと本文を差し替える
 
-まず `export const data` の `title` と、H1 の本文を編集します。
+まず frontmatter の `title` と、H1 の本文を編集します。
 
 ```mdx
-export const data = {
-  layout: "post",
-  title: "はじめてのサイト",
-};
+---
+layout: post
+title: はじめてのサイト
+---
 
 # はじめてのサイト
 

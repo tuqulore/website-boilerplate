@@ -48,11 +48,12 @@
     "test": "node --test"
   },
   "dependencies": {
-    "@babel/core": "^8.0.1",
-    "@babel/preset-react": "^8.0.1",
-    "@mdx-js/node-loader": "^3.1.0",
     "fast-glob": "^3.3.3",
-    "preact-render-to-string": "^6.5.13"
+    "github-slugger": "^2.0.0",
+    "oxc-transform": "^0.139.0",
+    "preact-render-to-string": "^6.5.13",
+    "satteri": "^0.9.5",
+    "yaml": "^2.9.0"
   },
   "devDependencies": {
     "@tuqulore-inc/eslint-config": "workspace:*",
@@ -63,7 +64,7 @@
     "preact": ">=10.0.0"
   },
   "engines": {
-    "node": ">=24.11.0"
+    "node": "^20.19.0 || >=22.12.0"
   },
   "publishConfig": {
     "access": "public"

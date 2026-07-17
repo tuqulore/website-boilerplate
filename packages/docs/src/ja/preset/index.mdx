@@ -1,8 +1,8 @@
-export const data = {
-  layout: "post",
-  locale: "ja",
-  title: "Preset の規約",
-};
+---
+layout: post
+locale: ja
+title: Preset の規約
+---
 
 # Preset の規約
 
@@ -13,7 +13,7 @@ export const data = {
 プリセットは、次の 3 つの領域に規約を持ち込みます。
 
 - [ディレクトリと命名](/ja/preset/directory/): `src/`, `dist/`, `_data/`, `_includes/`, `public/` のディレクトリ構成と、`.mdx` / `.jsx` / `.client.jsx` の命名規約。静的アセットと画像最適化の扱いも扱います。
-- [テンプレート](/ja/preset/templates/): `export const data` によるページデータの受け渡し、`layout` プロパティ、レイアウトチェイニングの書き方。
+- [テンプレート](/ja/preset/templates/): YAML frontmatter によるページデータの受け渡し、`layout` プロパティ、レイアウトチェイニングの書き方。
 - [Data Access](/ja/preset/data-access/): `eleventy` シングルトンから site / nav / page / title / content を参照する書き方。
 
 ## API の詳細と設計の背景

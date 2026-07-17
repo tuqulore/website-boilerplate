@@ -1,8 +1,8 @@
-export const data = {
-  layout: "post",
-  locale: "en",
-  title: "Directory & naming",
-};
+---
+layout: post
+locale: en
+title: Directory & naming
+---
 
 # Directory & naming
 
@@ -38,7 +38,7 @@ Sub-directories become nested keys. Placing `_data/nav/ja.json` and `_data/nav/e
 
 ## `src/_includes/`
 
-Where the [layouts](https://www.11ty.dev/docs/layouts/) for [layout chaining](https://www.11ty.dev/docs/layout-chaining/) live. When a page's `layout: "..."` in `export const data` (or in the frontmatter) resolves, Eleventy looks under this directory.
+Where the [layouts](https://www.11ty.dev/docs/layouts/) for [layout chaining](https://www.11ty.dev/docs/layout-chaining/) live. When a page's `layout: "..."` in its frontmatter resolves, Eleventy looks under this directory.
 
 By convention, `_includes/base.mdx` holds the HTML skeleton and `_includes/post.mdx` holds the article wrapper. See [Templates](/en/preset/templates/) for the details.
 

@@ -78,6 +78,11 @@ describe("_resolveTemplateImport", () => {
     await fs.mkdir(path.join(dir, "sub"), { recursive: true });
     await fs.writeFile(path.join(dir, "target.mdx"), "");
     await fs.writeFile(path.join(dir, "target.jsx"), "");
+    await fs.writeFile(path.join(dir, "target.tsx"), "");
+    await fs.writeFile(path.join(dir, "target.ts"), "");
+    await fs.writeFile(path.join(dir, "only-tsx.tsx"), "");
+    await fs.writeFile(path.join(dir, "only-ts.ts"), "");
+    await fs.writeFile(path.join(dir, "types.d.ts"), "");
     await fs.writeFile(path.join(dir, "sub", "child.mdx"), "");
   });
 
@@ -93,13 +98,56 @@ describe("_resolveTemplateImport", () => {
     );
   });
 
+  it(".tsx を含む拡張子付き相対パスも解決する", () => {
+    const from = path.join(dir, "parent.mdx");
+    assert.strictEqual(
+      _resolveTemplateImport("./target.tsx", from),
+      path.join(dir, "target.tsx"),
+    );
+  });
+
   it("拡張子なし相対パスは .mdx を優先して解決する", () => {
     const from = path.join(dir, "parent.mdx");
-    // target.mdx と target.jsx が両方あるが .mdx が優先
+    // target.mdx / target.jsx / target.tsx が全部あるが .mdx が優先
     assert.strictEqual(
       _resolveTemplateImport("./target", from),
       path.join(dir, "target.mdx"),
     );
+  });
+
+  it("拡張子なし相対パスが .tsx にしか無い場合は .tsx にフォールバックする", () => {
+    const from = path.join(dir, "parent.mdx");
+    assert.strictEqual(
+      _resolveTemplateImport("./only-tsx", from),
+      path.join(dir, "only-tsx.tsx"),
+    );
+  });
+
+  it(".ts を含む拡張子付き相対パスも解決する", () => {
+    const from = path.join(dir, "parent.mdx");
+    assert.strictEqual(
+      _resolveTemplateImport("./target.ts", from),
+      path.join(dir, "target.ts"),
+    );
+  });
+
+  it("拡張子なし相対パスが .ts にしか無い場合は .ts にフォールバックする", () => {
+    const from = path.join(dir, "parent.mdx");
+    assert.strictEqual(
+      _resolveTemplateImport("./only-ts", from),
+      path.join(dir, "only-ts.ts"),
+    );
+  });
+
+  it(".d.ts は型宣言のみのため fallback で拾わない", () => {
+    const from = path.join(dir, "parent.mdx");
+    // types.d.ts のみが存在するが、拡張子なし specifier `./types` は null
+    assert.strictEqual(_resolveTemplateImport("./types", from), null);
+  });
+
+  it("明示的な .d.ts 指定も null (runtime import 対象外)", () => {
+    const from = path.join(dir, "parent.mdx");
+    assert.strictEqual(_resolveTemplateImport("./types.d.ts", from), null);
   });
 
   it("サブディレクトリの相対パスを解決する", () => {
