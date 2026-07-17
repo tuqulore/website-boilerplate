@@ -23,11 +23,11 @@ jobs:
   release:
     runs-on: ubuntu-24.04
     steps:
-      - uses: tuqulore/.github/setup@11aae4eb6384c34e47e7ab530576d416ec9ff007 # main
+      - uses: tuqulore/.github/setup@8caf5d569132d10bb856f4c14b2530c0e9e8f1ba # main
         with:
           fetch-depth: 0
 
-      - uses: tuqulore/.github/configure-git@11aae4eb6384c34e47e7ab530576d416ec9ff007 # main
+      - uses: tuqulore/.github/configure-git@8caf5d569132d10bb856f4c14b2530c0e9e8f1ba # main
 
       - name: Find previous release tag
         id: previous-tag
@@ -47,7 +47,7 @@ jobs:
           fi
           echo "url=${URL}" >> "$GITHUB_OUTPUT"
 
-      - uses: tuqulore/.github/bump-and-pr@11aae4eb6384c34e47e7ab530576d416ec9ff007 # main
+      - uses: tuqulore/.github/bump-and-pr@8caf5d569132d10bb856f4c14b2530c0e9e8f1ba # main
         with:
           branch: release
           bump-command: pnpm packages:bump-version ${{ inputs.semver }} --yes --no-git-tag-version
@@ -64,6 +64,7 @@ jobs:
             jq --arg version "^$VERSION" '.devDependencies["@tuqulore-inc/eleventy-preset"] = $version' \
               packages/create-eleventy/templates/default/package.json > tmp.json
             mv tmp.json packages/create-eleventy/templates/default/package.json
+          pr-labels: release
           github-token: ${{ github.token }}
 
       - name: Cleanup on failure or cancellation
