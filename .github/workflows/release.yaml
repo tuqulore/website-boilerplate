@@ -66,6 +66,17 @@ jobs:
             mv tmp.json packages/create-eleventy/templates/default/package.json
           github-token: ${{ github.token }}
 
+      - name: Add release label to PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR_NUMBER=$(gh pr list --base main --head release --json number --jq '.[0].number // empty')
+          if [ -n "$PR_NUMBER" ]; then
+            gh pr edit "$PR_NUMBER" --add-label release || echo "::warning::Failed to add release label to PR #${PR_NUMBER}"
+          else
+            echo "::warning::Could not find release PR to label"
+          fi
+
       - name: Cleanup on failure or cancellation
         if: failure() || cancelled()
         env:
