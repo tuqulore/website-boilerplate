@@ -69,7 +69,11 @@ export async function load(href, context, nextLoad) {
   const out = await mdxToJs(source, { ...MDX_OPTIONS, fileURL: url });
 
   let prelude = "";
-  if (out.frontmatter?.value) {
+  // `out.frontmatter?.value` で判定すると `---\n---` のような空フェンスが
+  // silently 素通りしてしまい、(1) 空 frontmatter が反映されない (2) 本文側の
+  // `export const data = ...` との併用チェックも走らない、という穴になる。
+  // フェンスの有無だけを見て、内側の空/非空は parseYaml の返り値で判断する。
+  if (out.frontmatter) {
     if (USER_DATA_EXPORT_RE.test(out.code)) {
       throw new Error(
         `[eleventy-plugin-preact] ${filename}: cannot combine YAML frontmatter with an \`export const data\` declaration. Use one or the other.`,

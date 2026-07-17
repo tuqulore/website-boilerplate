@@ -251,6 +251,36 @@ describe("MDX loader (satteri)", () => {
       );
     });
 
+    it("空の front matter (`---\\n---`) も data を空オブジェクトとして prepend する", async () => {
+      const file = await writeMdx(
+        "empty-fence.mdx",
+        ["---", "---", "", "# Body", ""].join("\n"),
+      );
+
+      const result = await loadMdx(file);
+      assert.match(
+        String(result.source),
+        /^export const data = JSON\.parse\("\{\}"\);/,
+      );
+    });
+
+    it("空 fence + 本文の export const data の併用も throw する", async () => {
+      const file = await writeMdx(
+        "empty-fence-collision.mdx",
+        [
+          "---",
+          "---",
+          "",
+          "export const data = { title: 'From body' };",
+          "",
+          "# Body",
+          "",
+        ].join("\n"),
+      );
+
+      await assert.rejects(loadMdx(file), /export const data/);
+    });
+
     it("front matter が `null` の場合は data を空オブジェクトとして prepend する", async () => {
       const file = await writeMdx(
         "null-fm.mdx",
