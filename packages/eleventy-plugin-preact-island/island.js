@@ -97,10 +97,16 @@ export function Island({ component, on = "interaction", ...props }) {
       { cause },
     );
   }
+  // NOTE: `land-on:*` は「値なし = デフォルトの発火条件」で、値があると
+  // is-land 側で override として扱われる。特に `interaction` は値をイベント名
+  // として解釈するので (`is-land.js` の `Conditions.interaction`: `eventsStr =
+  // eventOverrides || "click,touchstart"`)、`true` を出すと「'true' という
+  // 未知のイベントを待つ」状態になり永久に hydrate されない。boolean 属性
+  // 相当の空文字を出して is-land のデフォルト挙動に乗せる。
   return h(
     "is-land",
     {
-      [`land-on:${on}`]: true,
+      [`land-on:${on}`]: "",
       type: "preact",
       import: importUrl,
       props: serializedProps,

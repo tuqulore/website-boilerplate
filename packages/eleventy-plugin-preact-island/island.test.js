@@ -107,6 +107,28 @@ describe("Island", () => {
     assert.match(html, /land-on:interaction/);
   });
 
+  // 回帰: is-land の `Conditions.interaction` は属性値をイベント名として
+  // 解釈する (`eventsStr = eventOverrides || "click,touchstart"`)。
+  // `land-on:interaction="true"` を SSR で出すと「'true' というイベントを
+  // 待つ」状態になり永久に hydrate されない。boolean 属性相当 (Preact JSX
+  // で `""` を渡すと preact-render-to-string は値なし形式で出力する) にして
+  // is-land 側では `getAttribute` → `""` → デフォルト click/touchstart 発火に
+  // フォールバックさせる。
+  it("land-on:* は boolean 属性相当 (値なし) で出力される", () => {
+    _setClientModuleResolver(() => "/x.client.js");
+    const X = clientComponent(() => null, "file:///proj/src/x.client.jsx");
+    const html = render(h(Island, { component: X, on: "interaction" }));
+    // is-land start tag 内で `land-on:interaction` が値なし属性として存在すること
+    // だけを検証する。属性の並び順に依存しないよう、直後に空白/`/`/`>` (= 属性
+    // 値が続かない) が来ることのみを要求する。
+    assert.match(
+      html,
+      /<is-land\b[^>]*\bland-on:interaction(?=[\s/>])/,
+      "land-on:interaction が is-land 開始タグ内に値なし属性として現れていない",
+    );
+    assert.doesNotMatch(html, /land-on:interaction=/);
+  });
+
   it("component が渡されていない (または関数でない) 場合は TypeError", () => {
     _setClientModuleResolver(() => "/x.client.js");
     assert.throws(
