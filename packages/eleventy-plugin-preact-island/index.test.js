@@ -142,7 +142,12 @@ describe("Island plugin URL prefix ↔ Eleventy pathPrefix / directories", () =>
 });
 
 describe("Island plugin importmap ↔ Eleventy pathPrefix", () => {
-  it("pathPrefix=/blog/ では importmap の is-land も /blog/is-land.js を指す", () => {
+  // NOTE: `?nodefine` は is-land の auto-define を抑止するための公式 query。
+  // これが無いと import 時点で `customElements.define("is-land", Island)` が
+  // デフォルト prefix ("on:") のまま走ってしまい、setup script 側で
+  // `land-on:` に切り替えても connectedCallback は既に完了しているので
+  // 遅延ハイドレーション (on="interaction" 等) が効かなくなる。
+  it("pathPrefix=/blog/ では importmap の is-land も /blog/is-land.js?nodefine を指す", () => {
     const config = makeEleventyConfigStub({ pathPrefix: "/blog/" });
     preactIsland(config);
 
@@ -151,10 +156,10 @@ describe("Island plugin importmap ↔ Eleventy pathPrefix", () => {
       "<html><head></head><body></body></html>",
       "dist/index.html",
     );
-    assert.match(html, /"is-land": "\/blog\/is-land\.js"/);
+    assert.match(html, /"is-land": "\/blog\/is-land\.js\?nodefine"/);
   });
 
-  it("pathPrefix 未設定では importmap の is-land は /is-land.js を指す", () => {
+  it("pathPrefix 未設定では importmap の is-land は /is-land.js?nodefine を指す", () => {
     const config = makeEleventyConfigStub({ pathPrefix: undefined });
     preactIsland(config);
 
@@ -163,7 +168,36 @@ describe("Island plugin importmap ↔ Eleventy pathPrefix", () => {
       "<html><head></head><body></body></html>",
       "dist/index.html",
     );
-    assert.match(html, /"is-land": "\/is-land\.js"/);
+    assert.match(html, /"is-land": "\/is-land\.js\?nodefine"/);
+  });
+});
+
+describe("Island plugin inline setup script の初期化順", () => {
+  // 回帰テスト: `Island.attributePrefix = "land-on:"` を `Island.define()` より
+  // 前で行い、かつ importmap 側で is-land を `?nodefine` に固定していることを
+  // 同時に固定する。片方だけ壊れると <is-land> は「条件属性なし = 即 hydrate」
+  // と判定され、`on="interaction"` 等の遅延ハイドレーションが無効化される。
+  it("attributePrefix 上書き → Island.define() の順で明示呼び出しになる", () => {
+    const config = makeEleventyConfigStub({ pathPrefix: undefined });
+    preactIsland(config);
+
+    const html = config._transform(
+      "preact-island-inject",
+      "<html><head></head><body></body></html>",
+      "dist/index.html",
+    );
+
+    const prefixIdx = html.indexOf('Island.attributePrefix = "land-on:"');
+    const defineIdx = html.indexOf("Island.define()");
+    assert.ok(prefixIdx > -1, "attributePrefix 上書きが inline script に無い");
+    assert.ok(
+      defineIdx > -1,
+      "明示 Island.define() 呼び出しが inline script に無い",
+    );
+    assert.ok(
+      prefixIdx < defineIdx,
+      "Island.attributePrefix は Island.define() より前に設定しないと customElements 登録に反映されない",
+    );
   });
 });
 

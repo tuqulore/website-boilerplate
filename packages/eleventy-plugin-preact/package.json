@@ -48,6 +48,7 @@
     "test": "node --test"
   },
   "dependencies": {
+    "fast-glob": "^3.3.3",
     "github-slugger": "^2.0.0",
     "oxc-transform": "^0.139.0",
     "preact-render-to-string": "^6.5.13",
