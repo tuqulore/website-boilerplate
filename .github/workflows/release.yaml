@@ -64,7 +64,7 @@ jobs:
             jq --arg version "^$VERSION" '.devDependencies["@tuqulore-inc/eleventy-preset"] = $version' \
               packages/create-eleventy/templates/default/package.json > tmp.json
             mv tmp.json packages/create-eleventy/templates/default/package.json
-          pr-label: release
+          pr-labels: release
           github-token: ${{ github.token }}
 
       - name: Cleanup on failure or cancellation

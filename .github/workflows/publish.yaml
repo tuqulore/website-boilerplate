@@ -102,7 +102,7 @@ jobs:
           commit-prefix: chore(alpha)
           pr-base: main
           pr-body: Bump to alpha version v${VERSION}
-          pr-label: release
+          pr-labels: release
           github-token: ${{ github.token }}
 
       - name: Cleanup alpha branch on failure or cancellation
