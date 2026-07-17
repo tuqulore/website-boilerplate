@@ -57,21 +57,28 @@ export const _parseTemplateImports = (content) => {
   return specs;
 };
 
-// 相対 specifier を絶対 `.jsx`/`.tsx`/`.mdx` パスに解決。npm パッケージや解決失敗時は null。
+// 相対 specifier を絶対 `.jsx`/`.tsx`/`.ts`/`.mdx` パスに解決。
+// npm パッケージや解決失敗時は null。`.d.ts` は型宣言のみで runtime import に
+// ならないので fallback には含めない (`import x from "./types"` を `.d.ts` に
+// 解決すると Node が runtime エラーを吐く)。明示的な `./x.d.ts` も除外する。
+//
+// NOTE: `.js` / `.mjs` は Eleventy 本体の `JavaScriptDependencies` +
+// `dependency-tree-esm` が扱う。ここで重複追跡する必要は無い。
 export const _resolveTemplateImport = (specifier, fromFile) => {
   if (!specifier.startsWith("./") && !specifier.startsWith("../")) return null;
   const base = path.resolve(path.dirname(fromFile), specifier);
-  if (/\.(jsx|tsx|mdx)$/.test(base) && fs.existsSync(base)) return base;
-  for (const ext of [".mdx", ".jsx", ".tsx"]) {
+  if (/\.d\.ts$/.test(base)) return null;
+  if (/\.(jsx|tsx|ts|mdx)$/.test(base) && fs.existsSync(base)) return base;
+  for (const ext of [".mdx", ".jsx", ".tsx", ".ts"]) {
     if (fs.existsSync(base + ext)) return base + ext;
   }
   return null;
 };
 
-// 「ファイル X → X を transitive に import している .jsx/.tsx/.mdx の集合」の逆辺グラフ。
-// 変更時に「その ancestor だけ」を invalidate する用途。ES import 経由のみ辿る
-// (layout 参照は data cascade 経由なので Eleventy が cacheBust:true で fresh に
-// 再評価するため、ここで追跡する必要は無い)。
+// 「ファイル X → X を transitive に import している .jsx/.tsx/.ts/.mdx の集合」の
+// 逆辺グラフ。変更時に「その ancestor だけ」を invalidate する用途。ES import 経由
+// のみ辿る (layout 参照は data cascade 経由なので Eleventy が cacheBust:true で
+// fresh に再評価するため、ここで追跡する必要は無い)。
 export const _buildReverseDeps = (files) => {
   const forward = new Map();
   for (const f of files) {
@@ -139,19 +146,21 @@ export default function (eleventyConfig) {
 
   eleventyConfig.addTemplateFormats(["jsx", "tsx", "mdx"]);
 
-  // watch/serve 時、`.jsx`/`.tsx`/`.mdx` の変更で「変更ファイル + それを transitive に
-  // import している .jsx/.tsx/.mdx (ancestor)」を Node の ESM cache から invalidate する。
-  // これがないと layout/partial 経由で import されている `.client.jsx` を編集しても
-  // 中間モジュールが cache に残ったままで SSR HTML が古いまま出る (詳細は上の
-  // EventBus ロードコメント参照)。
+  // watch/serve 時、`.jsx`/`.tsx`/`.ts`/`.mdx` の変更で「変更ファイル + それを
+  // transitive に import している .jsx/.tsx/.ts/.mdx (ancestor)」を Node の ESM
+  // cache から invalidate する。これがないと layout/partial 経由で import されている
+  // `.client.jsx` を編集しても中間モジュールが cache に残ったままで SSR HTML が
+  // 古いまま出る (詳細は上の EventBus ロードコメント参照)。`.d.ts` は型宣言のみで
+  // runtime に影響しないので除外する。`.js` / `.mjs` は Eleventy 本体の
+  // `JavaScriptDependencies` が自前で追跡するのでここでは扱わない。
   //
   // NOTE: `eleventy.beforeWatch` は watch/serve の 2 回目以降のビルド前にのみ発火
   // (初回ビルドや --serve 無しの単発ビルドでは発火しない) ため、production `pnpm build`
   // には影響しない。
   let eventBusPromise = null;
   eleventyConfig.on("eleventy.beforeWatch", async (changedFiles) => {
-    const templateChanges = changedFiles?.filter((f) =>
-      /\.(jsx|tsx|mdx)$/.test(f),
+    const templateChanges = changedFiles?.filter(
+      (f) => /\.(jsx|tsx|ts|mdx)$/.test(f) && !/\.d\.ts$/.test(f),
     );
     if (!templateChanges?.length) return;
     eventBusPromise ??= loadEleventyEventBus();
@@ -163,8 +172,8 @@ export default function (eleventyConfig) {
       return;
     }
     const inputDir = eleventyConfig.directories.input;
-    const allFiles = await fg([`${inputDir}**/*.{jsx,tsx,mdx}`], {
-      ignore: ["**/node_modules/**"],
+    const allFiles = await fg([`${inputDir}**/*.{jsx,tsx,ts,mdx}`], {
+      ignore: ["**/node_modules/**", "**/*.d.ts"],
       absolute: true,
     });
     const reverse = _buildReverseDeps(allFiles);
