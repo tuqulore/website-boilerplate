@@ -138,6 +138,9 @@ importers:
       '@mdx-js/node-loader':
         specifier: ^3.1.0
         version: 3.1.1
+      fast-glob:
+        specifier: ^3.3.3
+        version: 3.3.3
       preact:
         specifier: '>=10.0.0'
         version: 10.29.4
