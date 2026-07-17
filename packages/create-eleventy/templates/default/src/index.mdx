@@ -19,6 +19,6 @@ import Clicker from "./clicker.client.jsx";
 
 ## Partial Hydration サンプル
 
-以下のカウンターは Preact コンポーネントで、初回操作時にクライアント側でハイドレーションされます。
+以下のカウンターは Preact コンポーネントで、表示領域に入ったタイミングでクライアント側でハイドレーションされます。
 
-<Island component={Clicker} on="interaction" />
+<Island component={Clicker} on="visible" />

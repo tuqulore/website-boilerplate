@@ -10,13 +10,13 @@ import Mobile from "./header/mobile.client.jsx";
     </a>
     <Island
       component={Desktop}
-      on="interaction"
+      on="visible"
       class="hidden md:block"
       nav={eleventy.nav}
     />
     <Island
       component={Mobile}
-      on="interaction"
+      on="visible"
       class="ml-auto flex items-center md:hidden"
       nav={eleventy.nav}
     />
