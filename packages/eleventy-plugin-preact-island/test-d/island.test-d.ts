@@ -25,11 +25,12 @@ expectType<VNode>(
 expectType<VNode>(Island({ component: Counter, initial: 3, on: "visible" }));
 expectType<VNode>(Island({ component: Counter, initial: 3, on: "idle" }));
 
-// Escape hatch: unknown-but-serialisable trigger names still type-check via
-// the `(string & {})` branch of IslandOn.
-expectType<VNode>(
-  Island({ component: Counter, initial: 3, on: "media (min-width: 640px)" }),
-);
+// Escape hatch: is-land triggers outside the documented trio (e.g. `"load"`,
+// `"save-data"`) still type-check via the `(string & {})` branch of IslandOn.
+// The runtime validates `on` with `/^[A-Za-z0-9_-]+$/`, so values with spaces
+// or punctuation (parameterised triggers like `media(...)`) belong on a raw
+// `<is-land>` element, not on `<Island>`.
+expectType<VNode>(Island({ component: Counter, initial: 3, on: "load" }));
 expectAssignable<IslandOn>("save-data");
 expectAssignable<IslandOn>("load");
 
