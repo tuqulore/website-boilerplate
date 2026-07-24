@@ -1,5 +1,5 @@
-import { h } from "preact";
 import { stringify } from "devalue";
+import { h } from "preact";
 
 let currentResolver = null;
 

@@ -7,6 +7,7 @@
 
 import fs from "node:fs/promises";
 import { fileURLToPath } from "node:url";
+
 import GithubSlugger from "github-slugger";
 import { defineHastPlugin, mdxToJs } from "satteri";
 import { parse as parseYaml } from "yaml";
@@ -60,7 +61,7 @@ const USER_DATA_EXPORT_RE = /^\s*export\s+const\s+data\s*=/m;
 export async function load(href, context, nextLoad) {
   const url = new URL(href);
 
-  if (url.protocol !== "file:" || !/\.mdx$/.test(url.pathname)) {
+  if (url.protocol !== "file:" || !url.pathname.endsWith(".mdx")) {
     return nextLoad(href, context);
   }
 

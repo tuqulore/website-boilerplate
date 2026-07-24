@@ -29,6 +29,4 @@ export interface IslandProps<P = Record<string, unknown>> {
  * Wrap a Preact component for Partial Hydration via is-land. The extra props
  * are forwarded both to the SSR render and to the hydrated client render.
  */
-export function Island<P = Record<string, unknown>>(
-  props: IslandProps<P>,
-): VNode;
+export function Island<P = Record<string, unknown>>(props: IslandProps<P>): VNode;

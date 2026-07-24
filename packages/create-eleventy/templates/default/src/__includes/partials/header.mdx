@@ -8,12 +8,7 @@ import Mobile from "./header/mobile.client.jsx";
     <a class="flex-shrink-0" href="/">
       {eleventy.site.name}
     </a>
-    <Island
-      component={Desktop}
-      on="visible"
-      class="hidden md:block"
-      nav={eleventy.nav}
-    />
+    <Island component={Desktop} on="visible" class="hidden md:block" nav={eleventy.nav} />
     <Island
       component={Mobile}
       on="visible"

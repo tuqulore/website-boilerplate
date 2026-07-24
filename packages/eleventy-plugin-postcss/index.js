@@ -17,9 +17,7 @@ export default function (eleventyConfig, pluginOptions = {}) {
   }
 
   const { contentGlob = [], skip } = pluginOptions;
-  const contentPatterns = Array.isArray(contentGlob)
-    ? contentGlob
-    : [contentGlob];
+  const contentPatterns = Array.isArray(contentGlob) ? contentGlob : [contentGlob];
 
   eleventyConfig.addTemplateFormats("css");
   eleventyConfig.addExtension("css", {

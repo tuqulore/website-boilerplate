@@ -11,10 +11,7 @@ export function switchLocale(url, target) {
       {eleventy.site[eleventy.locale ?? "ja"].name}
     </a>
     <div class="ml-auto flex items-center gap-4">
-      <nav
-        aria-label={eleventy.locale === "en" ? "Language" : "言語"}
-        class="flex gap-4"
-      >
+      <nav aria-label={eleventy.locale === "en" ? "Language" : "言語"} class="flex gap-4">
         <a href={switchLocale(eleventy.page.url, "ja")}>日本語</a>
         <a href={switchLocale(eleventy.page.url, "en")}>English</a>
       </nav>

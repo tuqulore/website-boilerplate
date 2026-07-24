@@ -22,18 +22,18 @@ pnpm install
 | `packages/eleventy-plugin-preact`        | Preact による JSX テンプレート対応                                 |
 | `packages/eleventy-plugin-preact-island` | Partial Hydration                                                  |
 | `packages/eleventy-plugin-postcss`       | PostCSS 対応                                                       |
-| `packages/eslint-config`                 | 共有 ESLint 設定                                                   |
+| `packages/oxlint-config`                 | 共有 Oxlint 設定                                                   |
 
 ## 開発ワークフロー
 
 ### コード整形と静的検査
 
 ```shell
-pnpm format   # prettier --write .
-pnpm lint     # 各パッケージの eslint --fix .
+pnpm format   # oxfmt (整形を書き込む)
+pnpm lint     # 各パッケージの oxlint --fix
 ```
 
-CI（`.github/workflows/ci.yaml`）は `pnpm lint` → `pnpm -r test` → 整形チェックを実行します。ローカルでも同じコマンドが通ることを PR 前に確認してください。
+CI（`.github/workflows/ci.yaml`）は `pnpm lint` → `pnpm -r test` → 整形（`tuqulore/.github/format` composite action 経由で `pnpm format` を実行）を行います。ローカルでも同じコマンドが通ることを PR 前に確認してください。
 
 ### 自動テスト
 

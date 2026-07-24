@@ -2,20 +2,16 @@ import fs from "node:fs";
 import module from "node:module";
 import path from "node:path";
 import url from "node:url";
+
 import fg from "fast-glob";
 import render from "preact-render-to-string";
 import { jsx } from "preact/jsx-runtime";
+
 import { _runWithEleventyData } from "./eleventy.js";
 
 // Register Node.js loaders for JSX/TSX/MDX support
-module.register(
-  import.meta.resolve("./loaders/mdx.js"),
-  url.pathToFileURL("./"),
-);
-module.register(
-  import.meta.resolve("./loaders/jsx.js"),
-  url.pathToFileURL("./"),
-);
+module.register(import.meta.resolve("./loaders/mdx.js"), url.pathToFileURL("./"));
+module.register(import.meta.resolve("./loaders/jsx.js"), url.pathToFileURL("./"));
 
 // NOTE: Eleventy の import cache 無効化 (`eleventy.importCacheReset`) を発火する
 // EventBus は package の `exports` に無いため、`import.meta.resolve` で本体を辿って
@@ -49,8 +45,7 @@ const loadEleventyEventBus = async () => {
 // が途中で bail out した際に次回の抽出が壊れる。RegExp 生成コストは無視できるので、
 // 関数内で毎回生成する。
 export const _parseTemplateImports = (content) => {
-  const re =
-    /^import\s+(?:["']([^"']+)["']|[\s\S]+?\s+from\s+["']([^"']+)["'])/gm;
+  const re = /^import\s+(?:["']([^"']+)["']|[\s\S]+?\s+from\s+["']([^"']+)["'])/gm;
   const specs = [];
   let m;
   while ((m = re.exec(content)) !== null) specs.push(m[1] ?? m[2]);
@@ -67,7 +62,7 @@ export const _parseTemplateImports = (content) => {
 export const _resolveTemplateImport = (specifier, fromFile) => {
   if (!specifier.startsWith("./") && !specifier.startsWith("../")) return null;
   const base = path.resolve(path.dirname(fromFile), specifier);
-  if (/\.d\.ts$/.test(base)) return null;
+  if (base.endsWith(".d.ts")) return null;
   if (/\.(jsx|tsx|ts|mdx)$/.test(base) && fs.existsSync(base)) return base;
   for (const ext of [".mdx", ".jsx", ".tsx", ".ts"]) {
     if (fs.existsSync(base + ext)) return base + ext;
@@ -160,7 +155,7 @@ export default function (eleventyConfig) {
   let eventBusPromise = null;
   eleventyConfig.on("eleventy.beforeWatch", async (changedFiles) => {
     const templateChanges = changedFiles?.filter(
-      (f) => /\.(jsx|tsx|ts|mdx)$/.test(f) && !/\.d\.ts$/.test(f),
+      (f) => /\.(jsx|tsx|ts|mdx)$/.test(f) && !f.endsWith(".d.ts"),
     );
     if (!templateChanges?.length) return;
     eventBusPromise ??= loadEleventyEventBus();
@@ -187,9 +182,7 @@ export default function (eleventyConfig) {
       return async function (data) {
         return _runWithEleventyData(data, async () => {
           const content = await this.defaultRenderer(data);
-          const html = render(
-            jsx(content.type, content.props, content.key),
-          ).trimStart();
+          const html = render(jsx(content.type, content.props, content.key)).trimStart();
           // NOTE: preact-render-to-string does not emit a DOCTYPE, so full-page
           // outputs land in quirks mode. Prepend only when the render actually
           // starts with <html> to leave partial / island renders untouched.

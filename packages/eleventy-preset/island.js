@@ -1,4 +1,1 @@
-export {
-  Island,
-  clientComponent,
-} from "@tuqulore-inc/eleventy-plugin-preact-island/island";
+export { Island, clientComponent } from "@tuqulore-inc/eleventy-plugin-preact-island/island";

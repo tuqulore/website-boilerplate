@@ -1,9 +1,10 @@
+import path from "node:path";
+
 import Image from "@11ty/eleventy-img";
 import postcss from "@tuqulore-inc/eleventy-plugin-postcss";
 import preact from "@tuqulore-inc/eleventy-plugin-preact";
 import preactIsland from "@tuqulore-inc/eleventy-plugin-preact-island";
 import fg from "fast-glob";
-import path from "node:path";
 
 // This preset's directory convention. The URL prefix follows Eleventy's own
 // `pathPrefix`, so it is not duplicated here.
@@ -14,12 +15,9 @@ const OUT_DIR = "dist";
  * Optimize images under SRC_DIR and output the same tree under OUT_DIR
  */
 const optimizeImages = async () => {
-  const images = await fg(
-    [`${SRC_DIR}/**/*.{jpeg,jpg,png,webp,gif,tiff,avif,svg}`],
-    {
-      ignore: [OUT_DIR, "**/node_modules", `${SRC_DIR}/public`],
-    },
-  );
+  const images = await fg([`${SRC_DIR}/**/*.{jpeg,jpg,png,webp,gif,tiff,avif,svg}`], {
+    ignore: [OUT_DIR, "**/node_modules", `${SRC_DIR}/public`],
+  });
   for (const image of images) {
     await Image(image, {
       filenameFormat: () => path.basename(image),
@@ -27,9 +25,7 @@ const optimizeImages = async () => {
       sharpOptions: {
         animated: true,
       },
-      outputDir: path
-        .dirname(image)
-        .replace(new RegExp(`^${SRC_DIR}`), OUT_DIR),
+      outputDir: path.dirname(image).replace(new RegExp(`^${SRC_DIR}`), OUT_DIR),
     });
   }
 };
@@ -66,9 +62,7 @@ export default function preset(extend = () => {}) {
     });
 
     // Markdown settings
-    eleventyConfig.amendLibrary("md", (md) =>
-      md.set({ breaks: true, linkify: true }),
-    );
+    eleventyConfig.amendLibrary("md", (md) => md.set({ breaks: true, linkify: true }));
 
     // Copy static assets from SRC_DIR/public to root
     eleventyConfig.addPassthroughCopy({ [`${SRC_DIR}/public/**`]: "/" });

@@ -140,12 +140,7 @@ import Counter from "./counter.client.jsx";
 For the example above, `<Island>` emits an `<is-land>` element like this from SSR:
 
 ```html
-<is-land
-  land-on:visible
-  type="preact"
-  import="/counter.client.js"
-  props='{"initial":5}'
->
+<is-land land-on:visible type="preact" import="/counter.client.js" props='{"initial":5}'>
   <button>5</button>
 </is-land>
 ```

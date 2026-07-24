@@ -1,8 +1,10 @@
-import { describe, it, beforeEach } from "node:test";
 import assert from "node:assert";
+import { describe, it, beforeEach } from "node:test";
+
+import { parse } from "devalue";
 import { h } from "preact";
 import { render } from "preact-render-to-string";
-import { parse } from "devalue";
+
 import { Island, clientComponent, _setClientModuleResolver } from "./island.js";
 
 // SSR HTML から <is-land ... props="..."> の props 属性値を取り出し、HTML エスケープを
@@ -38,8 +40,7 @@ describe("_setClientModuleResolver", () => {
       assert.throws(
         () => _setClientModuleResolver(bad),
         (err) =>
-          err instanceof TypeError &&
-          /`resolver` must be a function or null/.test(err.message),
+          err instanceof TypeError && /`resolver` must be a function or null/.test(err.message),
         `_setClientModuleResolver(${JSON.stringify(bad)}) が TypeError にならなかった`,
       );
     }
@@ -51,10 +52,7 @@ describe("clientComponent", () => {
     const Comp = () => null;
     const returned = clientComponent(Comp, "file:///proj/src/foo.client.jsx");
     assert.strictEqual(returned, Comp);
-    assert.strictEqual(
-      Comp.__clientModuleUrl,
-      "file:///proj/src/foo.client.jsx",
-    );
+    assert.strictEqual(Comp.__clientModuleUrl, "file:///proj/src/foo.client.jsx");
   });
 
   it("Component が関数でない場合は TypeError", () => {
@@ -84,9 +82,7 @@ describe("Island", () => {
       return h("span", null, props.name);
     }, "file:///proj/src/foo.client.jsx");
 
-    const html = render(
-      h(Island, { component: Foo, on: "visible", name: "alice" }),
-    );
+    const html = render(h(Island, { component: Foo, on: "visible", name: "alice" }));
 
     assert.deepStrictEqual(receivedUrls, ["file:///proj/src/foo.client.jsx"]);
     assert.match(html, /^<is-land/);
@@ -131,10 +127,7 @@ describe("Island", () => {
 
   it("component が渡されていない (または関数でない) 場合は TypeError", () => {
     _setClientModuleResolver(() => "/x.client.js");
-    assert.throws(
-      () => render(h(Island, { component: "not-a-fn" })),
-      TypeError,
-    );
+    assert.throws(() => render(h(Island, { component: "not-a-fn" })), TypeError);
   });
 
   it("on に不正な値 (空白 / 空文字 / 非文字列) を渡すと TypeError", () => {
@@ -143,8 +136,7 @@ describe("Island", () => {
     for (const on of ["foo bar", "", 'bad"quote', 123, null]) {
       assert.throws(
         () => render(h(Island, { component: X, on })),
-        (err) =>
-          err instanceof TypeError && /`on` must match/.test(err.message),
+        (err) => err instanceof TypeError && /`on` must match/.test(err.message),
         `on=${JSON.stringify(on)} が TypeError にならなかった`,
       );
     }
@@ -153,10 +145,7 @@ describe("Island", () => {
   it("component が clientComponent でラップされていない場合は明示エラー", () => {
     _setClientModuleResolver(() => "/x.client.js");
     const Bare = () => null;
-    assert.throws(
-      () => render(h(Island, { component: Bare })),
-      /not marked as a client component/,
-    );
+    assert.throws(() => render(h(Island, { component: Bare })), /not marked as a client component/);
   });
 
   it("resolver が未設定の場合は明示エラー", () => {
@@ -172,9 +161,7 @@ describe("Island", () => {
     const X = clientComponent(function X(props) {
       return h("i", null, `x-${props.tag}`);
     }, "file:///proj/src/x.client.jsx");
-    const html = render(
-      h(Island, { component: X, tag: "auto" }, h("b", null, "ignored")),
-    );
+    const html = render(h(Island, { component: X, tag: "auto" }, h("b", null, "ignored")));
     assert.match(html, /<i>x-auto<\/i>/);
     assert.doesNotMatch(html, /<b>ignored<\/b>/);
   });
@@ -187,9 +174,7 @@ describe("Island", () => {
       return h("i", null, `x-${props.tag}`);
     }, "file:///proj/src/x.client.jsx");
 
-    const html = render(
-      h(Island, { component: X, tag: "auto" }, h("b", null, "ignored")),
-    );
+    const html = render(h(Island, { component: X, tag: "auto" }, h("b", null, "ignored")));
 
     // <is-land props="..."> 属性に children/VNode が混入していないことを確認
     // (props 属性値は tag のみで完結)
@@ -227,10 +212,7 @@ describe("Island", () => {
         assert.match(err.message, /\/x\.client\.js/);
         // devalue の DevalueError.path は原因 prop の位置を示す
         assert.match(err.message, /at `\.onClick`/);
-        assert.ok(
-          err.cause instanceof Error,
-          "元エラーが cause に保持されている",
-        );
+        assert.ok(err.cause instanceof Error, "元エラーが cause に保持されている");
         return true;
       },
     );

@@ -1,9 +1,11 @@
-import { describe, it, before, after } from "node:test";
 import assert from "node:assert";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { describe, it, before, after } from "node:test";
 import { pathToFileURL } from "node:url";
+
 import { render } from "preact-render-to-string";
+
 import { load } from "./loaders/jsx.js";
 
 describe("SSR loader (oxc)", () => {
@@ -49,9 +51,7 @@ describe("SSR loader (oxc)", () => {
       });
 
       const source = String(result.source);
-      const base64 = source.match(
-        /sourceMappingURL=data:application\/json;base64,(\S+)/,
-      )?.[1];
+      const base64 = source.match(/sourceMappingURL=data:application\/json;base64,(\S+)/)?.[1];
       assert.ok(base64, "sourceMappingURL comment should be present");
 
       const map = JSON.parse(Buffer.from(base64, "base64").toString());
@@ -93,10 +93,7 @@ describe("SSR loader (oxc)", () => {
       await fs.writeFile(compiled, result.source);
       const { Page } = await import(pathToFileURL(compiled).href);
 
-      assert.strictEqual(
-        render(Page()),
-        "<main><h1>タイトル</h1><p>本文</p></main>",
-      );
+      assert.strictEqual(render(Page()), "<main><h1>タイトル</h1><p>本文</p></main>");
     });
   });
 
@@ -127,10 +124,7 @@ describe("SSR loader (oxc)", () => {
 
     it(".ts で型注釈のみ剥がされ JSX 変換は入らない", async () => {
       const file = path.join(dir, "utility.ts");
-      await fs.writeFile(
-        file,
-        "export const add = (a: number, b: number): number => a + b;\n",
-      );
+      await fs.writeFile(file, "export const add = (a: number, b: number): number => a + b;\n");
 
       const result = await load(pathToFileURL(file).href, {}, () => {
         assert.fail("nextLoad should not be called for .ts files");
@@ -166,10 +160,7 @@ describe("SSR loader (oxc)", () => {
 
     it("スペースを含む .tsx パスでもソースマップの sources に生パスが載る", async () => {
       const file = path.join(dir, "typed with space.tsx");
-      await fs.writeFile(
-        file,
-        "export const A = (): unknown => <div>hi</div>;\n",
-      );
+      await fs.writeFile(file, "export const A = (): unknown => <div>hi</div>;\n");
 
       const result = await load(pathToFileURL(file).href, {}, () => {
         assert.fail("nextLoad should not be called for .tsx files");
