@@ -2,6 +2,7 @@ import assert from "node:assert";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { after, before, describe, it } from "node:test";
+
 import {
   _buildReverseDeps,
   _computeInvalidationSet,
@@ -60,10 +61,9 @@ import { a as b, c } from "./bar.mdx";
   it("連続呼び出しでも lastIndex が持ち越されず全件返す (regression)", () => {
     // 長めの入力を先に走らせて内部 lastIndex が末尾寄りに進むケースを再現。
     // 呼び出し毎に regex が新しく作られていれば、短い入力でも先頭から抽出できる。
-    const long = Array.from(
-      { length: 20 },
-      (_, i) => `import x${i} from "./m${i}.mdx";`,
-    ).join("\n");
+    const long = Array.from({ length: 20 }, (_, i) => `import x${i} from "./m${i}.mdx";`).join(
+      "\n",
+    );
     _parseTemplateImports(long);
     const short = `import a from "./a.mdx";\n`;
     assert.deepStrictEqual(_parseTemplateImports(short), ["./a.mdx"]);
@@ -92,51 +92,33 @@ describe("_resolveTemplateImport", () => {
 
   it("拡張子付き相対パスをそのまま解決する", () => {
     const from = path.join(dir, "parent.mdx");
-    assert.strictEqual(
-      _resolveTemplateImport("./target.mdx", from),
-      path.join(dir, "target.mdx"),
-    );
+    assert.strictEqual(_resolveTemplateImport("./target.mdx", from), path.join(dir, "target.mdx"));
   });
 
   it(".tsx を含む拡張子付き相対パスも解決する", () => {
     const from = path.join(dir, "parent.mdx");
-    assert.strictEqual(
-      _resolveTemplateImport("./target.tsx", from),
-      path.join(dir, "target.tsx"),
-    );
+    assert.strictEqual(_resolveTemplateImport("./target.tsx", from), path.join(dir, "target.tsx"));
   });
 
   it("拡張子なし相対パスは .mdx を優先して解決する", () => {
     const from = path.join(dir, "parent.mdx");
     // target.mdx / target.jsx / target.tsx が全部あるが .mdx が優先
-    assert.strictEqual(
-      _resolveTemplateImport("./target", from),
-      path.join(dir, "target.mdx"),
-    );
+    assert.strictEqual(_resolveTemplateImport("./target", from), path.join(dir, "target.mdx"));
   });
 
   it("拡張子なし相対パスが .tsx にしか無い場合は .tsx にフォールバックする", () => {
     const from = path.join(dir, "parent.mdx");
-    assert.strictEqual(
-      _resolveTemplateImport("./only-tsx", from),
-      path.join(dir, "only-tsx.tsx"),
-    );
+    assert.strictEqual(_resolveTemplateImport("./only-tsx", from), path.join(dir, "only-tsx.tsx"));
   });
 
   it(".ts を含む拡張子付き相対パスも解決する", () => {
     const from = path.join(dir, "parent.mdx");
-    assert.strictEqual(
-      _resolveTemplateImport("./target.ts", from),
-      path.join(dir, "target.ts"),
-    );
+    assert.strictEqual(_resolveTemplateImport("./target.ts", from), path.join(dir, "target.ts"));
   });
 
   it("拡張子なし相対パスが .ts にしか無い場合は .ts にフォールバックする", () => {
     const from = path.join(dir, "parent.mdx");
-    assert.strictEqual(
-      _resolveTemplateImport("./only-ts", from),
-      path.join(dir, "only-ts.ts"),
-    );
+    assert.strictEqual(_resolveTemplateImport("./only-ts", from), path.join(dir, "only-ts.ts"));
   });
 
   it(".d.ts は型宣言のみのため fallback で拾わない", () => {
@@ -160,10 +142,7 @@ describe("_resolveTemplateImport", () => {
 
   it("../ を含む相対パスを解決する", () => {
     const from = path.join(dir, "sub", "sibling.mdx");
-    assert.strictEqual(
-      _resolveTemplateImport("../target.mdx", from),
-      path.join(dir, "target.mdx"),
-    );
+    assert.strictEqual(_resolveTemplateImport("../target.mdx", from), path.join(dir, "target.mdx"));
   });
 
   it("bare specifier (npm パッケージ) は null を返す", () => {
@@ -216,7 +195,7 @@ describe("_buildReverseDeps", () => {
   it("transitive 依存も逆辺に集約する (base → header → desktop)", () => {
     const rev = _buildReverseDeps([base, header, desktop, footer, orphan]);
     // desktop の ancestor は header と base の両方
-    assert.deepStrictEqual([...rev.get(desktop)].sort(), [base, header].sort());
+    assert.deepStrictEqual([...rev.get(desktop)].toSorted(), [base, header].toSorted());
   });
 
   it("誰にも import されていないファイルの逆辺は空", () => {
@@ -246,7 +225,7 @@ describe("_computeInvalidationSet", () => {
       [base, new Set()],
     ]);
     const set = _computeInvalidationSet([desktop], reverse);
-    assert.deepStrictEqual([...set].sort(), [base, desktop, header].sort());
+    assert.deepStrictEqual([...set].toSorted(), [base, desktop, header].toSorted());
   });
 
   it("複数の変更ファイルの ancestor をマージする", () => {
@@ -259,7 +238,7 @@ describe("_computeInvalidationSet", () => {
       [shared, new Set()],
     ]);
     const set = _computeInvalidationSet([a, b], reverse);
-    assert.deepStrictEqual([...set].sort(), [a, b, shared].sort());
+    assert.deepStrictEqual([...set].toSorted(), [a, b, shared].toSorted());
   });
 
   it("ancestor が空でも変更ファイル自身は必ず含める", () => {

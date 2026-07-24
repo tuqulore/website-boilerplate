@@ -1,5 +1,6 @@
-import handler from "serve-handler";
 import http from "node:http";
+
+import handler from "serve-handler";
 
 const server = http.createServer((request, response) => {
   return handler(request, response, {

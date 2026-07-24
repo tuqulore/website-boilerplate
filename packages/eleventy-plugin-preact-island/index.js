@@ -2,8 +2,10 @@ import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import url from "node:url";
+
 import * as esbuild from "esbuild";
 import fg from "fast-glob";
+
 import { _setClientModuleResolver } from "./island.js";
 import { createClientModuleResolver, normalizeUrlPrefix } from "./resolver.js";
 
@@ -204,13 +206,10 @@ export default function (eleventyConfig, pluginOptions = {}) {
   // is-land.js の中身を持つファイルに化ける。importmap 側 (`${urlPrefix}is-land.js`)
   // と揃えて確定名にすることでこの罠を回避する。
   eleventyConfig.addPassthroughCopy({
-    [url.fileURLToPath(import.meta.resolve("@11ty/is-land/is-land.js"))]:
-      "/is-land.js",
+    [url.fileURLToPath(import.meta.resolve("@11ty/is-land/is-land.js"))]: "/is-land.js",
   });
   const preactSuffix = resolvedPreactVersion ? `@${resolvedPreactVersion}` : "";
-  const devalueSuffix = resolvedDevalueVersion
-    ? `@${resolvedDevalueVersion}`
-    : "";
+  const devalueSuffix = resolvedDevalueVersion ? `@${resolvedDevalueVersion}` : "";
 
   // NOTE: is-land は import されたモジュール末尾で `Island.define()` を呼び、
   // その時点の `Island.attributePrefix` (デフォルト "on:") で customElements を
@@ -306,29 +305,22 @@ ${rehydrateScript}
 </script>`;
   };
 
-  eleventyConfig.addTransform(
-    "preact-island-inject",
-    function (content, outputPath) {
-      if (!outputPath?.endsWith?.(".html")) {
-        return content;
-      }
+  eleventyConfig.addTransform("preact-island-inject", function (content, outputPath) {
+    if (!outputPath?.endsWith?.(".html")) {
+      return content;
+    }
 
-      if (!content.includes("</head>")) {
-        console.warn(
-          `[eleventy-plugin-preact-island] WARN: No </head> tag found in ${outputPath}. Scripts not injected.`,
-        );
-        return content;
-      }
+    if (!content.includes("</head>")) {
+      console.warn(
+        `[eleventy-plugin-preact-island] WARN: No </head> tag found in ${outputPath}. Scripts not injected.`,
+      );
+      return content;
+    }
 
-      const scripts = [
-        generateImportMap(),
-        generateDevScript(),
-        generateIslandSetup(),
-      ]
-        .filter(Boolean)
-        .join("\n");
+    const scripts = [generateImportMap(), generateDevScript(), generateIslandSetup()]
+      .filter(Boolean)
+      .join("\n");
 
-      return content.replace("</head>", `${scripts}\n</head>`);
-    },
-  );
+    return content.replace("</head>", `${scripts}\n</head>`);
+  });
 }

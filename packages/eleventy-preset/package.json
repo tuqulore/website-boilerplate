@@ -5,17 +5,27 @@
   "keywords": [
     "eleventy",
     "eleventy-preset",
-    "preact",
-    "postcss"
+    "postcss",
+    "preact"
   ],
+  "license": "MIT",
+  "author": "tuqulore inc.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tuqulore/website-boilerplate.git",
     "directory": "packages/eleventy-preset"
   },
-  "license": "MIT",
-  "author": "tuqulore inc.",
+  "files": [
+    "README.md",
+    "index.d.ts",
+    "index.js",
+    "eleventy.d.ts",
+    "eleventy.js",
+    "island.d.ts",
+    "island.js"
+  ],
   "type": "module",
+  "main": "./index.js",
   "exports": {
     ".": {
       "types": "./index.d.ts",
@@ -30,18 +40,11 @@
       "default": "./island.js"
     }
   },
-  "main": "./index.js",
-  "files": [
-    "README.md",
-    "index.d.ts",
-    "index.js",
-    "eleventy.d.ts",
-    "eleventy.js",
-    "island.d.ts",
-    "island.js"
-  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "lint": "eslint --fix ."
+    "lint": "oxlint --fix"
   },
   "dependencies": {
     "@11ty/eleventy-img": "^6.0.4",
@@ -51,8 +54,8 @@
     "fast-glob": "^3.3.3"
   },
   "devDependencies": {
-    "@tuqulore-inc/eslint-config": "workspace:*",
-    "eslint": "^10.0.0"
+    "@tuqulore-inc/oxlint-config": "workspace:*",
+    "oxlint": "^1.75.0"
   },
   "peerDependencies": {
     "@11ty/eleventy": ">=3.0.0",
@@ -61,8 +64,5 @@
   },
   "engines": {
     "node": ">=20"
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }

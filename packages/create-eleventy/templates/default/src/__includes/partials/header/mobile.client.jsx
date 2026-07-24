@@ -1,5 +1,5 @@
-import { clientComponent } from "@tuqulore-inc/eleventy-preset/island";
 import { useSignal, useSignalEffect } from "@preact/signals";
+import { clientComponent } from "@tuqulore-inc/eleventy-preset/island";
 import { useRef } from "preact/hooks";
 import { twMerge } from "tailwind-merge";
 
@@ -31,9 +31,7 @@ function Mobile(props) {
         ref={openButtonRef}
         aria-controls="nav-menu-mobile"
         aria-expanded={open.value}
-        aria-label={
-          open.value ? "Close navigation menu" : "Open navigation menu"
-        }
+        aria-label={open.value ? "Close navigation menu" : "Open navigation menu"}
         class="jumpu-icon-button h-12 w-12 text-2xl"
         type="button"
         onClick={() => (open.value = !open.value)}

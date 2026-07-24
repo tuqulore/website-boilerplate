@@ -2,26 +2,16 @@ import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
 
 <meta
   name="description"
-  content={
-    eleventy.description ?? eleventy.site[eleventy.locale ?? "ja"].description
-  }
+  content={eleventy.description ?? eleventy.site[eleventy.locale ?? "ja"].description}
 />
 <meta
   property="og:description"
-  content={
-    eleventy.description ?? eleventy.site[eleventy.locale ?? "ja"].description
-  }
+  content={eleventy.description ?? eleventy.site[eleventy.locale ?? "ja"].description}
 />
-<meta
-  property="og:site_name"
-  content={eleventy.site[eleventy.locale ?? "ja"].name}
-/>
+<meta property="og:site_name" content={eleventy.site[eleventy.locale ?? "ja"].name} />
 <meta property="og:title" content={eleventy.title} />
 <meta property="og:type" content="website" />
-<meta
-  property="og:url"
-  content={new URL(eleventy.page.url, eleventy.site.url).href}
-/>
+<meta property="og:url" content={new URL(eleventy.page.url, eleventy.site.url).href} />
 <meta
   property="og:image:alt"
   content={eleventy.title ?? eleventy.site[eleventy.locale ?? "ja"].name}

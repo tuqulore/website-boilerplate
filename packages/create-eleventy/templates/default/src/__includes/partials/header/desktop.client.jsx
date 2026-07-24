@@ -1,5 +1,5 @@
-import { clientComponent } from "@tuqulore-inc/eleventy-preset/island";
 import { useSignal, useSignalEffect } from "@preact/signals";
+import { clientComponent } from "@tuqulore-inc/eleventy-preset/island";
 import { useRef } from "preact/hooks";
 import slugify from "slugify";
 import { twMerge } from "tailwind-merge";
@@ -82,10 +82,7 @@ function Desktop(props) {
               <MenuList item={item} index={itemIndex}>
                 {item.children.map((child, childIndex) => (
                   <li key={`${child.name}-${childIndex}`}>
-                    <a
-                      class="jumpu-text-button w-full whitespace-nowrap"
-                      href={child.path}
-                    >
+                    <a class="jumpu-text-button w-full whitespace-nowrap" href={child.path}>
                       {child.name}
                     </a>
                   </li>

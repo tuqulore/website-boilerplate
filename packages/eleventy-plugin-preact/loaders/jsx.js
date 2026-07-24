@@ -7,6 +7,7 @@
 
 import fs from "node:fs/promises";
 import { fileURLToPath } from "node:url";
+
 import { transformSync } from "oxc-transform";
 
 const TRANSFORM_RE = /\.(jsx|tsx|ts)$/;
@@ -37,11 +38,7 @@ const OPTIONS = {
 export async function load(href, context, nextLoad) {
   const url = new URL(href);
 
-  if (
-    url.protocol !== "file:" ||
-    !TRANSFORM_RE.test(url.pathname) ||
-    DTS_RE.test(url.pathname)
-  ) {
+  if (url.protocol !== "file:" || !TRANSFORM_RE.test(url.pathname) || DTS_RE.test(url.pathname)) {
     return nextLoad(href, context);
   }
 
@@ -52,15 +49,9 @@ export async function load(href, context, nextLoad) {
   const fatal = errors.filter((e) => e.severity === "Error");
   if (fatal.length > 0) {
     const details = fatal
-      .map(
-        (e) =>
-          e.codeframe ??
-          `${e.message}${e.helpMessage ? `\n  help: ${e.helpMessage}` : ""}`,
-      )
+      .map((e) => e.codeframe ?? `${e.message}${e.helpMessage ? `\n  help: ${e.helpMessage}` : ""}`)
       .join("\n\n");
-    throw new Error(
-      `[eleventy-plugin-preact] Failed to transform ${filename}:\n${details}`,
-    );
+    throw new Error(`[eleventy-plugin-preact] Failed to transform ${filename}:\n${details}`);
   }
 
   return {

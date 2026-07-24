@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import fs from "node:fs";
 import path from "node:path";
-import { parseArgs } from "node:util";
 import readline from "node:readline";
+import { parseArgs } from "node:util";
 
 const { values, positionals } = parseArgs({
   options: {

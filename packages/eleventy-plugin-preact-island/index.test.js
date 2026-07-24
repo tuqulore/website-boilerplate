@@ -1,12 +1,14 @@
-import { createRequire } from "node:module";
-import path from "node:path";
-import { describe, it } from "node:test";
 import assert from "node:assert";
 import { readFileSync } from "node:fs";
+import { createRequire } from "node:module";
+import path from "node:path";
 import { dirname, join } from "node:path";
+import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
+
 import { h } from "preact";
 import { render } from "preact-render-to-string";
+
 import preactIsland from "./index.js";
 import { Island, clientComponent } from "./island.js";
 
@@ -41,11 +43,7 @@ function readInstalledDevalueVersion() {
  * registration and invoke `eleventy.before` without spinning up Eleventy.
  * `ignores.add` records patterns so tests can assert the always-on ignore rule.
  */
-function makeEleventyConfigStub({
-  pathPrefix,
-  input = "/proj/src/",
-  output = "/proj/dist/",
-} = {}) {
+function makeEleventyConfigStub({ pathPrefix, input = "/proj/src/", output = "/proj/dist/" } = {}) {
   const eventHandlers = new Map();
   const ignoreAdds = [];
   const transforms = new Map();
@@ -90,10 +88,7 @@ describe("Island plugin URL prefix ↔ Eleventy pathPrefix / directories", () =>
     const config = makeEleventyConfigStub({ pathPrefix: "/" });
     preactIsland(config);
 
-    const Foo = clientComponent(
-      () => h("span", null, "x"),
-      "file:///proj/src/foo.client.jsx",
-    );
+    const Foo = clientComponent(() => h("span", null, "x"), "file:///proj/src/foo.client.jsx");
     const html = render(h(Island, { component: Foo }));
     assert.match(html, /import="\/foo\.client\.js"/);
   });
@@ -132,10 +127,7 @@ describe("Island plugin URL prefix ↔ Eleventy pathPrefix / directories", () =>
     });
     preactIsland(config);
 
-    const Foo = clientComponent(
-      () => null,
-      "file:///proj/content/foo.client.jsx",
-    );
+    const Foo = clientComponent(() => null, "file:///proj/content/foo.client.jsx");
     const html = render(h(Island, { component: Foo }));
     assert.match(html, /import="\/assets\/foo\.client\.js"/);
   });
@@ -190,10 +182,7 @@ describe("Island plugin inline setup script の初期化順", () => {
     const prefixIdx = html.indexOf('Island.attributePrefix = "land-on:"');
     const defineIdx = html.indexOf("Island.define()");
     assert.ok(prefixIdx > -1, "attributePrefix 上書きが inline script に無い");
-    assert.ok(
-      defineIdx > -1,
-      "明示 Island.define() 呼び出しが inline script に無い",
-    );
+    assert.ok(defineIdx > -1, "明示 Island.define() 呼び出しが inline script に無い");
     assert.ok(
       prefixIdx < defineIdx,
       "Island.attributePrefix は Island.define() より前に設定しないと customElements 登録に反映されない",
@@ -217,14 +206,8 @@ describe("Island plugin importmap ↔ preact バージョン自動検出", () =>
       html.includes(`https://esm.sh/preact@${version}"`),
       `expected importmap to pin preact to @${version}, got: ${html}`,
     );
-    assert.ok(
-      html.includes(`https://esm.sh/preact@${version}/hooks?external=preact`),
-    );
-    assert.ok(
-      html.includes(
-        `https://esm.sh/preact@${version}/jsx-runtime?external=preact`,
-      ),
-    );
+    assert.ok(html.includes(`https://esm.sh/preact@${version}/hooks?external=preact`));
+    assert.ok(html.includes(`https://esm.sh/preact@${version}/jsx-runtime?external=preact`));
   });
 
   it("preactVersion 指定時は指定値が優先され、警告は出ない", (t) => {
@@ -314,17 +297,13 @@ describe("Island plugin ignore ルール (常時追加)", () => {
   it("bundle デフォルトでも .client.* を input 配下で ignore に追加する", () => {
     const config = makeEleventyConfigStub({ input: "./src/" });
     preactIsland(config);
-    assert.deepStrictEqual(config._ignoreAdds, [
-      "./src/**/*.client.{js,jsx,ts,tsx}",
-    ]);
+    assert.deepStrictEqual(config._ignoreAdds, ["./src/**/*.client.{js,jsx,ts,tsx}"]);
   });
 
   it("bundle: false でも .client.* を ignore に追加する (バンドラー選択と独立)", () => {
     const config = makeEleventyConfigStub({ input: "./src/" });
     preactIsland(config, { bundle: false });
-    assert.deepStrictEqual(config._ignoreAdds, [
-      "./src/**/*.client.{js,jsx,ts,tsx}",
-    ]);
+    assert.deepStrictEqual(config._ignoreAdds, ["./src/**/*.client.{js,jsx,ts,tsx}"]);
   });
 
   // NOTE: Eleventy の directories.input は常に「./ 前置 + 末尾スラッシュ」に正規化
@@ -333,9 +312,7 @@ describe("Island plugin ignore ルール (常時追加)", () => {
   it("input がプロジェクトルート (正規化形 './') でも有効な glob を追加する", () => {
     const config = makeEleventyConfigStub({ input: "./" });
     preactIsland(config);
-    assert.deepStrictEqual(config._ignoreAdds, [
-      "./**/*.client.{js,jsx,ts,tsx}",
-    ]);
+    assert.deepStrictEqual(config._ignoreAdds, ["./**/*.client.{js,jsx,ts,tsx}"]);
   });
 });
 

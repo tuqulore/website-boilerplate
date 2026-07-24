@@ -1,7 +1,8 @@
-import { describe, it } from "node:test";
 import assert from "node:assert";
 import path from "node:path";
+import { describe, it } from "node:test";
 import url from "node:url";
+
 import { createClientModuleResolver } from "./resolver.js";
 
 // Absolute inputDir values keep tests independent of the runner's cwd (the
@@ -12,36 +13,25 @@ describe("createClientModuleResolver", () => {
   describe("input 配下のモジュールを解決する", () => {
     it("ネストしたモジュールを <urlPrefix><sub>.client.js に変換する", () => {
       const resolve = createClientModuleResolver({ inputDir: "/proj/src" });
-      assert.strictEqual(
-        resolve("file:///proj/src/foo/bar.client.jsx"),
-        "/foo/bar.client.js",
-      );
+      assert.strictEqual(resolve("file:///proj/src/foo/bar.client.jsx"), "/foo/bar.client.js");
     });
 
     it(".jsx / .tsx / .js / .ts を全て受け付け .client.js に統一する", () => {
       const resolve = createClientModuleResolver({ inputDir: "/proj/src" });
       for (const ext of ["jsx", "tsx", "js", "ts"]) {
-        assert.strictEqual(
-          resolve(`file:///proj/src/foo.client.${ext}`),
-          "/foo.client.js",
-        );
+        assert.strictEqual(resolve(`file:///proj/src/foo.client.${ext}`), "/foo.client.js");
       }
     });
 
     it('input "." (Eleventy デフォルト = プロジェクトルート) 直下も解決する', () => {
       const resolve = createClientModuleResolver({ inputDir: "." });
-      const moduleUrl = url.pathToFileURL(
-        path.join(process.cwd(), "foo.client.jsx"),
-      ).href;
+      const moduleUrl = url.pathToFileURL(path.join(process.cwd(), "foo.client.jsx")).href;
       assert.strictEqual(resolve(moduleUrl), "/foo.client.js");
     });
 
     it('input "./src/" 形式 (末尾スラッシュ) でも解決する', () => {
       const resolve = createClientModuleResolver({ inputDir: "/proj/src/" });
-      assert.strictEqual(
-        resolve("file:///proj/src/foo.client.jsx"),
-        "/foo.client.js",
-      );
+      assert.strictEqual(resolve("file:///proj/src/foo.client.jsx"), "/foo.client.js");
     });
   });
 
@@ -51,10 +41,7 @@ describe("createClientModuleResolver", () => {
         inputDir: "/proj/src",
         urlPrefix: "/assets",
       });
-      assert.strictEqual(
-        resolve("file:///proj/src/foo.client.jsx"),
-        "/assets/foo.client.js",
-      );
+      assert.strictEqual(resolve("file:///proj/src/foo.client.jsx"), "/assets/foo.client.js");
     });
 
     it("urlPrefix の前後スラッシュを正規化する", () => {
@@ -114,10 +101,7 @@ describe("createClientModuleResolver", () => {
 
     it(".client.{js,jsx,ts,tsx} 以外はエラーで失敗する", () => {
       const resolve = createClientModuleResolver({ inputDir: "/proj/src" });
-      assert.throws(
-        () => resolve("file:///proj/src/foo.jsx"),
-        /must end with \.client/,
-      );
+      assert.throws(() => resolve("file:///proj/src/foo.jsx"), /must end with \.client/);
     });
 
     it("URL として不正な値はエラーで失敗する", () => {
@@ -126,16 +110,12 @@ describe("createClientModuleResolver", () => {
     });
 
     it("inputDir が非文字列だと factory 呼び出しの時点で TypeError", () => {
-      assert.throws(
-        () => createClientModuleResolver({ inputDir: 123 }),
-        TypeError,
-      );
+      assert.throws(() => createClientModuleResolver({ inputDir: 123 }), TypeError);
     });
 
     it("urlPrefix が非文字列だと factory 呼び出しの時点で TypeError", () => {
       assert.throws(
-        () =>
-          createClientModuleResolver({ inputDir: "/proj/src", urlPrefix: 123 }),
+        () => createClientModuleResolver({ inputDir: "/proj/src", urlPrefix: 123 }),
         TypeError,
       );
     });

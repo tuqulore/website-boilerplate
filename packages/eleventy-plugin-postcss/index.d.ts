@@ -17,9 +17,6 @@ export interface PluginOptions {
 /**
  * Eleventy plugin for processing CSS with PostCSS
  */
-declare function postcssPlugin(
-  eleventyConfig: UserConfig,
-  pluginOptions?: PluginOptions,
-): void;
+declare function postcssPlugin(eleventyConfig: UserConfig, pluginOptions?: PluginOptions): void;
 
 export default postcssPlugin;

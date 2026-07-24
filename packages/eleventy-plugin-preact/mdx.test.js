@@ -3,6 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { after, before, describe, it } from "node:test";
 import { pathToFileURL } from "node:url";
+
 import { load } from "./loaders/mdx.js";
 
 describe("MDX loader (satteri)", () => {
@@ -72,10 +73,7 @@ describe("MDX loader (satteri)", () => {
 
   describe("見出しアンカー", () => {
     it("h1 - h6 に heading-slug の id が付く", async () => {
-      const file = await writeMdx(
-        "slug.mdx",
-        "# Hello World\n\n## Sub Heading\n\n### Deep\n",
-      );
+      const file = await writeMdx("slug.mdx", "# Hello World\n\n## Sub Heading\n\n### Deep\n");
       const result = await loadMdx(file);
       const source = String(result.source);
 
@@ -115,17 +113,7 @@ describe("MDX loader (satteri)", () => {
     it("front matter が export const data として prepend される", async () => {
       const file = await writeMdx(
         "with-fm.mdx",
-        [
-          "---",
-          "title: Hello",
-          "tags:",
-          "  - a11y",
-          "  - web",
-          "---",
-          "",
-          "# Body",
-          "",
-        ].join("\n"),
+        ["---", "title: Hello", "tags:", "  - a11y", "  - web", "---", "", "# Body", ""].join("\n"),
       );
       const result = await loadMdx(file);
       const source = String(result.source);
@@ -222,10 +210,7 @@ describe("MDX loader (satteri)", () => {
           /\[eleventy-plugin-preact\].*broken-yaml\.mdx.*failed to parse YAML frontmatter/,
         );
         // 原因の元 error は cause に載っている
-        assert.ok(
-          err.cause,
-          "original YAMLParseError should be exposed as `cause`",
-        );
+        assert.ok(err.cause, "original YAMLParseError should be exposed as `cause`");
         return true;
       });
     });
@@ -245,37 +230,22 @@ describe("MDX loader (satteri)", () => {
         ["---", "- a", "- b", "---", "", "# Body", ""].join("\n"),
       );
 
-      await assert.rejects(
-        loadMdx(file),
-        /must be an object \(mapping\), got array/,
-      );
+      await assert.rejects(loadMdx(file), /must be an object \(mapping\), got array/);
     });
 
     it("空の front matter (`---\\n---`) も data を空オブジェクトとして prepend する", async () => {
-      const file = await writeMdx(
-        "empty-fence.mdx",
-        ["---", "---", "", "# Body", ""].join("\n"),
-      );
+      const file = await writeMdx("empty-fence.mdx", ["---", "---", "", "# Body", ""].join("\n"));
 
       const result = await loadMdx(file);
-      assert.match(
-        String(result.source),
-        /^export const data = JSON\.parse\("\{\}"\);/,
-      );
+      assert.match(String(result.source), /^export const data = JSON\.parse\("\{\}"\);/);
     });
 
     it("空 fence + 本文の export const data の併用も throw する", async () => {
       const file = await writeMdx(
         "empty-fence-collision.mdx",
-        [
-          "---",
-          "---",
-          "",
-          "export const data = { title: 'From body' };",
-          "",
-          "# Body",
-          "",
-        ].join("\n"),
+        ["---", "---", "", "export const data = { title: 'From body' };", "", "# Body", ""].join(
+          "\n",
+        ),
       );
 
       await assert.rejects(loadMdx(file), /export const data/);
@@ -288,25 +258,15 @@ describe("MDX loader (satteri)", () => {
       );
 
       const result = await loadMdx(file);
-      assert.match(
-        String(result.source),
-        /^export const data = JSON\.parse\("\{\}"\);/,
-      );
+      assert.match(String(result.source), /^export const data = JSON\.parse\("\{\}"\);/);
     });
 
     it("frontmatter の `__proto__` キーは prototype を汚染せず own property になる", async () => {
       const file = await writeMdx(
         "proto.mdx",
-        [
-          "---",
-          "__proto__:",
-          "  poisoned: true",
-          "title: Safe",
-          "---",
-          "",
-          "# Body",
-          "",
-        ].join("\n"),
+        ["---", "__proto__:", "  poisoned: true", "title: Safe", "---", "", "# Body", ""].join(
+          "\n",
+        ),
       );
 
       const result = await loadMdx(file);
@@ -343,15 +303,7 @@ describe("MDX loader (satteri)", () => {
     it("front matter を持つ MDX を import すると data として取り出せる", async () => {
       const file = await writeMdx(
         "importable.mdx",
-        [
-          "---",
-          "title: Imported",
-          "layout: post",
-          "---",
-          "",
-          "# Body",
-          "",
-        ].join("\n"),
+        ["---", "title: Imported", "layout: post", "---", "", "# Body", ""].join("\n"),
       );
       const result = await loadMdx(file);
 

@@ -18,19 +18,12 @@ import url from "node:url";
  *   bundles are served (follows Eleventy `pathPrefix`).
  * @returns {(moduleUrl: string) => string}
  */
-export function createClientModuleResolver({
-  inputDir = ".",
-  urlPrefix = "/",
-} = {}) {
+export function createClientModuleResolver({ inputDir = ".", urlPrefix = "/" } = {}) {
   if (typeof inputDir !== "string") {
-    throw new TypeError(
-      "createClientModuleResolver: `inputDir` must be a string",
-    );
+    throw new TypeError("createClientModuleResolver: `inputDir` must be a string");
   }
   if (typeof urlPrefix !== "string") {
-    throw new TypeError(
-      "createClientModuleResolver: `urlPrefix` must be a string",
-    );
+    throw new TypeError("createClientModuleResolver: `urlPrefix` must be a string");
   }
 
   // Absolute input dir as a URL pathname, with a guaranteed trailing slash so
@@ -48,9 +41,7 @@ export function createClientModuleResolver({
     try {
       pathname = new URL(moduleUrl).pathname;
     } catch {
-      throw new Error(
-        `[eleventy-plugin-preact-island] Invalid module URL: ${moduleUrl}`,
-      );
+      throw new Error(`[eleventy-plugin-preact-island] Invalid module URL: ${moduleUrl}`);
     }
 
     if (!pathname.startsWith(inputBase)) {

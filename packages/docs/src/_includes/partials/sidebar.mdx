@@ -11,9 +11,7 @@ import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
           {section.path ? (
             <a
               href={section.path}
-              aria-current={
-                eleventy.page.url === section.path ? "page" : undefined
-              }
+              aria-current={eleventy.page.url === section.path ? "page" : undefined}
               class="block font-semibold aria-[current=page]:underline"
             >
               {section.name}
@@ -27,9 +25,7 @@ import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
                 <li key={child.path}>
                   <a
                     href={child.path}
-                    aria-current={
-                      eleventy.page.url === child.path ? "page" : undefined
-                    }
+                    aria-current={eleventy.page.url === child.path ? "page" : undefined}
                     class="block aria-[current=page]:underline"
                   >
                     {child.name}

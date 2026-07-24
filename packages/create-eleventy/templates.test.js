@@ -1,10 +1,10 @@
-import { describe, it, before, after } from "node:test";
 import assert from "node:assert";
+import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import fsp from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { spawnSync } from "node:child_process";
+import { describe, it, before, after } from "node:test";
 import { fileURLToPath } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -39,25 +39,15 @@ describe("create-eleventy templates", { concurrency: true }, () => {
   const overrides = {};
 
   before(async () => {
-    packDir = await fsp.mkdtemp(
-      path.join(os.tmpdir(), "create-eleventy-pack-"),
-    );
+    packDir = await fsp.mkdtemp(path.join(os.tmpdir(), "create-eleventy-pack-"));
     for (const name of workspacePackageNames) {
-      const result = spawnSync(
-        "pnpm",
-        ["--filter", name, "pack", "--pack-destination", packDir],
-        {
-          cwd: workspaceRoot,
-          encoding: "utf8",
-          timeout: TIMEOUT_PACK,
-          maxBuffer: MAX_BUFFER,
-        },
-      );
-      assert.strictEqual(
-        result.status,
-        0,
-        describeChild(`pnpm pack ${name}`, result),
-      );
+      const result = spawnSync("pnpm", ["--filter", name, "pack", "--pack-destination", packDir], {
+        cwd: workspaceRoot,
+        encoding: "utf8",
+        timeout: TIMEOUT_PACK,
+        maxBuffer: MAX_BUFFER,
+      });
+      assert.strictEqual(result.status, 0, describeChild(`pnpm pack ${name}`, result));
       const shortName = name.replace("@tuqulore-inc/", "tuqulore-inc-");
       const tarball = fs
         .readdirSync(packDir)
@@ -84,9 +74,7 @@ describe("create-eleventy templates", { concurrency: true }, () => {
       let projectDir;
 
       before(async () => {
-        workDir = await fsp.mkdtemp(
-          path.join(os.tmpdir(), `create-eleventy-${template}-`),
-        );
+        workDir = await fsp.mkdtemp(path.join(os.tmpdir(), `create-eleventy-${template}-`));
         projectDir = path.join(workDir, "my-app");
       });
 
@@ -95,22 +83,16 @@ describe("create-eleventy templates", { concurrency: true }, () => {
       });
 
       it("CLI で scaffold できる", () => {
-        const result = spawnSync(
-          process.execPath,
-          [cli, "my-app", "--template", template],
-          {
-            cwd: workDir,
-            stdio: ["ignore", "pipe", "pipe"],
-            encoding: "utf8",
-            timeout: TIMEOUT_FAST,
-            maxBuffer: MAX_BUFFER,
-          },
-        );
+        const result = spawnSync(process.execPath, [cli, "my-app", "--template", template], {
+          cwd: workDir,
+          stdio: ["ignore", "pipe", "pipe"],
+          encoding: "utf8",
+          timeout: TIMEOUT_FAST,
+          maxBuffer: MAX_BUFFER,
+        });
         assert.strictEqual(result.status, 0, describeChild("scaffold", result));
 
-        const pkg = JSON.parse(
-          fs.readFileSync(path.join(projectDir, "package.json"), "utf8"),
-        );
+        const pkg = JSON.parse(fs.readFileSync(path.join(projectDir, "package.json"), "utf8"));
         assert.strictEqual(pkg.name, "my-app");
         assert.ok(
           fs.existsSync(path.join(projectDir, ".env")),
@@ -137,10 +119,7 @@ describe("create-eleventy templates", { concurrency: true }, () => {
             `packages:\n  - my-app\n` +
             `overrides:\n${overridesYaml}\n` +
             `allowBuilds:\n  esbuild: false\n  sharp: false\n`;
-          fs.writeFileSync(
-            path.join(workDir, "pnpm-workspace.yaml"),
-            workspaceYaml,
-          );
+          fs.writeFileSync(path.join(workDir, "pnpm-workspace.yaml"), workspaceYaml);
 
           const install = spawnSync("pnpm", ["install", "--prefer-offline"], {
             cwd: projectDir,
@@ -148,11 +127,7 @@ describe("create-eleventy templates", { concurrency: true }, () => {
             timeout: TIMEOUT_INSTALL,
             maxBuffer: MAX_BUFFER,
           });
-          assert.strictEqual(
-            install.status,
-            0,
-            describeChild("pnpm install", install),
-          );
+          assert.strictEqual(install.status, 0, describeChild("pnpm install", install));
 
           const build = spawnSync("pnpm", ["run", "build"], {
             cwd: projectDir,
@@ -160,11 +135,7 @@ describe("create-eleventy templates", { concurrency: true }, () => {
             timeout: TIMEOUT_BUILD,
             maxBuffer: MAX_BUFFER,
           });
-          assert.strictEqual(
-            build.status,
-            0,
-            describeChild("pnpm build", build),
-          );
+          assert.strictEqual(build.status, 0, describeChild("pnpm build", build));
 
           assert.ok(
             fs.existsSync(path.join(projectDir, "dist", "index.html")),
@@ -197,10 +168,7 @@ describe("create-eleventy templates", { concurrency: true }, () => {
               "dist/clicker.client/ が生成されている (.client.* の Eleventy ignore が効いていない可能性)",
             );
 
-            const indexHtml = fs.readFileSync(
-              path.join(projectDir, "dist", "index.html"),
-              "utf8",
-            );
+            const indexHtml = fs.readFileSync(path.join(projectDir, "dist", "index.html"), "utf8");
             assert.match(
               indexHtml,
               /<is-land[^>]*\bimport="\/clicker\.client\.js"/,

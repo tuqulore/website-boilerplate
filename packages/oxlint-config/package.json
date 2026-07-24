@@ -1,0 +1,30 @@
+{
+  "name": "@tuqulore-inc/oxlint-config",
+  "version": "5.1.1-alpha.0",
+  "private": true,
+  "description": "Shared Oxlint configuration for tuqulore packages",
+  "keywords": [
+    "oxlint",
+    "oxlint-config"
+  ],
+  "license": "MIT",
+  "author": "tuqulore inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tuqulore/website-boilerplate.git",
+    "directory": "packages/oxlint-config"
+  },
+  "files": [
+    ".oxlintrc.json"
+  ],
+  "type": "module",
+  "exports": {
+    "./oxlintrc": "./.oxlintrc.json"
+  },
+  "peerDependencies": {
+    "oxlint": ">=1.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
