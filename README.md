@@ -15,7 +15,7 @@ Full documentation lives at [website.tuqulore.workers.dev](https://website.tuqul
 | [@tuqulore-inc/eleventy-plugin-preact](./packages/eleventy-plugin-preact)               | Plugin for JSX/MDX templates via Preact SSR                              |
 | [@tuqulore-inc/eleventy-plugin-preact-island](./packages/eleventy-plugin-preact-island) | Plugin for Partial Hydration                                             |
 | [@tuqulore-inc/eleventy-plugin-postcss](./packages/eleventy-plugin-postcss)             | Plugin for PostCSS                                                       |
-| [@tuqulore-inc/eslint-config](./packages/eslint-config)                                 | Shared ESLint config                                                     |
+| [@tuqulore-inc/oxlint-config](./packages/oxlint-config)                                 | Shared Oxlint config                                                     |
 
 ## Quick start
 
