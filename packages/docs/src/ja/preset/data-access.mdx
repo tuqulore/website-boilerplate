@@ -122,6 +122,38 @@ src/_data/nav/en.json
 
 現在のページの `locale` に応じてどちらを引くかは、テンプレート側で `eleventy.nav[eleventy.locale]` の形で分岐します。本ドキュメントの sidebar 実装がその例です。
 
+## データに型を付ける
+
+`eleventy` シングルトンは `EleventyBuiltinData & EleventyUserData` として型付けされています。`EleventyBuiltinData` にはプリセットが提供する組み込み型 (`page`, `content`、`title` / `description` などよくある frontmatter フィールド) が入ります。`EleventyUserData` は空の interface で、プロジェクトごとに TypeScript の declaration merging で拡張します。
+
+`.d.ts` ファイル (例: `src/eleventy.env.d.ts`) を追加し、`_data/` の形とプロジェクト固有の frontmatter フィールドを宣言します。
+
+```ts
+// src/eleventy.env.d.ts
+type Locale = "ja" | "en";
+
+interface NavItem {
+  name: string;
+  path?: string;
+  children?: readonly NavItem[];
+}
+
+declare module "@tuqulore-inc/eleventy-plugin-preact/eleventy" {
+  interface EleventyUserData {
+    locale?: Locale;
+    site: Record<Locale, { name: string; description: string }> & {
+      url: string;
+      author: string;
+    };
+    nav: Record<Locale, readonly NavItem[]>;
+  }
+}
+```
+
+これで `eleventy.site[eleventy.locale ?? "ja"].name` が `string` に解決され、`eleventy.titel` は型エラーになり、エディタの補完も各フィールドを列挙できるようになります。
+
+declaration merging のターゲット module は、コードが preset パス経由でシングルトンを import している場合でも、常に型の物理的な出所である `@tuqulore-inc/eleventy-plugin-preact/eleventy` を使います。
+
 ## SSR 中のみ有効
 
 `eleventy` シングルトンは SSR 中にだけ有効です。クライアント側で hydrate される Island からは参照できません。SSR 側で解決した値を Island に渡したいときは、`<Island>` の props として明示的に渡します。

@@ -28,6 +28,7 @@ Example:
 }
 
 const templatesDir = new URL("./templates/", import.meta.url);
+/** @type {string[]} */
 let templates;
 
 try {
@@ -38,6 +39,10 @@ try {
   process.exit(1);
 }
 
+/**
+ * @param {string} question
+ * @returns {Promise<string>}
+ */
 async function prompt(question) {
   const rl = readline.createInterface({
     input: process.stdin,
@@ -73,6 +78,10 @@ async function selectTemplate() {
   process.exit(1);
 }
 
+/**
+ * @param {string} src
+ * @param {string} dest
+ */
 function copyDir(src, dest) {
   fs.mkdirSync(dest, { recursive: true });
   const entries = fs.readdirSync(src, { withFileTypes: true });
@@ -100,26 +109,20 @@ function copyDir(src, dest) {
 
 async function main() {
   let projectName = positionals[0];
-
   if (!projectName) {
     projectName = await prompt("Project name: ");
-    if (!projectName) {
-      console.error("Project name is required");
-      process.exit(1);
-    }
+  }
+  if (!projectName) {
+    console.error("Project name is required");
+    process.exit(1);
   }
 
   let templateName = values.template;
-
   if (!templateName) {
-    if (templates.length === 1) {
-      templateName = templates[0];
-    } else {
-      templateName = await selectTemplate();
-    }
+    templateName =
+      templates.length === 1 ? templates[0] : await selectTemplate();
   }
-
-  if (!templates.includes(templateName)) {
+  if (!templateName || !templates.includes(templateName)) {
     console.error(`Template "${templateName}" not found.`);
     console.error(`Available templates: ${templates.join(", ")}`);
     process.exit(1);

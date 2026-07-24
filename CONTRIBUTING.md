@@ -29,15 +29,18 @@ pnpm install
 ### コード整形と静的検査
 
 ```shell
-pnpm format   # prettier --write .
-pnpm lint     # 各パッケージの eslint --fix .
+pnpm format       # prettier --write .
+pnpm lint         # 各パッケージの eslint --fix .
+pnpm typecheck    # 各パッケージの tsc --noEmit
 ```
 
-CI（`.github/workflows/ci.yaml`）は `pnpm lint` → `pnpm -r test` → 整形チェックを実行します。ローカルでも同じコマンドが通ることを PR 前に確認してください。
+CI（`.github/workflows/ci.yaml`）は `pnpm lint` → `pnpm typecheck` → `pnpm -r test` → `pnpm test:types` → 整形チェックを実行します。ローカルでも同じコマンドが通ることを PR 前に確認してください。
 
 ### 自動テスト
 
 各パッケージの `test` スクリプトはリポジトリルートから `pnpm -r test` で一括実行できます。テストは Node.js 標準の `node --test` を採用し、追加ランナーは持ち込みません。
+
+公開パッケージの `.d.ts` に対する型テストは `tsd` で書き、`pnpm test:types` で一括実行できます (該当パッケージだけを対象に `pnpm -r --if-present test:types` として解決)。実装 `.js` の JSDoc は `pnpm typecheck` の対象なので、型に関わる変更を入れたときはどちらも通ることを確認してください。
 
 ## パッケージの手動テストガイド
 

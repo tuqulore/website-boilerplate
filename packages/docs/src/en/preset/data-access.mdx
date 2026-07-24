@@ -122,6 +122,38 @@ src/_data/nav/en.json
 
 Templates typically pick which side to read based on the current page's `locale`: `eleventy.nav[eleventy.locale]`. This is exactly what this documentation's sidebar does.
 
+## Typing your data
+
+The `eleventy` singleton is typed as `EleventyBuiltinData & EleventyUserData`. `EleventyBuiltinData` is filled in by the preset (`page`, `content`, and the common frontmatter fields `title` / `description`). `EleventyUserData` is an empty interface that projects extend via TypeScript declaration merging.
+
+Add a `.d.ts` file (for example `src/eleventy.env.d.ts`) that describes the shape of your `_data/` files and any project-specific frontmatter fields:
+
+```ts
+// src/eleventy.env.d.ts
+type Locale = "ja" | "en";
+
+interface NavItem {
+  name: string;
+  path?: string;
+  children?: readonly NavItem[];
+}
+
+declare module "@tuqulore-inc/eleventy-plugin-preact/eleventy" {
+  interface EleventyUserData {
+    locale?: Locale;
+    site: Record<Locale, { name: string; description: string }> & {
+      url: string;
+      author: string;
+    };
+    nav: Record<Locale, readonly NavItem[]>;
+  }
+}
+```
+
+After this, `eleventy.site[eleventy.locale ?? "ja"].name` is a `string`, `eleventy.titel` is a type error, and editor autocompletion enumerates your fields.
+
+The declaration merging target is always the plugin module `@tuqulore-inc/eleventy-plugin-preact/eleventy` — the physical source of the types — even if the code itself imports the singleton from the preset path.
+
 ## Only valid during SSR
 
 The `eleventy` singleton is only valid during SSR. Islands hydrated on the client cannot see it. To pass SSR-side values into an Island, hand them in as props on `<Island>`.

@@ -51,8 +51,13 @@
     "fast-glob": "^3.3.3"
   },
   "devDependencies": {
+    "@11ty/eleventy": "^3.1.2",
     "@tuqulore-inc/eslint-config": "workspace:*",
-    "eslint": "^10.0.0"
+    "@types/node": "^24.0.0",
+    "eslint": "^10.0.0",
+    "postcss": "^8.5.6",
+    "preact": "^10.26.4",
+    "typescript": "^7.0.0"
   },
   "peerDependencies": {
     "@11ty/eleventy": ">=3.0.0",
