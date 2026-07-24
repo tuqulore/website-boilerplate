@@ -13,4 +13,4 @@ jobs:
       - uses: tuqulore/.github/setup@8caf5d569132d10bb856f4c14b2530c0e9e8f1ba # main
       - run: pnpm lint
       - run: pnpm -r test
-      - run: pnpm format:check
+      - uses: tuqulore/.github/format@8caf5d569132d10bb856f4c14b2530c0e9e8f1ba # main

@@ -34,7 +34,7 @@ pnpm format:check   # oxfmt --check
 pnpm lint           # 各パッケージの oxlint --fix
 ```
 
-CI（`.github/workflows/ci.yaml`）は `pnpm lint` → `pnpm -r test` → `pnpm format:check` を実行します。ローカルでも同じコマンドが通ることを PR 前に確認してください。
+CI（`.github/workflows/ci.yaml`）は `pnpm lint` → `pnpm -r test` → 整形（`tuqulore/.github/format` composite action 経由で `pnpm format` を実行）を行います。ローカルでも同じコマンドが通ることを PR 前に確認してください。
 
 ### 自動テスト
 
