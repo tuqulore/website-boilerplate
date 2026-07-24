@@ -1,6 +1,7 @@
 import { useSignal, useSignalEffect } from "@preact/signals";
 import { clientComponent } from "@tuqulore-inc/eleventy-preset/island";
 import { useRef } from "preact/hooks";
+import slugify from "slugify";
 import { twMerge } from "tailwind-merge";
 
 function Mobile(props) {
@@ -61,31 +62,34 @@ function Mobile(props) {
           <span class="icon-[material-symbols--close]"></span>
         </button>
         <ul class="flex flex-col px-4 py-16">
-          {props.nav.map((item) => (
-            <li key={item.name}>
-              {item.children && (
-                <div class="mb-6">
-                  <p id={`nav-mobile-group-${item.name}`} class="mb-2 ml-4 text-lg">
+          {props.nav.map((item) => {
+            const groupId = `nav-mobile-group-${slugify(item.name)}`;
+            return (
+              <li key={item.name}>
+                {item.children && (
+                  <div class="mb-6">
+                    <p id={groupId} class="mb-2 ml-4 text-lg">
+                      {item.name}
+                    </p>
+                    <ul aria-labelledby={groupId}>
+                      {item.children.map((child) => (
+                        <li key={child.name}>
+                          <a class="jumpu-text-button block" href={child.path}>
+                            {child.name}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {item.path && (
+                  <a class="jumpu-text-button block" href={item.path}>
                     {item.name}
-                  </p>
-                  <ul aria-labelledby={`nav-mobile-group-${item.name}`}>
-                    {item.children.map((child) => (
-                      <li key={child.name}>
-                        <a class="jumpu-text-button block" href={child.path}>
-                          {child.name}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {item.path && (
-                <a class="jumpu-text-button block" href={item.path}>
-                  {item.name}
-                </a>
-              )}
-            </li>
-          ))}
+                  </a>
+                )}
+              </li>
+            );
+          })}
         </ul>
       </nav>
     </div>
