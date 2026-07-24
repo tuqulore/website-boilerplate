@@ -20,7 +20,6 @@
   "type": "module",
   "scripts": {
     "format": "oxfmt",
-    "format:check": "oxfmt --check",
     "lint": "pnpm -r lint",
     "packages:bump-version": "lerna version",
     "packages:publish": "lerna publish from-package"

@@ -8,7 +8,6 @@
     "clean": "shx rm -rf dist",
     "dev": "dotenv -c development -- eleventy --serve",
     "format": "oxfmt",
-    "format:check": "oxfmt --check",
     "lint": "oxlint --fix"
   },
   "dependencies": {
