@@ -15,7 +15,7 @@ function MenuList(props) {
   };
   const ref = useRef(null);
   const buttonRef = useRef(null);
-  const slug = `${slugify(props.item.name)}-${props.index}`;
+  const slug = slugify(props.item.name);
   useSignalEffect(() => {
     if (!open.value) return;
     const clickHandler = (e) => {
@@ -76,12 +76,12 @@ function Desktop(props) {
   return (
     <nav class={props.class}>
       <ul class="flex items-center">
-        {props.nav.map((item, itemIndex) =>
+        {props.nav.map((item) =>
           "children" in item ? (
-            <li key={`${item.name}-${itemIndex}`} class="relative">
-              <MenuList item={item} index={itemIndex}>
-                {item.children.map((child, childIndex) => (
-                  <li key={`${child.name}-${childIndex}`}>
+            <li key={item.name} class="relative">
+              <MenuList item={item}>
+                {item.children.map((child) => (
+                  <li key={child.name}>
                     <a class="jumpu-text-button w-full whitespace-nowrap" href={child.path}>
                       {child.name}
                     </a>
@@ -90,7 +90,7 @@ function Desktop(props) {
               </MenuList>
             </li>
           ) : (
-            <li key={`${item.name}-${itemIndex}`}>
+            <li key={item.name}>
               <a class="jumpu-text-button" href={item.path}>
                 {item.name}
               </a>
