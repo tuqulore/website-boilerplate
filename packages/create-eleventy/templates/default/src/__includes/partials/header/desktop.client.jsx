@@ -14,7 +14,7 @@ function MenuList(props) {
   };
   const ref = useRef(null);
   const buttonRef = useRef(null);
-  const slug = useId();
+  const baseId = useId();
   useSignalEffect(() => {
     if (!open.value) return;
     const clickHandler = (e) => {
@@ -43,9 +43,9 @@ function MenuList(props) {
       }}
     >
       <button
-        id={`nav-button-${slug}`}
+        id={`nav-button-${baseId}`}
         ref={buttonRef}
-        aria-controls={`nav-menu-${slug}`}
+        aria-controls={`nav-menu-${baseId}`}
         aria-expanded={open.value}
         class="jumpu-text-button"
         type="button"
@@ -54,8 +54,8 @@ function MenuList(props) {
         {props.item.name}
       </button>
       <ul
-        id={`nav-menu-${slug}`}
-        aria-labelledby={`nav-button-${slug}`}
+        id={`nav-menu-${baseId}`}
+        aria-labelledby={`nav-button-${baseId}`}
         class={twMerge(
           "jumpu-card absolute top-full left-1/2 max-h-[50vh] -translate-x-1/2 overflow-y-auto p-2",
           "translate-y-2 transition duration-75 ease-in-out",
