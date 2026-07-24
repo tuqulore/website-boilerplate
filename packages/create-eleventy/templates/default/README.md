@@ -134,14 +134,14 @@ export default clientComponent(Counter, import.meta.url);
 import { Island } from "@tuqulore-inc/eleventy-preset/island";
 import Counter from "./counter.client.jsx";
 
-<Island component={Counter} on="interaction" initial={5} />
+<Island component={Counter} on="visible" initial={5} />
 ```
 
 For the example above, `<Island>` emits an `<is-land>` element like this from SSR:
 
 ```html
 <is-land
-  land-on:interaction
+  land-on:visible
   type="preact"
   import="/counter.client.js"
   props='{"initial":5}'
