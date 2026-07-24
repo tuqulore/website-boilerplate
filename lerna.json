@@ -2,13 +2,19 @@
   "$schema": "node_modules/@lerna-lite/cli/schemas/lerna-schema.json",
   "version": "5.2.0",
   "npmClient": "pnpm",
-  "packages": ["./", "packages/*"],
+  "packages": [
+    "./",
+    "packages/*"
+  ],
   "command": {
     "publish": {
       "registry": "https://registry.npmjs.org"
     },
     "version": {
-      "allowBranch": ["release", "alpha"],
+      "allowBranch": [
+        "release",
+        "alpha"
+      ],
       "noChangelog": true
     }
   }
