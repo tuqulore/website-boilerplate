@@ -1,7 +1,6 @@
 import { useSignal, useSignalEffect } from "@preact/signals";
 import { clientComponent } from "@tuqulore-inc/eleventy-preset/island";
-import { useRef } from "preact/hooks";
-import slugify from "slugify";
+import { useId, useRef } from "preact/hooks";
 import { twMerge } from "tailwind-merge";
 
 function MenuList(props) {
@@ -15,7 +14,7 @@ function MenuList(props) {
   };
   const ref = useRef(null);
   const buttonRef = useRef(null);
-  const slug = `${slugify(props.item.name)}-${props.index}`;
+  const baseId = useId();
   useSignalEffect(() => {
     if (!open.value) return;
     const clickHandler = (e) => {
@@ -44,9 +43,9 @@ function MenuList(props) {
       }}
     >
       <button
-        id={`nav-button-${slug}`}
+        id={`nav-button-${baseId}`}
         ref={buttonRef}
-        aria-controls={`nav-menu-${slug}`}
+        aria-controls={`nav-menu-${baseId}`}
         aria-expanded={open.value}
         class="jumpu-text-button"
         type="button"
@@ -55,8 +54,8 @@ function MenuList(props) {
         {props.item.name}
       </button>
       <ul
-        id={`nav-menu-${slug}`}
-        aria-labelledby={`nav-button-${slug}`}
+        id={`nav-menu-${baseId}`}
+        aria-labelledby={`nav-button-${baseId}`}
         class={twMerge(
           "jumpu-card absolute top-full left-1/2 max-h-[50vh] -translate-x-1/2 overflow-y-auto p-2",
           "translate-y-2 transition duration-75 ease-in-out",
@@ -76,12 +75,12 @@ function Desktop(props) {
   return (
     <nav class={props.class}>
       <ul class="flex items-center">
-        {props.nav.map((item, itemIndex) =>
+        {props.nav.map((item) =>
           "children" in item ? (
-            <li key={`${item.name}-${itemIndex}`} class="relative">
-              <MenuList item={item} index={itemIndex}>
-                {item.children.map((child, childIndex) => (
-                  <li key={`${child.name}-${childIndex}`}>
+            <li key={item.name} class="relative">
+              <MenuList item={item}>
+                {item.children.map((child) => (
+                  <li key={child.name}>
                     <a class="jumpu-text-button w-full whitespace-nowrap" href={child.path}>
                       {child.name}
                     </a>
@@ -90,7 +89,7 @@ function Desktop(props) {
               </MenuList>
             </li>
           ) : (
-            <li key={`${item.name}-${itemIndex}`}>
+            <li key={item.name}>
               <a class="jumpu-text-button" href={item.path}>
                 {item.name}
               </a>

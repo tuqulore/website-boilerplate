@@ -1,7 +1,27 @@
 import { useSignal, useSignalEffect } from "@preact/signals";
 import { clientComponent } from "@tuqulore-inc/eleventy-preset/island";
-import { useRef } from "preact/hooks";
+import { useId, useRef } from "preact/hooks";
 import { twMerge } from "tailwind-merge";
+
+function NavGroup(props) {
+  const groupId = useId();
+  return (
+    <div class="mb-6">
+      <p id={groupId} class="mb-2 ml-4 text-lg">
+        {props.item.name}
+      </p>
+      <ul aria-labelledby={groupId}>
+        {props.item.children.map((child) => (
+          <li key={child.name}>
+            <a class="jumpu-text-button block" href={child.path}>
+              {child.name}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 function Mobile(props) {
   const open = useSignal(false);
@@ -61,24 +81,9 @@ function Mobile(props) {
           <span class="icon-[material-symbols--close]"></span>
         </button>
         <ul class="flex flex-col px-4 py-16">
-          {props.nav.map((item, itemIndex) => (
-            <li key={`${item.name}-${itemIndex}`}>
-              {item.children && (
-                <div class="mb-6" role="group" aria-label={item.name}>
-                  <p class="mb-2 ml-4 text-lg" aria-hidden="true">
-                    {item.name}
-                  </p>
-                  <ul>
-                    {item.children.map((child, childIndex) => (
-                      <li key={`${child.name}-${childIndex}`}>
-                        <a class="jumpu-text-button block" href={child.path}>
-                          {child.name}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+          {props.nav.map((item) => (
+            <li key={item.name}>
+              {item.children && <NavGroup item={item} />}
               {item.path && (
                 <a class="jumpu-text-button block" href={item.path}>
                   {item.name}
