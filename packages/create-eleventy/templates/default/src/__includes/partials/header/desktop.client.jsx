@@ -1,7 +1,6 @@
 import { useSignal, useSignalEffect } from "@preact/signals";
 import { clientComponent } from "@tuqulore-inc/eleventy-preset/island";
-import { useRef } from "preact/hooks";
-import slugify from "slugify";
+import { useId, useRef } from "preact/hooks";
 import { twMerge } from "tailwind-merge";
 
 function MenuList(props) {
@@ -15,7 +14,7 @@ function MenuList(props) {
   };
   const ref = useRef(null);
   const buttonRef = useRef(null);
-  const slug = slugify(props.item.name);
+  const slug = useId();
   useSignalEffect(() => {
     if (!open.value) return;
     const clickHandler = (e) => {
