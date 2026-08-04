@@ -29,11 +29,11 @@
     "@lerna-lite/publish": "^5.0.0",
     "@lerna-lite/version": "^5.0.0",
     "@tuqulore-inc/oxlint-config": "workspace:*",
-    "oxfmt": "^0.60.0",
+    "oxfmt": "^0.61.0",
     "oxlint": "^1.75.0"
   },
   "engines": {
     "node": "24"
   },
-  "packageManager": "pnpm@11.9.0"
+  "packageManager": "pnpm@11.17.0"
 }

@@ -30,7 +30,7 @@ jobs:
       tag-exists: ${{ steps.check-tag.outputs.tag-exists }}
       sha: ${{ steps.target.outputs.sha }}
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - uses: tuqulore/.github/resolve-target-sha@8caf5d569132d10bb856f4c14b2530c0e9e8f1ba # main
         id: target
