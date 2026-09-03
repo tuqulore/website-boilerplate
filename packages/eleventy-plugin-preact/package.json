@@ -53,9 +53,9 @@
   "dependencies": {
     "fast-glob": "^3.3.3",
     "github-slugger": "^2.0.0",
-    "oxc-transform": "^0.142.0",
+    "oxc-transform": "^0.147.0",
     "preact-render-to-string": "^6.5.13",
-    "satteri": "^0.9.5",
+    "satteri": "^0.10.0",
     "yaml": "^2.9.0"
   },
   "devDependencies": {

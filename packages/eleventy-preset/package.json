@@ -47,7 +47,7 @@
     "lint": "oxlint --fix"
   },
   "dependencies": {
-    "@11ty/eleventy-img": "^6.0.4",
+    "@11ty/eleventy-img": "^7.0.0",
     "@tuqulore-inc/eleventy-plugin-postcss": "workspace:*",
     "@tuqulore-inc/eleventy-plugin-preact": "workspace:*",
     "@tuqulore-inc/eleventy-plugin-preact-island": "workspace:*",
@@ -63,6 +63,6 @@
     "preact": ">=10.0.0"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   }
 }
