@@ -22,6 +22,7 @@ pnpm create @tuqulore-inc/eleventy my-project --template default
 ## Available templates
 
 - `default` — Preact + Tailwind CSS
+- `typed` — `default` with TypeScript: typed client components, typed Eleventy data, and type checking in `pnpm lint`
 
 ## After creation
 
