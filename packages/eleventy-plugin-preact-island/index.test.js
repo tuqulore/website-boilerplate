@@ -58,6 +58,8 @@ function makeEleventyConfigStub({ pathPrefix, input = "/proj/src/", output = "/p
     },
     async _emit(event, arg) {
       for (const handler of eventHandlers.get(event) ?? []) {
+        // Run handlers one by one in registration order to keep tests deterministic.
+        // oxlint-disable-next-line no-await-in-loop
         await handler(arg);
       }
     },

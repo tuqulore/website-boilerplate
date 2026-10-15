@@ -23,6 +23,9 @@ function extractParsedProps(html) {
   return parse(decoded);
 }
 
+const Comp = () => null;
+const Bare = () => null;
+
 describe("_setClientModuleResolver", () => {
   it("関数を渡せる", () => {
     assert.doesNotThrow(() => _setClientModuleResolver(() => "/x.js"));
@@ -49,7 +52,6 @@ describe("_setClientModuleResolver", () => {
 
 describe("clientComponent", () => {
   it("Component に __clientModuleUrl を付与して同じ関数を返す", () => {
-    const Comp = () => null;
     const returned = clientComponent(Comp, "file:///proj/src/foo.client.jsx");
     assert.strictEqual(returned, Comp);
     assert.strictEqual(Comp.__clientModuleUrl, "file:///proj/src/foo.client.jsx");
@@ -144,7 +146,6 @@ describe("Island", () => {
 
   it("component が clientComponent でラップされていない場合は明示エラー", () => {
     _setClientModuleResolver(() => "/x.client.js");
-    const Bare = () => null;
     assert.throws(() => render(h(Island, { component: Bare })), /not marked as a client component/);
   });
 
