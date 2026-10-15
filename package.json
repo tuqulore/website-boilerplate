@@ -1,6 +1,6 @@
 {
   "name": "website-boilerplate",
-  "version": "5.2.2",
+  "version": "5.2.3-alpha.0",
   "private": true,
   "description": "a boilerplate of website provided with npm scripts",
   "keywords": [
