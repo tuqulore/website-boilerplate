@@ -73,7 +73,7 @@ collection 名を設定ファイルに列挙する方式にしなかったのは
 `.ts` の読み込みには、プリセットが組み込む JSX プラグインのローダーをそのまま使います。
 
 探索は設定の読み込み時に一度だけ行うので、collection のディレクトリを新しく作ったときは dev サーバを再起動してください。
-既存のスキーマの編集は、watch 中にそのまま反映されます。
+既存のスキーマと、スキーマが import する入力ディレクトリ配下の `.ts` の編集は、watch 中にそのまま反映されます。
 
 ## content 型と data 型
 
@@ -120,13 +120,13 @@ src/posts/hello.md
 
 ## 型の生成
 
-本プラグインはビルドの前に `generated/collections.d.ts` を書き出します。
+本プラグインはビルドの前に、プロジェクトのルートへ `collections.d.ts` を書き出します。
 中身は、collection ごとのスキーマを指す宣言マージです。
 
 ```ts
 declare module "@tuqulore-inc/eleventy-preset/eleventy" {
   interface EleventyCollections {
-    posts: CollectionOf<typeof import("../src/posts/_schema.ts")>;
+    posts: CollectionOf<typeof import("./src/posts/_schema.ts")>;
   }
 }
 ```
@@ -135,7 +135,7 @@ declare module "@tuqulore-inc/eleventy-preset/eleventy" {
 本プラグインの側に型を計算する仕組みは要りません。
 
 生成物はリポジトリに含めず、ビルドと lint のたびに作り直します。
-`default` テンプレートは、`generated/` を Git、Oxlint、Oxfmt の対象から外し、`tsconfig.json` の対象に含めた状態で始まります。
+`default` テンプレートは、`collections.d.ts` を Git、Oxlint、Oxfmt の対象から外した状態で始まります。`tsconfig.json` はルート直下の `*.d.ts` を対象に含んでいるので、設定を足さずに型が効きます。
 lint は型検査の前に `eleventy-collections sync` を実行するので、ビルドしていない状態でも型が揃います。
 スキーマが一つもないプロジェクトでは何も書き出しません。
 
@@ -148,4 +148,7 @@ lint は型検査の前に `eleventy-collections sync` を実行するので、�
 `_schema.ts` を置くまでは何もしないので、collection を使わないプロジェクトの挙動は変わりません。
 
 本プラグインは単独でもインストールでき、プリセットを介さずに他の Eleventy プロジェクトへ持ち込めます。
-その場合の設定は `@tuqulore-inc/eleventy-collections` の README を参照してください。
+ただし、単独で持ち込めるのは検証です。
+生成する型は JSX プラグインの `eleventy` シングルトンを拡張するもので、Eleventy 本体はテンプレートに型付きのデータを渡さないため、JSX プラグインを使わないプロジェクトでは型を付ける先がありません。
+その場合は `outFile: false` で型の生成を止めます。
+設定の詳細は `@tuqulore-inc/eleventy-collections` の README を参照してください。

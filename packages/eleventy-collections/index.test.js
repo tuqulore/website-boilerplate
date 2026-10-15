@@ -31,6 +31,14 @@ const LIST_TEMPLATE = `export default function (data) {
 }
 `;
 
+/** @param {Error} error */
+const messagesOf = (error) => {
+  const messages = [];
+  // Eleventy keeps the wrapped error in `originalError`, not `cause`.
+  for (let e = error; e; e = e.cause ?? e.originalError) messages.push(e.message);
+  return messages.join("\n");
+};
+
 /**
  * @param {string} root
  * @param {Record<string, string>} files
@@ -55,7 +63,7 @@ async function build(root, options = {}) {
     config(eleventyConfig) {
       eleventyConfig.addPlugin(preact);
       eleventyConfig.addPlugin(collections, {
-        outFile: path.join(root, "generated/collections.d.ts"),
+        outFile: path.join(root, "collections.d.ts"),
         ...options,
       });
     },
@@ -107,14 +115,44 @@ describe("eleventy-collections plugin", () => {
         "src/posts/no-title.md": "---\ndraft: yes\n---\n",
       });
       await assert.rejects(build(dir), (error) => {
-        const messages = [];
-        for (let e = error; e; e = e.cause) messages.push(e.message);
-        const message = messages.join("\n");
+        const message = messagesOf(error);
         assert.match(message, /Collection "posts": validation failed/);
         assert.match(message, /\.tmp-collections-test-\w+\/invalid\/src\/posts\/no-title\.md/);
         assert.match(message, /- title: /);
         assert.match(message, /- draft: /);
         assert.doesNotMatch(message, /ok\.md/);
+        return true;
+      });
+    });
+  });
+
+  describe("glob の特殊文字を含むディレクトリ名", () => {
+    it("丸括弧を含む collection も要素を集め、ディレクトリデータだけを除外する", async () => {
+      const dir = await fixture("parens", {
+        "src/posts(en)/_schema.ts": POSTS_SCHEMA,
+        "src/posts(en)/a.md": "---\ntitle: A\n---\n",
+        "src/authors(en)/_schema.ts": AUTHORS_SCHEMA,
+        "src/authors(en)/alice.json": JSON.stringify({ name: "Alice" }),
+        "src/authors(en)/authors(en).json": JSON.stringify({ layout: null }),
+        // エスケープしないと `(en)` がグループとして解釈され、こちらが除外される
+        "src/authors(en)/authorsen.json": JSON.stringify({ name: "E" }),
+        "src/list.11ty.js": `export default function (data) {
+  return JSON.stringify({
+    posts: data.collections["posts(en)"].map((p) => p.data.title),
+    authors: data.collections["authors(en)"].map((a) => a.id),
+  });
+}
+`,
+      });
+      const { list } = await build(dir);
+
+      assert.deepStrictEqual(list, { posts: ["A"], authors: ["alice", "authorsen"] });
+    });
+
+    it("Eleventy が collection として扱えない角括弧付きの名前はエラーにする", async () => {
+      const dir = await fixture("brackets", { "src/posts[en]/_schema.ts": POSTS_SCHEMA });
+      await assert.rejects(build(dir), (error) => {
+        assert.match(messagesOf(error), /posts\[en\]: a collection name cannot/);
         return true;
       });
     });
@@ -146,9 +184,7 @@ describe("eleventy-collections plugin", () => {
         "src/authors/carol.json": JSON.stringify({ name: "Carol", url: "not a url" }),
       });
       await assert.rejects(build(dir), (error) => {
-        const messages = [];
-        for (let e = error; e; e = e.cause) messages.push(e.message);
-        assert.match(messages.join("\n"), /authors\/carol\.json\n {2}- url: /);
+        assert.match(messagesOf(error), /authors\/carol\.json\n {2}- url: /);
         return true;
       });
     });
@@ -163,15 +199,15 @@ describe("eleventy-collections plugin", () => {
       });
       await build(dir);
 
-      const generated = await fs.readFile(path.join(dir, "generated/collections.d.ts"), "utf8");
+      const generated = await fs.readFile(path.join(dir, "collections.d.ts"), "utf8");
       assert.match(generated, /declare module "@tuqulore-inc\/eleventy-preset\/eleventy"/);
       assert.match(
         generated,
-        /"authors": CollectionOf<typeof import\("\.\.\/src\/authors\/_schema\.ts"\)>;/,
+        /"authors": CollectionOf<typeof import\("\.\/src\/authors\/_schema\.ts"\)>;/,
       );
       assert.match(
         generated,
-        /"posts": CollectionOf<typeof import\("\.\.\/src\/posts\/_schema\.ts"\)>;/,
+        /"posts": CollectionOf<typeof import\("\.\/src\/posts\/_schema\.ts"\)>;/,
       );
     });
 
@@ -183,7 +219,17 @@ describe("eleventy-collections plugin", () => {
       const { list } = await build(dir);
 
       assert.deepStrictEqual(list, { posts: [], authors: [] });
-      await assert.rejects(fs.access(path.join(dir, "generated")), { code: "ENOENT" });
+      await assert.rejects(fs.access(path.join(dir, "collections.d.ts")), { code: "ENOENT" });
+    });
+
+    it("outFile: false なら型ファイルを書き出さない", async () => {
+      const dir = await fixture("no-types", {
+        "src/posts/_schema.ts": POSTS_SCHEMA,
+        "src/posts/a.md": "---\ntitle: A\n---\n",
+      });
+      await build(dir, { outFile: false });
+
+      await assert.rejects(fs.access(path.join(dir, "collections.d.ts")), { code: "ENOENT" });
     });
   });
 });

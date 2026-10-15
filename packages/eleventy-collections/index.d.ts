@@ -2,10 +2,11 @@ import type { UserConfig } from "@11ty/eleventy";
 
 export interface PluginOptions {
   /**
-   * Path of the generated types, relative to the project root.
-   * @default "generated/collections.d.ts"
+   * Path of the generated types, relative to the project root. `false` skips
+   * type generation, e.g. in projects without `@tuqulore-inc/eleventy-plugin-preact`.
+   * @default "collections.d.ts"
    */
-  outFile?: string;
+  outFile?: string | false;
   /**
    * Module whose `EleventyCollections` interface the generated types augment.
    * Use the module you import `eleventy` from.

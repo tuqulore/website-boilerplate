@@ -19,13 +19,15 @@ import { generateTypes } from "./generate.js";
 
 /**
  * @param {import("./discover.js").CollectionSource} source
+ * @param {number} generation - Changes on every watch rebuild
  * @returns {Promise<{ type: "content" | "data", schema: StandardSchema }>}
  */
-async function loadSchemaModule(source) {
-  const { mtimeMs } = await fs.stat(source.schemaPath);
-  // NOTE: The mtime query re-imports a schema edited during watch; Node's ESM
-  // cache would otherwise keep serving the first version.
-  const mod = await import(`${pathToFileURL(source.schemaPath).href}?v=${mtimeMs}`);
+async function loadSchemaModule(source, generation) {
+  // NOTE: The query re-imports the schema on every watch rebuild; Node's ESM
+  // cache would otherwise keep serving the first version. Modules the schema
+  // imports are refreshed by Eleventy's own ESM resolver, which cache-busts
+  // changed files, but skips imports made from node_modules like this one.
+  const mod = await import(`${pathToFileURL(source.schemaPath).href}?v=${generation}`);
   const label = `${source.dir}/${SCHEMA_FILE}`;
   const type = mod.type ?? "content";
   if (type !== "content" && type !== "data") {
@@ -47,7 +49,8 @@ async function loadSchemaModule(source) {
  * @param {any} collectionApi
  */
 async function buildContentCollection(source, schema, collectionApi) {
-  const items = collectionApi.getFilteredByGlob(`${source.dir}/**/*.{md,mdx}`);
+  const dirPattern = fg.convertPathToPattern(source.dir);
+  const items = collectionApi.getFilteredByGlob(`${dirPattern}/**/*.{md,mdx}`);
   const results = await Promise.all(items.map((item) => schema["~standard"].validate(item.data)));
   const failures = [];
   for (const [i, item] of items.entries()) {
@@ -79,7 +82,7 @@ async function buildDataCollection(source, schema) {
       ignore: [
         `${dirPattern}/_*`,
         `${dirPattern}/*.11tydata.json`,
-        `${dirPattern}/${source.name}.json`,
+        `${dirPattern}/${fg.escapePath(source.name)}.json`,
       ],
     })
   ).toSorted();
@@ -118,17 +121,26 @@ async function buildDataCollection(source, schema) {
  *
  * @param {import("@11ty/eleventy").UserConfig} eleventyConfig
  * @param {Object} [pluginOptions]
- * @param {string} [pluginOptions.outFile] - Generated types path, relative to the project root
+ * @param {string | false} [pluginOptions.outFile] - Generated types path, relative to the project root; `false` skips type generation
  * @param {string} [pluginOptions.typesModule] - Module whose `EleventyCollections` is augmented
  */
 export default function collectionsPlugin(eleventyConfig, { outFile, typesModule } = {}) {
   const collections = discoverCollections(eleventyConfig.directories.input);
+  let generation = 0;
+  eleventyConfig.on("eleventy.beforeWatch", () => {
+    generation += 1;
+  });
 
+  // Schemas may import shared modules from anywhere under the input directory.
+  if (collections.length > 0) {
+    eleventyConfig.addWatchTarget(
+      `${fg.convertPathToPattern(eleventyConfig.directories.input)}**/*.ts`,
+    );
+  }
   for (const source of collections) {
-    eleventyConfig.addWatchTarget(source.schemaPath);
     eleventyConfig.addWatchTarget(`${source.dir}/*.json`);
     eleventyConfig.addCollection(source.name, async (collectionApi) => {
-      const { type, schema } = await loadSchemaModule(source);
+      const { type, schema } = await loadSchemaModule(source, generation);
       const { entries, failures } =
         type === "data"
           ? await buildDataCollection(source, schema)
@@ -140,6 +152,7 @@ export default function collectionsPlugin(eleventyConfig, { outFile, typesModule
     });
   }
 
+  if (outFile === false) return;
   eleventyConfig.on("eleventy.before", async () => {
     await generateTypes(collections, { outFile, typesModule });
   });

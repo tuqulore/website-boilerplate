@@ -51,24 +51,28 @@ export const schema = z.object({
 
 ### Register the plugin
 
-Skip this with the preset. Otherwise:
+Skip this with the preset. Otherwise, register it together with [@tuqulore-inc/eleventy-plugin-preact](../eleventy-plugin-preact), whose `eleventy` singleton the generated types extend:
 
 ```js
 // eleventy.config.js
 import collections from "@tuqulore-inc/eleventy-collections";
+import preact from "@tuqulore-inc/eleventy-plugin-preact";
 
 export default function (eleventyConfig) {
+  eleventyConfig.addPlugin(preact);
   eleventyConfig.addPlugin(collections, {
     typesModule: "@tuqulore-inc/eleventy-plugin-preact/eleventy",
   });
 }
 ```
 
-Collections are discovered when the configuration loads. Restart the dev server after adding a collection directory; edits to an existing schema are picked up in watch mode.
+Without that plugin, validation still works, but Eleventy offers templates no typed data to attach the types to. Pass `outFile: false` to skip generating them.
+
+Collections are discovered when the configuration loads. Restart the dev server after adding a collection directory; edits to a schema, and to `.ts` modules under the input directory it imports, are picked up in watch mode.
 
 ### Generated types
 
-The plugin writes `generated/collections.d.ts` before each build, and `eleventy-collections sync` writes it without building. Nothing is written while no `_schema.ts` exists.
+The plugin writes `collections.d.ts` to the project root before each build, and `eleventy-collections sync` writes it without building. Nothing is written while no `_schema.ts` exists.
 
 ```ts
 import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
@@ -78,8 +82,8 @@ const titles = eleventy.collections.posts.map((post) => post.data.title);
 
 Set up the project once:
 
-- Add `generated` to `include` in `tsconfig.json`.
-- Ignore `generated/` in `.gitignore`, Oxlint, and Oxfmt.
+- Make sure `tsconfig.json` includes `collections.d.ts` (`"include": ["*.d.ts", ...]` does).
+- Ignore `collections.d.ts` in `.gitignore`, Oxlint, and Oxfmt.
 - Run `eleventy-collections sync` before type checking, e.g. `"lint": "eleventy-collections sync && oxlint --type-aware --type-check"`.
 
 ## API
@@ -88,7 +92,7 @@ Set up the project once:
 
 The Eleventy plugin. Options:
 
-- `outFile` — Path of the generated types, relative to the project root. Default: `generated/collections.d.ts`.
+- `outFile` — Path of the generated types, relative to the project root, or `false` to skip generating them. Default: `collections.d.ts`.
 - `typesModule` — Module whose `EleventyCollections` the generated types augment; use the one you import `eleventy` from. Default: `@tuqulore-inc/eleventy-preset/eleventy`.
 
 ### `eleventy-collections sync [--input src] [--out <file>] [--module <name>]`

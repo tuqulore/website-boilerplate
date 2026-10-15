@@ -52,6 +52,12 @@ describe("eleventy-collections CLI", () => {
     JSON.parse(await fs.readFile(path.join(workDir, "src/authors/example.json"), "utf8"));
   });
 
+  it("collection 名が example なら、ディレクトリデータと衝突しない名前でサンプルを作る", async () => {
+    const result = runCli(["create", "example", "--type", "data"], workDir);
+    assert.strictEqual(result.status, 0, result.stderr);
+    await fs.access(path.join(workDir, "src/example/sample.json"));
+  });
+
   it("既存の collection には create できない", () => {
     const result = runCli(["create", "posts"], workDir);
     assert.notStrictEqual(result.status, 0);
@@ -66,9 +72,9 @@ describe("eleventy-collections CLI", () => {
   it("sync は見つけた collection の型を書き出す", async () => {
     const result = runCli(["sync"], workDir);
     assert.strictEqual(result.status, 0, result.stderr);
-    assert.match(result.stdout, /2 collection\(s\)/);
+    assert.match(result.stdout, /3 collection\(s\)/);
 
-    const generated = await fs.readFile(path.join(workDir, "generated/collections.d.ts"), "utf8");
+    const generated = await fs.readFile(path.join(workDir, "collections.d.ts"), "utf8");
     assert.match(generated, /"authors": CollectionOf/);
     assert.match(generated, /"posts": CollectionOf/);
   });

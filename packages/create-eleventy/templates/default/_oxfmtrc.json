@@ -2,5 +2,5 @@
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
   "sortImports": true,
   "sortTailwindcss": true,
-  "ignorePatterns": ["generated"]
+  "ignorePatterns": ["collections.d.ts"]
 }

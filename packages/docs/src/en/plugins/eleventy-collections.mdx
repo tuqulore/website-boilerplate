@@ -73,7 +73,7 @@ Unless `checkJs` is enabled, values exported from `.js` get no inferred type, an
 `.ts` files are loaded by the loader of the JSX plugin that the preset includes.
 
 Discovery runs once, when the configuration loads, so restart the dev server after creating a new collection directory.
-Edits to an existing schema are picked up during watch.
+Edits to an existing schema, and to `.ts` modules under the input directory that it imports, are picked up during watch.
 
 ## Content and data collections
 
@@ -120,13 +120,13 @@ The file path is added by this plugin, which gathered the entries.
 
 ## Generating the types
 
-Before each build, this plugin writes `generated/collections.d.ts`.
+Before each build, this plugin writes `collections.d.ts` to the project root.
 It contains declaration merging that points each collection at its schema.
 
 ```ts
 declare module "@tuqulore-inc/eleventy-preset/eleventy" {
   interface EleventyCollections {
-    posts: CollectionOf<typeof import("../src/posts/_schema.ts")>;
+    posts: CollectionOf<typeof import("./src/posts/_schema.ts")>;
   }
 }
 ```
@@ -135,7 +135,7 @@ Only references to the schemas are generated; the TypeScript compiler derives th
 This plugin needs no machinery of its own to compute types.
 
 The generated file is not committed and is rewritten on every build and lint.
-The `default` template starts with `generated/` excluded from Git, Oxlint, and Oxfmt and included in `tsconfig.json`.
+The `default` template starts with `collections.d.ts` excluded from Git, Oxlint, and Oxfmt. Its `tsconfig.json` already includes `*.d.ts` at the root, so the types apply without further setup.
 Its lint runs `eleventy-collections sync` before type checking, so the types are in place even before a build.
 Projects without any schema get no file.
 
@@ -148,4 +148,7 @@ The preset bundles this plugin.
 It does nothing until a `_schema.ts` exists, so projects that use no collections behave as before.
 
 This plugin can also be installed on its own and brought into other Eleventy projects without the preset.
-For that setup, see the `@tuqulore-inc/eleventy-collections` README.
+What carries over on its own is validation, though.
+The generated types extend the `eleventy` singleton of the JSX plugin, and Eleventy itself passes no typed data to templates, so a project without the JSX plugin has nothing to attach the types to.
+In that case, turn type generation off with `outFile: false`.
+For the setup, see the `@tuqulore-inc/eleventy-collections` README.

@@ -1,4 +1,4 @@
 .env*.local
+/collections.d.ts
 dist
-generated
 node_modules

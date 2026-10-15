@@ -14,7 +14,7 @@ export const schema = z.object({
   date: z.coerce.date(),
 });
 `,
-    sampleFile: "example.md",
+    sampleFile: (base) => `${base}.md`,
     sample: `---
 title: Example
 date: 2026-01-01
@@ -32,7 +32,7 @@ export const schema = z.object({
   name: z.string(),
 });
 `,
-    sampleFile: "example.json",
+    sampleFile: (base) => `${base}.json`,
     sample: `${JSON.stringify({ name: "Example" }, null, 2)}\n`,
   },
 };
@@ -57,9 +57,11 @@ export async function createCollection({ name, type = "content", inputDir = "src
   }
 
   const dir = path.join(inputDir, name);
+  // NOTE: `<name>.json` is directory data to Eleventy, not an entry.
+  const sampleFile = template.sampleFile(name === "example" ? "sample" : "example");
   const files = [
     [path.join(dir, SCHEMA_FILE), template.schema],
-    [path.join(dir, template.sampleFile), template.sample],
+    [path.join(dir, sampleFile), template.sample],
   ];
   const existing = await Promise.all(files.map(([file]) => fs.stat(file).catch(() => undefined)));
   const conflict = files.find((_, i) => existing[i]);

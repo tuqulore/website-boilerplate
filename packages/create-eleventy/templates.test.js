@@ -144,8 +144,8 @@ describe("create-eleventy templates", { concurrency: true }, () => {
           );
           // _schema.ts を持たないプロジェクトには collection の型ファイルを作らない
           assert.ok(
-            !fs.existsSync(path.join(projectDir, "generated")),
-            "スキーマが無いのに generated/ が作られた",
+            !fs.existsSync(path.join(projectDir, "collections.d.ts")),
+            "スキーマが無いのに collections.d.ts が作られた",
           );
 
           // テンプレートの lint は型検査 (--type-check) を含む。公開型定義と

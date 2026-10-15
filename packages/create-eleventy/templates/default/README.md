@@ -201,7 +201,7 @@ pnpm exec eleventy-collections create posts # src/posts/_schema.ts and a sample 
 pnpm exec eleventy-collections create authors --type data # one entry per .json file
 ```
 
-Front matter is read as `post.data.title`. The types are written to `generated/` (git-ignored) by `pnpm build`, `pnpm dev`, and `pnpm lint`. See [@tuqulore-inc/eleventy-collections](https://github.com/tuqulore/website-boilerplate/tree/main/packages/eleventy-collections) for details.
+Front matter is read as `post.data.title`. The types are written to `collections.d.ts` (git-ignored) by `pnpm build`, `pnpm dev`, and `pnpm lint`. See [@tuqulore-inc/eleventy-collections](https://github.com/tuqulore/website-boilerplate/tree/main/packages/eleventy-collections) for details.
 
 ### Island props
 

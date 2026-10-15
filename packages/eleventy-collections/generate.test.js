@@ -22,7 +22,7 @@ const TSCONFIG = {
     skipLibCheck: false,
     noUncheckedIndexedAccess: true,
   },
-  include: ["generated", "src/**/*"],
+  include: ["collections.d.ts", "src/**/*"],
 };
 
 const USAGE = `import { eleventy } from "@tuqulore-inc/eleventy-plugin-preact/eleventy";
@@ -101,7 +101,7 @@ export const schema = z.object({ name: z.string() });
   });
 
   it("スキーマが無くなったら既存の型ファイルを空のモジュールで上書きする", async () => {
-    const outFile = path.join(root, "empty/generated/collections.d.ts");
+    const outFile = path.join(root, "empty/collections.d.ts");
     assert.strictEqual(await generateTypes([], { outFile }), false);
     await assert.rejects(fs.access(outFile), { code: "ENOENT" });
 

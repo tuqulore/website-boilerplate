@@ -28,6 +28,12 @@ export function discoverCollections(inputDir) {
       const schemaPath = path.resolve(schemaFile);
       // Eleventy matches collection globs against cwd-relative input paths.
       const dir = path.relative(process.cwd(), path.dirname(schemaPath)).split(path.sep).join("/");
-      return { name: path.basename(dir), dir, schemaPath };
+      const name = path.basename(dir);
+      // NOTE: Eleventy skips collection names wrapped in brackets (`[keys]` and
+      // the like are its internal entries), so such a collection would be empty.
+      if (name.startsWith("[") || name.endsWith("]")) {
+        throw new Error(`${dir}: a collection name cannot start with "[" or end with "]"`);
+      }
+      return { name, dir, schemaPath };
     });
 }
