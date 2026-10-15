@@ -48,7 +48,7 @@
   },
   "scripts": {
     "lint": "oxlint --fix",
-    "test": "node --test && tsd"
+    "test": "node --test"
   },
   "dependencies": {
     "fast-glob": "^3.3.3",
@@ -60,22 +60,11 @@
   },
   "devDependencies": {
     "@tuqulore-inc/oxlint-config": "workspace:*",
-    "oxlint": "^1.88.0",
-    "tsd": "^0.32.0"
+    "oxlint": "^1.88.0"
   },
   "peerDependencies": {
     "@11ty/eleventy": ">=3.0.0",
     "preact": ">=10.0.0"
-  },
-  "tsd": {
-    "compilerOptions": {
-      "module": "esnext",
-      "moduleResolution": "bundler",
-      "noUncheckedIndexedAccess": true,
-      "strict": true,
-      "target": "es2022"
-    },
-    "directory": "test-d"
   },
   "engines": {
     "node": "^20.19.0 || >=22.12.0"

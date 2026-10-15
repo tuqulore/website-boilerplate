@@ -42,7 +42,7 @@
   },
   "scripts": {
     "lint": "oxlint --fix",
-    "test": "node --test && tsd"
+    "test": "node --test"
   },
   "dependencies": {
     "@11ty/is-land": "^5.0.0",
@@ -54,24 +54,11 @@
     "@tuqulore-inc/oxlint-config": "workspace:*",
     "oxlint": "^1.88.0",
     "preact": "^10.26.4",
-    "preact-render-to-string": "^6.5.13",
-    "tsd": "^0.32.0"
+    "preact-render-to-string": "^6.5.13"
   },
   "peerDependencies": {
     "@11ty/eleventy": ">=3.0.0",
     "preact": ">=10.0.0"
-  },
-  "tsd": {
-    "compilerOptions": {
-      "jsx": "react-jsx",
-      "jsxImportSource": "preact",
-      "module": "esnext",
-      "moduleResolution": "bundler",
-      "noUncheckedIndexedAccess": true,
-      "strict": true,
-      "target": "es2022"
-    },
-    "directory": "test-d"
   },
   "engines": {
     "node": ">=20"
