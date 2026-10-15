@@ -66,15 +66,19 @@ function makeEleventyConfigStub({ pathPrefix, input = "/proj/src/", output = "/p
 
 /**
  * Run the `bundle: false` path into a temp output directory and return the
- * written setup module source.
+ * written setup module source and a page with an Island after the transform.
+ * It avoids esbuild, whose watch context would keep a `serve` run alive.
  */
-async function writeUnbundledSetup({ pathPrefix, runMode = "build" } = {}) {
+async function runUnbundled({ pathPrefix, runMode = "build" } = {}) {
   const dir = await fs.mkdtemp(path.join(import.meta.dirname, ".tmp-setup-test-"));
   try {
     const config = makeEleventyConfigStub({ pathPrefix, output: `${dir}/` });
     preactIsland(config, { bundle: false });
     await config._emit("eleventy.before", { runMode });
-    return await fs.readFile(path.join(dir, "__island-setup.js"), "utf8");
+    return {
+      source: await fs.readFile(path.join(dir, "__island-setup.js"), "utf8"),
+      html: config._transform("preact-island-inject", PAGE_WITH_ISLAND, "dist/index.html"),
+    };
   } finally {
     await fs.rm(dir, { recursive: true, force: true });
   }
@@ -166,7 +170,7 @@ describe("Island plugin setup モジュールの初期化", () => {
   // 同時に固定する。片方だけ壊れると <is-land> は「条件属性なし = 即 hydrate」
   // と判定され、`on="interaction"` 等の遅延ハイドレーションが無効化される。
   it("is-land を ?nodefine 付き URL で import し、attributePrefix 上書き → Island.define() の順で呼ぶ", async () => {
-    const source = await writeUnbundledSetup({ pathPrefix: "/blog/" });
+    const { source } = await runUnbundled({ pathPrefix: "/blog/" });
 
     assert.match(source, /^import \{ Island \} from "\/blog\/is-land\.js\?nodefine";$/m);
     const prefixIdx = source.indexOf('Island.attributePrefix = "land-on:"');
@@ -182,24 +186,14 @@ describe("Island plugin setup モジュールの初期化", () => {
 
 describe("Island plugin dev フック ↔ Eleventy runMode", () => {
   it("serve では setup に __eleventyRehydrate を、HTML に WebSocket フックを入れる", async () => {
-    const source = await writeUnbundledSetup({ runMode: "serve" });
+    const { source, html } = await runUnbundled({ runMode: "serve" });
     assert.match(source, /window\.__eleventyRehydrate = /);
-
-    const config = makeEleventyConfigStub();
-    preactIsland(config);
-    await config._emit("eleventy.before", { runMode: "serve" });
-    const html = config._transform("preact-island-inject", PAGE_WITH_ISLAND, "dist/index.html");
     assert.match(html, /window\.__eleventyRehydrate\?\.\(\)/);
   });
 
   it("build では dev フックを入れない", async () => {
-    const source = await writeUnbundledSetup({ runMode: "build" });
+    const { source, html } = await runUnbundled({ runMode: "build" });
     assert.doesNotMatch(source, /__eleventyRehydrate/);
-
-    const config = makeEleventyConfigStub();
-    preactIsland(config);
-    await config._emit("eleventy.before", { runMode: "build" });
-    const html = config._transform("preact-island-inject", PAGE_WITH_ISLAND, "dist/index.html");
     assert.doesNotMatch(html, /__eleventyRehydrate/);
   });
 });
@@ -221,9 +215,42 @@ describe("Island plugin 非推奨オプション", () => {
   });
 });
 
+describe("Island plugin setup の import 解決", () => {
+  // 回帰テスト: setup は別モジュールなので、素の <is-land import="./x.js"> の
+  // 相対パスを setup の URL ではなくページ基準で解決しないと hydrate に失敗する。
+  it("import 属性を document.baseURI 基準の URL にしてから import する", async () => {
+    const { source } = await runUnbundled();
+    assert.match(
+      source,
+      /import\(new URL\(target\.getAttribute\("import"\), document\.baseURI\)\.href\)/,
+    );
+  });
+});
+
+describe("Island plugin .client.* が無いサイト", () => {
+  // 回帰テスト: 素の <is-land> だけのページにも setup は注入されるので、
+  // .client.* が 0 件でも setup を出力しないと 404 になる。
+  it("setup だけをバンドルして出力する", async () => {
+    const dir = await fs.mkdtemp(path.join(import.meta.dirname, ".tmp-empty-test-"));
+    try {
+      await fs.mkdir(path.join(dir, "src"));
+      const config = makeEleventyConfigStub({
+        input: `${path.join(dir, "src")}/`,
+        output: `${path.join(dir, "dist")}/`,
+      });
+      preactIsland(config);
+      await config._emit("eleventy.before", { runMode: "build" });
+      const setup = await fs.readFile(path.join(dir, "dist", "__island-setup.js"), "utf8");
+      assert.match(setup, /Island\.define\(\)/);
+    } finally {
+      await fs.rm(dir, { recursive: true, force: true });
+    }
+  });
+});
+
 describe("Island plugin bundle: false", () => {
   it("setup を未バンドルのまま出力に書き出す (preact / devalue は bare import)", async () => {
-    const source = await writeUnbundledSetup();
+    const { source } = await runUnbundled();
 
     assert.match(source, /^import \{ h, hydrate \} from "preact";$/m);
     assert.match(source, /^import \{ parse \} from "devalue";$/m);
@@ -233,7 +260,7 @@ describe("Island plugin bundle: false", () => {
 // A client entry that pulls in both preact hooks and @preact/signals.
 const clientIsland = (name) => `import { useSignal } from "@preact/signals";
 import { useId } from "preact/hooks";
-import { clientComponent } from "${path.join(import.meta.dirname, "island.js")}";
+import { clientComponent } from ${JSON.stringify(path.join(import.meta.dirname, "island.js"))};
 
 function ${name}() {
   const count = useSignal(0);

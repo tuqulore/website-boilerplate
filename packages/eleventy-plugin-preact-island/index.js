@@ -108,7 +108,8 @@ import { parse } from "devalue";
 
 const mount = async (target) => {
   try {
-    const component = await import(target.getAttribute("import"));
+    // NOTE: Resolve a relative "import" attribute against the page, not this module.
+    const component = await import(new URL(target.getAttribute("import"), document.baseURI).href);
     const propsAttr = target.getAttribute("props");
     const props = propsAttr ? parse(propsAttr) : {};
     hydrate(h(component.default, props), target);
@@ -168,15 +169,14 @@ ${rehydrateScript}
       if (watchCtx) return;
 
       // NOTE: エントリは明示ファイルリストで渡す (esbuild のワイルドカードはブレース展開
-      // {jsx,tsx} 未対応)。0 件時は esbuild を呼ばずスキップし、Island を使わないサイトでも
-      // ビルドが通るようにする。島が無ければ <is-land> も出力されないので setup も不要。
+      // {jsx,tsx} 未対応)。0 件でも setup はバンドルする。素の <is-land> は .client.* なしでも
+      // 書けるので、transform が注入する setup を常に出力しておく必要がある。
       // NOTE: fast-glob は node_modules をデフォルト除外しないため明示する。
       // input が "." (プロジェクトルート) の構成で依存パッケージ内の *.client.* を
       // 誤ってバンドルしない・毎ビルド node_modules を走査しないための guard。
       const clientEntries = await fg(clientGlob, {
         ignore: ["**/node_modules/**"],
       });
-      if (clientEntries.length === 0) return;
 
       /** @type {import("esbuild").BuildOptions} */
       const options = {
