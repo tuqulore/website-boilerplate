@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "@tuqulore-inc/oxlint-config": "workspace:*",
-    "oxlint": "^1.75.0",
+    "oxlint": "^1.88.0",
     "preact": "^10.26.4",
     "preact-render-to-string": "^6.5.13"
   },
