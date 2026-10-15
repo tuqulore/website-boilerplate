@@ -150,7 +150,7 @@ Target the module your templates import `eleventy` from (`@tuqulore-inc/eleventy
 Do not target the plugin module the preset uses internally: a project installed with pnpm cannot resolve it, so `declare module` declares a new module instead of extending the types, and `eleventy` loses its type.
 For the same reason, keep at least one top-level `import` in the type definition file. A file with neither `import` nor `export` is not treated as a module.
 
-The `typed` template ships this type definition file out of the box.
+The `default` template ships this type definition file out of the box.
 
 ## Only valid during SSR
 

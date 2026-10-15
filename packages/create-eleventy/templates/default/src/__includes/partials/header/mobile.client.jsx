@@ -3,15 +3,19 @@ import { clientComponent } from "@tuqulore-inc/eleventy-preset/island";
 import { useId, useRef } from "preact/hooks";
 import { twMerge } from "tailwind-merge";
 
+/** @import { RefObject } from "preact" */
+/** @import { EleventyData } from "@tuqulore-inc/eleventy-preset/eleventy" */
+
+/** @param {{ name: string; items: readonly { name: string; path: string }[] }} props */
 function NavGroup(props) {
   const groupId = useId();
   return (
     <div class="mb-6">
       <p id={groupId} class="mb-2 ml-4 text-lg">
-        {props.item.name}
+        {props.name}
       </p>
       <ul aria-labelledby={groupId}>
-        {props.item.children.map((child) => (
+        {props.items.map((child) => (
           <li key={child.name}>
             <a class="jumpu-text-button block" href={child.path}>
               {child.name}
@@ -23,16 +27,20 @@ function NavGroup(props) {
   );
 }
 
+/** @param {{ nav: EleventyData["nav"]; class?: string }} props */
 function Mobile(props) {
   const open = useSignal(false);
+  /** @type {RefObject<HTMLButtonElement>} */
   const openButtonRef = useRef(null);
+  /** @type {RefObject<HTMLButtonElement>} */
   const closeButtonRef = useRef(null);
   useSignalEffect(() => {
-    if (!open.value) return;
+    if (!open.value) return undefined;
     closeButtonRef.current?.focus();
     // NOTE: メニュー表示中は背景 (html) のスクロールを止め、モバイルで
     // メニューをスクロールしたつもりが背後のページも動く事故を防ぐ。
     document.documentElement.classList.add("overflow-hidden");
+    /** @param {KeyboardEvent} e */
     const handler = (e) => {
       if (e.key !== "Escape") return;
       open.value = false;
@@ -83,7 +91,7 @@ function Mobile(props) {
         <ul class="flex flex-col px-4 py-16">
           {props.nav.map((item) => (
             <li key={item.name}>
-              {item.children && <NavGroup item={item} />}
+              {item.children && <NavGroup name={item.name} items={item.children} />}
               {item.path && (
                 <a class="jumpu-text-button block" href={item.path}>
                   {item.name}

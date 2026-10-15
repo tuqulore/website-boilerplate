@@ -48,7 +48,7 @@ The same props flow to the SSR render and the client-side hydration. What the br
 Props are serialized with [`devalue`](https://github.com/Rich-Harris/devalue), so `Date`, `Map`, `Set`, and other types that JSON drops survive the trip as actual JavaScript values.
 
 At the type level, the props passed to `<Island>` are checked against the props type of the component you pass.
-In a project with type checking enabled (such as the `typed` template), a misspelled prop or a missing required prop is a type error.
+In a project with type checking enabled (such as the `default` template), a misspelled prop or a missing required prop is a type error.
 
 ## Riding Eleventy's `pathPrefix`
 

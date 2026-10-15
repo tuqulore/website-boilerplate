@@ -18,13 +18,13 @@ pnpm dev # start the dev server
 
 ## npm scripts
 
-| Task   | Description               |
-| :----- | :------------------------ |
-| build  | Generate the static site. |
-| clean  | Remove build artifacts.   |
-| dev    | Start the dev server.     |
-| format | Format code.              |
-| lint   | Run static checks.        |
+| Task   | Description                                 |
+| :----- | :------------------------------------------ |
+| build  | Generate the static site.                   |
+| clean  | Remove build artifacts.                     |
+| dev    | Start the dev server.                       |
+| format | Format code.                                |
+| lint   | Run static checks, including type checking. |
 
 ## Environment variables
 
@@ -121,6 +121,7 @@ Pass a component marked with `clientComponent()` to `<Island>`, and the same pro
 import { clientComponent } from "@tuqulore-inc/eleventy-preset/island";
 import { useSignal } from "@preact/signals";
 
+/** @param {{ initial?: number }} props */
 function Counter(props) {
   const n = useSignal(props.initial ?? 0);
   return <button onClick={() => n.value++}>{n}</button>;
@@ -150,6 +151,34 @@ The `on` prop maps to the `<is-land>` initialization trigger (`interaction` / `v
 > [!NOTE]
 >
 > The [`<is-land>`](https://github.com/11ty/is-land?tab=readme-ov-file#usage) initialization attribute normally uses the `on:*` form, but that conflicts with JSX syntax, so this preset uses `land-on:*` instead. For parameterized triggers such as `on:media("(min-width: ...)")`, drop `<Island>` and use the raw `<is-land>` element.
+
+## Types
+
+`tsconfig.json` enables strict type checking, including for `.js` / `.jsx` files (`checkJs`), and `pnpm lint` runs it through oxlint (`--type-aware --type-check`). Annotate JavaScript with [JSDoc](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html), or rename a file to `.ts` / `.tsx` to write TypeScript.
+
+### Eleventy data
+
+The `eleventy` singleton is typed. Built-in fields such as `eleventy.page` are typed out of the box; project-specific data is declared in `eleventy.env.d.ts` through declaration merging. `site` and `nav` are derived from the files under `src/_data/`, so they follow edits to those files. When you add a global data file or read a new front matter field, declare it in `eleventy.env.d.ts` as well.
+
+> [!IMPORTANT]
+>
+> Keep at least one top-level `import` in `eleventy.env.d.ts`. Without one the file is not a module, and `declare module` replaces the package's types instead of extending them.
+
+### Island props
+
+`<Island>` checks its props against the props type of the wrapped client component. A misspelled or missing prop is a type error.
+
+### MDX
+
+Install the recommended [MDX extension](https://marketplace.visualstudio.com/items?itemName=unified.vscode-mdx) for VS Code to get the same type checking inside `.mdx` files (`"mdx": { "checkMdx": true }` in `tsconfig.json`). `pnpm lint` does not check `.mdx` files.
+
+### Loosening the checks
+
+Narrow what gets checked instead of turning off `strict`. Without `strict`, `null` and `undefined` drop out of the types, so type-aware lint rules can misjudge nullable values, and `pnpm lint` applies their fixes automatically.
+
+1. Skip a single file: add `// @ts-nocheck` at the top.
+2. Skip JavaScript: set `"checkJs": false` in `tsconfig.json`. `.ts` / `.tsx` files are still checked.
+3. Skip type checking: remove `--type-aware --type-check` from the `lint` script.
 
 ## Docker
 

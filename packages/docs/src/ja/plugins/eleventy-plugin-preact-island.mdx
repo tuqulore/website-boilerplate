@@ -48,7 +48,7 @@ import Counter from "./counter.client.jsx";
 props のシリアライズには [`devalue`](https://github.com/Rich-Harris/devalue) を使っており、`Date`、`Map`、`Set` のような JSON では失われる型もそのまま JavaScript の値として渡せます。
 
 型定義の上では、`<Island>` に渡す props は、渡したコンポーネントの props の型と照合されます。
-型検査を有効にしたプロジェクト(`typed` テンプレートなど)では、props 名の打ち間違いや必須の props の渡し忘れが型エラーになります。
+型検査を有効にしたプロジェクト(`default` テンプレートなど)では、props 名の打ち間違いや必須の props の渡し忘れが型エラーになります。
 
 ## Eleventy の `pathPrefix` に乗る
 

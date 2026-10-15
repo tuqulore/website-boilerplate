@@ -61,11 +61,9 @@ jobs:
           # テンプレート内の@tuqulore-inc/eleventy-presetのバージョンを更新
           pre-commit-command: |
             VERSION=$(jq -r .version lerna.json)
-            for f in packages/create-eleventy/templates/*/package.json; do
-              jq --arg version "^$VERSION" '.devDependencies["@tuqulore-inc/eleventy-preset"] = $version' \
-                "$f" > tmp.json
-              mv tmp.json "$f"
-            done
+            jq --arg version "^$VERSION" '.devDependencies["@tuqulore-inc/eleventy-preset"] = $version' \
+              packages/create-eleventy/templates/default/package.json > tmp.json
+            mv tmp.json packages/create-eleventy/templates/default/package.json
           pr-labels: release
           github-token: ${{ github.token }}
 

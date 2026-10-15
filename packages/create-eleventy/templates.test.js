@@ -142,16 +142,16 @@ describe("create-eleventy templates", { concurrency: true }, () => {
             "build 後に dist/index.html が生成されていない",
           );
 
-          // typed テンプレートは lint に型検査 (--type-check) を含む。公開型定義と
+          // テンプレートの lint は型検査 (--type-check) を含む。公開型定義と
           // テンプレート側の宣言マージ・props 型の整合をここで検証する。
           // 誤った使い方が型エラーになることは @ts-expect-error で表明する。
           // エラーにならなければ未使用の directive (TS2578) として lint が失敗する。
-          if (template === "typed") {
+          if (template === "default") {
             fs.writeFileSync(
               path.join(projectDir, "src", "type-probe.ts"),
               `import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
 import { Island } from "@tuqulore-inc/eleventy-preset/island";
-import Desktop from "./_includes/partials/header/desktop.client.tsx";
+import Desktop from "./_includes/partials/header/desktop.client.jsx";
 
 export const probes = [
   Island({ component: Desktop, nav: eleventy.nav, class: "x", on: "load" }),
@@ -166,20 +166,20 @@ export const probes = [
 ];
 `,
             );
-            const lint = spawnSync("pnpm", ["run", "lint"], {
-              cwd: projectDir,
-              encoding: "utf8",
-              timeout: TIMEOUT_BUILD,
-              maxBuffer: MAX_BUFFER,
-            });
-            assert.strictEqual(lint.status, 0, describeChild("pnpm lint", lint));
           }
+          const lint = spawnSync("pnpm", ["run", "lint"], {
+            cwd: projectDir,
+            encoding: "utf8",
+            timeout: TIMEOUT_BUILD,
+            maxBuffer: MAX_BUFFER,
+          });
+          assert.strictEqual(lint.status, 0, describeChild("pnpm lint", lint));
 
-          // default / typed テンプレートは 3 つの *.client.{jsx,tsx} を持ち、Island プラグイン
+          // default テンプレートは 3 つの *.client.jsx を持ち、Island プラグイン
           // によって esbuild で bundle され、index.mdx から <Island component={Clicker}>
           // として参照される。responsibility split と命名変更で URL 経路が壊れて
           // も回帰検知できるよう、生成物の実在と HTML 内の import URL を検証する。
-          if (template === "default" || template === "typed") {
+          if (template === "default") {
             // CLI が `__prefix` を `_prefix` にリネームするため、build 出力上は
             // `_includes/**` に落ちる (index.js L84-89 を参照)。
             const expectedBundles = [

@@ -52,7 +52,7 @@ describe("create-eleventy CLI", () => {
   it("既存ディレクトリと同名のプロジェクト名はエラー終了する", () => {
     const existing = path.join(workDir, "existing");
     fs.mkdirSync(existing);
-    const result = runCli(["existing", "--template", "default"], workDir);
+    const result = runCli(["existing"], workDir);
     assert.notStrictEqual(result.status, 0);
     assert.match(result.stderr, /already exists/);
   });
