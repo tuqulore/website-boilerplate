@@ -170,7 +170,7 @@ The `eleventy` singleton is typed. Built-in fields such as `eleventy.page` are t
 
 ### MDX
 
-Install the recommended [MDX extension](https://marketplace.visualstudio.com/items?itemName=unified.vscode-mdx) for VS Code to get the same type checking inside `.mdx` files (`"mdx": { "checkMdx": true }` in `tsconfig.json`). `pnpm lint` does not check `.mdx` files.
+Install the recommended [MDX extension](https://marketplace.visualstudio.com/items?itemName=unifiedjs.vscode-mdx) for VS Code to get the same type checking inside `.mdx` files (`"mdx": { "checkMdx": true }` in `tsconfig.json`). `pnpm lint` does not check `.mdx` files.
 
 ### Loosening the checks
 
