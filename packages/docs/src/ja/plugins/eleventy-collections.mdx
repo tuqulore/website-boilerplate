@@ -1,0 +1,151 @@
+---
+layout: post
+locale: ja
+title: eleventy-collections
+---
+
+# `@tuqulore-inc/eleventy-collections`
+
+本ページでは、Zod スキーマから collection の検証と型を導く `@tuqulore-inc/eleventy-collections` について、その内部設計を扱います。
+なぜ型検査とは別に検証が要るのか、なぜ対象を collection に絞るのか、スキーマをどこに置きどう読むのかを説明します。
+API リファレンスとインストール手順は、パッケージの README を参照してください。
+
+## 型検査と検証が守るもの
+
+Eleventy の **collection** は、記事一覧のように同じ形のデータを持つページの集まりです。
+テンプレートからは `eleventy.collections.posts` のように名前で参照します。
+collection の要素の形を保つには、次の二つの検査が必要です。
+
+- **型検査**:TypeScript のコンパイラが `.ts` や `.tsx` のコードを読み、コードがデータを正しく使っているかを確かめます。`post.data.titel` のような打ち間違いを検出します。
+- **検証**:ビルド時に、Markdown の frontmatter や JSON の中身がスキーマに従っているかを確かめます。`title` が欠けた記事を検出します。
+
+一方だけでは足りません。
+TypeScript のコンパイラは YAML の frontmatter を読まないので、`title: 123` と書かれた記事があっても型検査は通ります。
+逆に検証だけでは、正しいデータを誤った型で読むコードを見逃します。
+
+本プラグインは、一つの [Zod](https://zod.dev/) スキーマから両方を導きます。
+検証にはスキーマそのものを使い、型にはスキーマの出力型を使います。
+スキーマを書き換えると検証と型が同時に変わるので、両者がずれることはありません。
+
+検証は、型を書かない開発者にも効きます。
+`.md` だけでサイトを書いていても、壊れた frontmatter はビルドを止めます。
+
+## 対象を collection に限る理由
+
+本プラグインが扱うのは、スキーマを持つ collection だけです。
+グローバルデータ、collection に属さないページの frontmatter、`eleventyComputed`、ディレクトリデータの合流は扱いません。
+
+対象を広げると、Eleventy のデータカスケード(複数の出どころから値が合流する仕組み)を型で再現する必要が出てきます。
+`.js` のデータファイルが返す値の型は実行するまで決まらず、合流の優先順位も型の上では表しにくいため、この再現は破綻しやすい作業です。
+collection は要素の集まりが一つの形を持つ単位なので、一つのスキーマで記述でき、この問題を避けられます。
+
+グローバルデータに型を付けたいときは、[Data Access](/ja/preset/data-access/) で説明する宣言マージを使います。
+
+## スキーマの置き場所と発見
+
+スキーマは collection のディレクトリに `_schema.ts` として置きます。
+ディレクトリ名がそのまま collection 名になります。
+
+```
+src/posts/_schema.ts
+src/posts/hello.md
+src/posts/world.mdx
+```
+
+`src/posts/_schema.ts` は次の形です。
+
+```ts
+import { z } from "zod";
+
+export const schema = z.object({
+  title: z.string(),
+  date: z.coerce.date(),
+  draft: z.boolean().default(false),
+});
+```
+
+本プラグインは、設定の読み込み時に入力ディレクトリ直下の `*/_schema.ts` を探し、見つけたディレクトリごとに collection を登録します。
+型の生成も同じ探索結果を使います。
+collection 名を設定ファイルに列挙する方式にしなかったのは、登録を忘れたときに「型はあるのに実行時は存在しない」collection が生まれるからです。
+
+スキーマを `.js` ではなく `.ts` で書くのは、型を導くためです。
+`checkJs` を有効にしない限り、`.js` から export した値の型は推論されず、collection の要素型が `any` に落ちます。
+`.ts` の読み込みには、プリセットが組み込む JSX プラグインのローダーをそのまま使います。
+
+探索は設定の読み込み時に一度だけ行うので、collection のディレクトリを新しく作ったときは dev サーバを再起動してください。
+既存のスキーマの編集は、watch 中にそのまま反映されます。
+
+## content 型と data 型
+
+collection には、要素の集め方が異なる二つの型があります。
+
+- **content 型**:ディレクトリ配下の `.md` と `.mdx` が要素です。スキーマは各ページのデータ(frontmatter を含む)に当たります。既定はこちらです。
+- **data 型**:ディレクトリ直下の `.json` が、ファイルごとに一つの要素です。スキーマは JSON の中身全体に当たります。
+
+data 型にするには、`_schema.ts` に `type` を export します。
+
+```ts
+export const type = "data";
+```
+
+型の区別を設定ファイルではなく `_schema.ts` に置いたのは、検証と型生成の両方が同じ場所から読めるようにするためです。
+型生成は `typeof import("./_schema.ts")` から `type` の値を型として読み取るので、スキーマを実行せずに要素の型を切り替えられます。
+
+content 型の要素は Eleventy の collection の要素そのもので、frontmatter は `post.data.title` のように `data` の下にあります。
+一覧ページ(`index.tsx` など)を同じディレクトリに置いても、`.md` と `.mdx` 以外は要素になりません。
+
+data 型の要素は `{ id, inputPath, data }` の形で、`id` は拡張子を除いたファイル名です。
+`_` で始まるファイルと、ディレクトリと同名の JSON(`authors/authors.json`)は要素になりません。
+後者は、Eleventy がディレクトリデータとして読むファイルだからです。
+
+## 検証の結果をページに戻す
+
+検証に通った値は、元のページのデータに書き戻します。
+`.default(false)` を付けた `draft` は、frontmatter に書かなくても `false` としてページの描画に届きます。
+`z.coerce.date()` のような変換の結果も同様です。
+
+書き戻しは、collection の要素を作り直さずに、要素の `data` を直接更新する形で行います。
+要素の本文(`templateContent`)は描画前に読むと例外を投げるので、要素をコピーする方式では collection を組み立てる時点でビルドが止まってしまいます。
+
+検証に失敗した要素は collection ごとにまとめ、ファイルのパスとフィールドのパスを添えてビルドを止めます。
+
+```
+Collection "posts": validation failed
+src/posts/hello.md
+  - title: Invalid input: expected string, received number
+```
+
+スキーマが知っているのは「どのフィールドがどう誤っているか」だけで、値がどのファイルから来たかは知りません。
+ファイルのパスは、要素を集めた本プラグインが補います。
+
+## 型の生成
+
+本プラグインはビルドの前に `generated/collections.d.ts` を書き出します。
+中身は、collection ごとのスキーマを指す宣言マージです。
+
+```ts
+declare module "@tuqulore-inc/eleventy-preset/eleventy" {
+  interface EleventyCollections {
+    posts: CollectionOf<typeof import("../src/posts/_schema.ts")>;
+  }
+}
+```
+
+生成するのはスキーマへの参照だけで、要素の型は TypeScript のコンパイラがスキーマから導きます。
+本プラグインの側に型を計算する仕組みは要りません。
+
+生成物はリポジトリに含めず、ビルドと lint のたびに作り直します。
+`default` テンプレートは、`generated/` を Git、Oxlint、Oxfmt の対象から外し、`tsconfig.json` の対象に含めた状態で始まります。
+lint は型検査の前に `eleventy-collections sync` を実行するので、ビルドしていない状態でも型が揃います。
+スキーマが一つもないプロジェクトでは何も書き出しません。
+
+宣言マージの対象は、テンプレートが `eleventy` を import しているモジュールです。
+既定はプリセットのモジュールで、プリセットを使わない場合は `typesModule` オプションで切り替えます。
+
+## プリセットとの関係
+
+本プリセットは本プラグインを同梱しています。
+`_schema.ts` を置くまでは何もしないので、collection を使わないプロジェクトの挙動は変わりません。
+
+本プラグインは単独でもインストールでき、プリセットを介さずに他の Eleventy プロジェクトへ持ち込めます。
+その場合の設定は `@tuqulore-inc/eleventy-collections` の README を参照してください。

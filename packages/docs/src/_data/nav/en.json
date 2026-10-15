@@ -36,6 +36,10 @@
       {
         "name": "eleventy-plugin-postcss",
         "path": "/en/plugins/eleventy-plugin-postcss/"
+      },
+      {
+        "name": "eleventy-collections",
+        "path": "/en/plugins/eleventy-collections/"
       }
     ]
   }
