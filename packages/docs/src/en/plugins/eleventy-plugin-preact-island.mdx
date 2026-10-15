@@ -47,6 +47,9 @@ The same props flow to the SSR render and the client-side hydration. What the br
 
 Props are serialized with [`devalue`](https://github.com/Rich-Harris/devalue), so `Date`, `Map`, `Set`, and other types that JSON drops survive the trip as actual JavaScript values.
 
+At the type level, the props passed to `<Island>` are checked against the props type of the component you pass.
+In a project with type checking enabled (such as the `typed` template), a misspelled prop or a missing required prop is a type error.
+
 ## Riding Eleventy's `pathPrefix`
 
 When you deploy to a subdirectory (for example GitHub Pages under `/repo/`), the `<is-land import="...">` URLs need to match that prefix. The plugin reads Eleventy's own [`pathPrefix`](https://www.11ty.dev/docs/config/#deploy-to-a-subdirectory-with-a-path-prefix) directly; there is no separate URL prefix option.
@@ -128,6 +131,10 @@ The `on` prop on `<Island>` picks when hydration happens.
 </table>
 
 The tie-breaker is "how much time does the user actually give us before touching this Island?" — delay the ones with more slack, hydrate early only the ones that need it.
+
+The type of `on` offers the three values in the table as editor completions while still accepting any other string.
+Other is-land triggers such as `load` or `save-data` pass through as-is.
+At runtime, however, a value that does not match `/^[A-Za-z0-9_-]+$/` throws.
 
 For parameterized triggers like `on:media("(min-width: 40rem)")`, skip `<Island>` and write the raw `<is-land>` element yourself. See the `@tuqulore-inc/eleventy-plugin-preact-island` README for details.
 

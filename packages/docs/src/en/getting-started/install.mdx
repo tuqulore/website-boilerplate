@@ -33,7 +33,10 @@ Replace `my-project` with the directory name you want. To pin the template expli
 pnpm create @tuqulore-inc/eleventy my-project -t default
 ```
 
-The only template currently shipped is `default`. It sets up Eleventy, Preact, and Tailwind CSS together.
+Two templates are shipped: `default` and `typed`.
+`default` sets up Eleventy, Preact, and Tailwind CSS together.
+`typed` is the same setup with TypeScript type checking: Island components are written as `.client.tsx`, and `pnpm lint` also runs the type checker.
+Without `-t`, the CLI asks which template to use.
 
 ## Install dependencies and start the dev server
 
