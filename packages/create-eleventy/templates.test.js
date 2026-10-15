@@ -152,9 +152,11 @@ describe("create-eleventy templates", { concurrency: true }, () => {
               `import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
 import { Island } from "@tuqulore-inc/eleventy-preset/island";
 import Desktop from "./_includes/partials/header/desktop.client.jsx";
+import Clock from "./clock.client.jsx";
 
 export const probes = [
   Island({ component: Desktop, nav: eleventy.nav, class: "x", on: "load" }),
+  Island({ component: Clock, locale: "en", fallback: "--:--" }),
   // @ts-expect-error -- typo on a Global Data field
   eleventy.site.nmae,
   // @ts-expect-error -- typo on an Island prop
@@ -163,6 +165,10 @@ export const probes = [
   Island({ component: Desktop, nav: "x" }),
   // @ts-expect-error -- missing required Island prop
   Island({ component: Desktop }),
+  // @ts-expect-error -- typo on a client-only Island prop
+  Island({ component: Clock, localee: "en" }),
+  // @ts-expect-error -- fallback is reserved only for client-only components
+  Island({ component: Desktop, nav: eleventy.nav, fallback: "x" }),
 ];
 `,
             );
@@ -175,7 +181,7 @@ export const probes = [
           });
           assert.strictEqual(lint.status, 0, describeChild("pnpm lint", lint));
 
-          // default テンプレートは 3 つの *.client.jsx を持ち、Island プラグイン
+          // default テンプレートは 4 つの *.client.jsx を持ち、Island プラグイン
           // によって esbuild で bundle され、index.mdx から <Island component={Clicker}>
           // として参照される。responsibility split と命名変更で URL 経路が壊れて
           // も回帰検知できるよう、生成物の実在と HTML 内の import URL を検証する。
@@ -184,6 +190,7 @@ export const probes = [
             // `_includes/**` に落ちる (index.js L84-89 を参照)。
             const expectedBundles = [
               "clicker.client.js",
+              "clock.client.js",
               "_includes/partials/header/desktop.client.js",
               "_includes/partials/header/mobile.client.js",
               "__island-setup.js",
@@ -207,6 +214,11 @@ export const probes = [
               indexHtml,
               /<is-land[^>]*\bimport="\/clicker\.client\.js"/,
               'dist/index.html に <is-land import="/clicker.client.js"> が含まれていない (Island の URL 解決経路が壊れている可能性)',
+            );
+            assert.match(
+              indexHtml,
+              /<is-land[^>]*\bimport="\/clock\.client\.js"[^>]*\bclient-only[^>]*>\s*<span[^>]*>--:--:--<\/span>\s*<\/is-land>/,
+              "dist/index.html の client-only 島が fallback だけを出力していない",
             );
             assert.match(indexHtml, /<script type="module" src="\/__island-setup\.js"><\/script>/);
             assert.doesNotMatch(indexHtml, /type="importmap"|esm\.sh/);

@@ -152,6 +152,33 @@ The `on` prop maps to the `<is-land>` initialization trigger (`interaction` / `v
 >
 > The [`<is-land>`](https://github.com/11ty/is-land?tab=readme-ov-file#usage) initialization attribute normally uses the `on:*` form, but that conflicts with JSX syntax, so this preset uses `land-on:*` instead. For parameterized triggers such as `on:media("(min-width: ...)")`, drop `<Island>` and use the raw `<is-land>` element.
 
+### Client-only islands
+
+A component whose output differs between SSR and the browser (the current time, random values, `localStorage`), or that needs browser-only APIs to render, can skip SSR. Mark it with `clientOnlyComponent()` instead of `clientComponent()`. `<Island>` then emits only the `fallback` prop from SSR, and the client renders the component from scratch once the `on` trigger fires.
+
+```jsx
+// src/clock.client.jsx
+import { clientOnlyComponent } from "@tuqulore-inc/eleventy-preset/island";
+
+function Clock() {
+  return <time>{new Date().toLocaleTimeString()}</time>;
+}
+
+export default clientOnlyComponent(Clock, import.meta.url);
+```
+
+```mdx
+<Island component={Clock} on="visible" fallback={<span>--:--:--</span>} />
+```
+
+```html
+<is-land land-on:visible type="preact" import="/clock.client.js" props="[{}]" client-only>
+  <span>--:--:--</span>
+</is-land>
+```
+
+Size the `fallback` like the rendered component to avoid layout shift. See `src/clock.client.jsx` for a working example.
+
 ## Types
 
 `tsconfig.json` enables strict type checking, including for `.js` / `.jsx` files (`checkJs`), and `pnpm lint` runs it through oxlint (`--type-aware --type-check`). Annotate JavaScript with [JSDoc](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html), or rename a file to `.ts` / `.tsx` to write TypeScript.
