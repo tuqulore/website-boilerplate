@@ -3,6 +3,11 @@ import { describe, it } from "node:test";
 
 import { eleventy, _runWithEleventyData } from "./eleventy.js";
 
+const readTitleLater = async () => {
+  await delay(5);
+  return eleventy.title;
+};
+
 describe("eleventy singleton", () => {
   describe("SSRコンテキスト内でのデータアクセス", () => {
     it("トップレベルのプロパティにアクセスできる", () => {
@@ -108,13 +113,8 @@ describe("eleventy singleton", () => {
     });
 
     it("ネストされたasync関数内でもデータが伝播する", async () => {
-      const innerFn = async () => {
-        await delay(5);
-        return eleventy.title;
-      };
-
       const result = await _runWithEleventyData({ title: "Nested" }, async () => {
-        return await innerFn();
+        return await readTitleLater();
       });
 
       assert.strictEqual(result, "Nested");

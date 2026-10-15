@@ -28,6 +28,11 @@ function extractParsedProps(html) {
   return parse(decoded);
 }
 
+const Comp = () => null;
+const Bare = () => null;
+// clientOnlyComponent は __clientOnly を付けるので、Comp とは別の関数を使う。
+const ClientOnlyComp = () => null;
+
 // SSR で本体が呼ばれたら throw する client-only component。
 function makeThrowingClock() {
   return clientOnlyComponent(function Clock() {
@@ -61,7 +66,6 @@ describe("_setClientModuleResolver", () => {
 
 describe("clientComponent", () => {
   it("Component に __clientModuleUrl を付与して同じ関数を返す", () => {
-    const Comp = () => null;
     const returned = clientComponent(Comp, "file:///proj/src/foo.client.jsx");
     assert.strictEqual(returned, Comp);
     assert.strictEqual(Comp.__clientModuleUrl, "file:///proj/src/foo.client.jsx");
@@ -80,11 +84,10 @@ describe("clientComponent", () => {
 
 describe("clientOnlyComponent", () => {
   it("Component に __clientModuleUrl と __clientOnly を付与して同じ関数を返す", () => {
-    const Comp = () => null;
-    const returned = clientOnlyComponent(Comp, "file:///proj/src/foo.client.jsx");
-    assert.strictEqual(returned, Comp);
-    assert.strictEqual(Comp.__clientModuleUrl, "file:///proj/src/foo.client.jsx");
-    assert.strictEqual(Comp.__clientOnly, true);
+    const returned = clientOnlyComponent(ClientOnlyComp, "file:///proj/src/foo.client.jsx");
+    assert.strictEqual(returned, ClientOnlyComp);
+    assert.strictEqual(ClientOnlyComp.__clientModuleUrl, "file:///proj/src/foo.client.jsx");
+    assert.strictEqual(ClientOnlyComp.__clientOnly, true);
   });
 
   it("引数が不正な場合は clientOnlyComponent の名前で TypeError", () => {
@@ -177,7 +180,6 @@ describe("Island", () => {
 
   it("component が clientComponent でラップされていない場合は明示エラー", () => {
     _setClientModuleResolver(() => "/x.client.js");
-    const Bare = () => null;
     assert.throws(() => render(h(Island, { component: Bare })), /not marked as a client component/);
   });
 

@@ -58,6 +58,8 @@ function makeEleventyConfigStub({ pathPrefix, input = "/proj/src/", output = "/p
     },
     async _emit(event, arg) {
       for (const handler of eventHandlers.get(event) ?? []) {
+        // Run handlers one by one in registration order to keep tests deterministic.
+        // oxlint-disable-next-line no-await-in-loop
         await handler(arg);
       }
     },
@@ -162,6 +164,26 @@ describe("Island plugin setup 注入 ↔ Eleventy pathPrefix", () => {
     const page = '<html><head></head><body><IS-LAND type="preact"></IS-LAND></body></html>';
     const html = config._transform("preact-island-inject", page, "dist/index.html");
     assert.match(html, /<script type="module" src="\/__island-setup\.js"><\/script>/);
+  });
+
+  it("大文字の </HEAD> の直前にも注入し、元の表記を保つ", () => {
+    const config = makeEleventyConfigStub();
+    preactIsland(config);
+
+    const page = '<HTML><HEAD></HEAD><BODY><is-land type="preact"></is-land></BODY></HTML>';
+    const html = config._transform("preact-island-inject", page, "dist/index.html");
+    assert.match(html, /<script type="module" src="\/__island-setup\.js"><\/script>\n<\/HEAD>/);
+  });
+
+  it("</head> が無いページには注入せず警告する", (t) => {
+    const warn = t.mock.method(console, "warn", () => {});
+    const config = makeEleventyConfigStub();
+    preactIsland(config);
+
+    const page = '<is-land type="preact"></is-land>';
+    assert.strictEqual(config._transform("preact-island-inject", page, "dist/index.html"), page);
+    assert.strictEqual(warn.mock.callCount(), 1);
+    assert.match(warn.mock.calls[0].arguments[0], /No <\/head> tag found/);
   });
 
   it("名前が is-land で始まる別の要素だけでは注入しない", () => {

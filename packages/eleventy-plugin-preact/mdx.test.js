@@ -6,6 +6,11 @@ import { pathToFileURL } from "node:url";
 
 import { load } from "./loaders/mdx.js";
 
+const loadMdx = async (file) =>
+  load(pathToFileURL(file).href, {}, () => {
+    assert.fail(`nextLoad should not be called for ${file}`);
+  });
+
 describe("MDX loader (satteri)", () => {
   // bare specifier (preact/jsx-runtime) を解決できるよう
   // 一時ファイルはこのパッケージ配下に作る
@@ -24,11 +29,6 @@ describe("MDX loader (satteri)", () => {
     await fs.writeFile(file, source);
     return file;
   };
-
-  const loadMdx = async (file) =>
-    load(pathToFileURL(file).href, {}, () => {
-      assert.fail(`nextLoad should not be called for ${file}`);
-    });
 
   describe("基本の変換", () => {
     it("MDX が preact/jsx-runtime を import する ESM に変換される", async () => {
