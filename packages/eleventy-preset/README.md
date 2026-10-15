@@ -53,7 +53,7 @@ export default preset((eleventyConfig) => {
 | Input directory      | `src`                                                |
 | Output directory     | `dist`                                               |
 | Client entries       | `src/**/*.client.{js,jsx,ts,tsx}`                    |
-| PostCSS content glob | `src/**/*.{md,mdx,jsx}`                              |
+| PostCSS content glob | `src/**/*.{md,mdx,jsx,tsx}`                          |
 | Server watches       | `dist/**/*.css`                                      |
 | Markdown             | `breaks: true`, `linkify: true`                      |
 | Static assets        | `src/public/**` copied to root                       |

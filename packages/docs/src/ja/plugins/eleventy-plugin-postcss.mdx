@@ -27,7 +27,7 @@ Tailwind CSS は、テンプレート内で使われているクラス名を走�
 これに合わせて、本プラグインは `contentGlob` オプションで「CSS の依存」として追跡するファイルを受け取ります。プリセットのデフォルトは次の値です。
 
 ```js
-contentGlob: ["src/**/*.{md,mdx,jsx}"];
+contentGlob: ["src/**/*.{md,mdx,jsx,tsx}"];
 ```
 
 Eleventy の `addDependencies` API を通じて、これらのファイルの変更が CSS の再ビルドを引き起こします。テンプレートに新しい Tailwind クラスを書いた瞬間に、開発サーバ上で反映されます。
