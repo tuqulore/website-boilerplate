@@ -244,6 +244,16 @@ describe("Island plugin setup の import 解決", () => {
   });
 });
 
+describe("Island plugin setup の mount 方式", () => {
+  it("client-only 属性があれば fallback を消して render、無ければ hydrate する", async () => {
+    const { source } = await runUnbundled();
+    assert.match(
+      source,
+      /if \(target\.hasAttribute\("client-only"\)\) \{[^}]*target\.replaceChildren\(\);\s*render\(h\(component\.default, props\), target\);\s*\} else \{\s*hydrate\(h\(component\.default, props\), target\);/,
+    );
+  });
+});
+
 describe("Island plugin .client.* が無いサイト", () => {
   // 回帰テスト: 素の <is-land> だけのページにも setup は注入されるので、
   // .client.* が 0 件でも setup を出力しないと 404 になる。
@@ -269,7 +279,7 @@ describe("Island plugin bundle: false", () => {
   it("setup を未バンドルのまま出力に書き出す (preact / devalue は bare import)", async () => {
     const { source } = await runUnbundled();
 
-    assert.match(source, /^import \{ h, hydrate \} from "preact";$/m);
+    assert.match(source, /^import \{ h, hydrate, render \} from "preact";$/m);
     assert.match(source, /^import \{ parse \} from "devalue";$/m);
   });
 });
