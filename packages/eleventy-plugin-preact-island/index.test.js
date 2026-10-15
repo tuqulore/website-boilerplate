@@ -1,38 +1,19 @@
 import assert from "node:assert";
-import { readFileSync } from "node:fs";
-import { createRequire } from "node:module";
+import fs from "node:fs/promises";
 import path from "node:path";
-import { dirname, join } from "node:path";
-import { describe, it } from "node:test";
-import { fileURLToPath } from "node:url";
+import { after, before, describe, it } from "node:test";
 
+import fg from "fast-glob";
 import { h } from "preact";
 import { render } from "preact-render-to-string";
 
 import preactIsland from "./index.js";
 import { Island, clientComponent } from "./island.js";
 
-const require = createRequire(import.meta.url);
-
-// index.js の resolveInstalledDevalueVersion が導出するはずのバージョンを
-// テスト側から独立に取得する (両実装が一致することを確認)。devalue の
-// exports は `./package.json` を公開していないので、entry パスから上方向に
-// package.json を探す (preact のように require では取れない)。
-function readInstalledDevalueVersion() {
-  let dir = dirname(fileURLToPath(import.meta.resolve("devalue")));
-  while (true) {
-    try {
-      const pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf8"));
-      if (pkg.name === "devalue") return pkg.version;
-    } catch {
-      // 上へ辿る
-    }
-    const parent = dirname(dir);
-    if (parent === dir) break;
-    dir = parent;
-  }
-  throw new Error("devalue package.json not found");
-}
+const PAGE_WITH_ISLAND = '<html><head></head><body><is-land type="preact"></is-land></body></html>';
+// esbuild が非 minify 出力でモジュールごとに付ける由来コメント。preact 本体が
+// どのファイルに同梱されたかの目印にする。
+const PREACT_MARKER = "/preact/dist/preact.module.js";
 
 /**
  * Minimal UserConfig stub carrying only what the plugin actually reads.
@@ -81,6 +62,22 @@ function makeEleventyConfigStub({ pathPrefix, input = "/proj/src/", output = "/p
       }
     },
   };
+}
+
+/**
+ * Run the `bundle: false` path into a temp output directory and return the
+ * written setup module source.
+ */
+async function writeUnbundledSetup({ pathPrefix, runMode = "build" } = {}) {
+  const dir = await fs.mkdtemp(path.join(import.meta.dirname, ".tmp-setup-test-"));
+  try {
+    const config = makeEleventyConfigStub({ pathPrefix, output: `${dir}/` });
+    preactIsland(config, { bundle: false });
+    await config._emit("eleventy.before", { runMode });
+    return await fs.readFile(path.join(dir, "__island-setup.js"), "utf8");
+  } finally {
+    await fs.rm(dir, { recursive: true, force: true });
+  }
 }
 
 describe("Island plugin URL prefix ↔ Eleventy pathPrefix / directories", () => {
@@ -133,56 +130,49 @@ describe("Island plugin URL prefix ↔ Eleventy pathPrefix / directories", () =>
   });
 });
 
-describe("Island plugin importmap ↔ Eleventy pathPrefix", () => {
-  // NOTE: `?nodefine` は is-land の auto-define を抑止するための公式 query。
-  // これが無いと import 時点で `customElements.define("is-land", Island)` が
-  // デフォルト prefix ("on:") のまま走ってしまい、setup script 側で
-  // `land-on:` に切り替えても connectedCallback は既に完了しているので
-  // 遅延ハイドレーション (on="interaction" 等) が効かなくなる。
-  it("pathPrefix=/blog/ では importmap の is-land も /blog/is-land.js?nodefine を指す", () => {
+describe("Island plugin setup 注入 ↔ Eleventy pathPrefix", () => {
+  it("pathPrefix=/blog/ では setup を /blog/__island-setup.js から読み、importmap は注入しない", () => {
     const config = makeEleventyConfigStub({ pathPrefix: "/blog/" });
     preactIsland(config);
 
-    const html = config._transform(
-      "preact-island-inject",
-      "<html><head></head><body></body></html>",
-      "dist/index.html",
+    const html = config._transform("preact-island-inject", PAGE_WITH_ISLAND, "dist/index.html");
+    assert.match(
+      html,
+      /<script type="module" src="\/blog\/__island-setup\.js"><\/script>\n<\/head>/,
     );
-    assert.match(html, /"is-land": "\/blog\/is-land\.js\?nodefine"/);
+    assert.doesNotMatch(html, /importmap/);
   });
 
-  it("pathPrefix 未設定では importmap の is-land は /is-land.js?nodefine を指す", () => {
+  it("pathPrefix 未設定では setup を /__island-setup.js から読む", () => {
     const config = makeEleventyConfigStub({ pathPrefix: undefined });
     preactIsland(config);
 
-    const html = config._transform(
-      "preact-island-inject",
-      "<html><head></head><body></body></html>",
-      "dist/index.html",
-    );
-    assert.match(html, /"is-land": "\/is-land\.js\?nodefine"/);
+    const html = config._transform("preact-island-inject", PAGE_WITH_ISLAND, "dist/index.html");
+    assert.match(html, /<script type="module" src="\/__island-setup\.js"><\/script>/);
+  });
+
+  it("<is-land> を含まないページには何も注入しない", () => {
+    const config = makeEleventyConfigStub();
+    preactIsland(config);
+
+    const page = "<html><head></head><body></body></html>";
+    assert.strictEqual(config._transform("preact-island-inject", page, "dist/index.html"), page);
   });
 });
 
-describe("Island plugin inline setup script の初期化順", () => {
-  // 回帰テスト: `Island.attributePrefix = "land-on:"` を `Island.define()` より
-  // 前で行い、かつ importmap 側で is-land を `?nodefine` に固定していることを
+describe("Island plugin setup モジュールの初期化", () => {
+  // 回帰テスト: is-land を `?nodefine` 付き URL で import し、かつ
+  // `Island.attributePrefix = "land-on:"` を `Island.define()` より前で行うことを
   // 同時に固定する。片方だけ壊れると <is-land> は「条件属性なし = 即 hydrate」
   // と判定され、`on="interaction"` 等の遅延ハイドレーションが無効化される。
-  it("attributePrefix 上書き → Island.define() の順で明示呼び出しになる", () => {
-    const config = makeEleventyConfigStub({ pathPrefix: undefined });
-    preactIsland(config);
+  it("is-land を ?nodefine 付き URL で import し、attributePrefix 上書き → Island.define() の順で呼ぶ", async () => {
+    const source = await writeUnbundledSetup({ pathPrefix: "/blog/" });
 
-    const html = config._transform(
-      "preact-island-inject",
-      "<html><head></head><body></body></html>",
-      "dist/index.html",
-    );
-
-    const prefixIdx = html.indexOf('Island.attributePrefix = "land-on:"');
-    const defineIdx = html.indexOf("Island.define()");
-    assert.ok(prefixIdx > -1, "attributePrefix 上書きが inline script に無い");
-    assert.ok(defineIdx > -1, "明示 Island.define() 呼び出しが inline script に無い");
+    assert.match(source, /^import \{ Island \} from "\/blog\/is-land\.js\?nodefine";$/m);
+    const prefixIdx = source.indexOf('Island.attributePrefix = "land-on:"');
+    const defineIdx = source.indexOf("Island.define()");
+    assert.ok(prefixIdx > -1, "attributePrefix 上書きが setup に無い");
+    assert.ok(defineIdx > -1, "明示 Island.define() 呼び出しが setup に無い");
     assert.ok(
       prefixIdx < defineIdx,
       "Island.attributePrefix は Island.define() より前に設定しないと customElements 登録に反映されない",
@@ -190,106 +180,130 @@ describe("Island plugin inline setup script の初期化順", () => {
   });
 });
 
-describe("Island plugin importmap ↔ preact バージョン自動検出", () => {
-  it("preactVersion 未指定時は importmap がインストール済 preact のバージョンで pin される", () => {
-    const config = makeEleventyConfigStub({ pathPrefix: undefined });
-    preactIsland(config);
+describe("Island plugin dev フック ↔ Eleventy runMode", () => {
+  it("serve では setup に __eleventyRehydrate を、HTML に WebSocket フックを入れる", async () => {
+    const source = await writeUnbundledSetup({ runMode: "serve" });
+    assert.match(source, /window\.__eleventyRehydrate = /);
 
-    const html = config._transform(
-      "preact-island-inject",
-      "<html><head></head><body></body></html>",
-      "dist/index.html",
-    );
-    // テスト側でもプラグインと同じ peer 依存の preact を参照するので値は一致する
-    const { version } = require("preact/package.json");
-    assert.ok(
-      html.includes(`https://esm.sh/preact@${version}"`),
-      `expected importmap to pin preact to @${version}, got: ${html}`,
-    );
-    assert.ok(html.includes(`https://esm.sh/preact@${version}/hooks?external=preact`));
-    assert.ok(html.includes(`https://esm.sh/preact@${version}/jsx-runtime?external=preact`));
+    const config = makeEleventyConfigStub();
+    preactIsland(config);
+    await config._emit("eleventy.before", { runMode: "serve" });
+    const html = config._transform("preact-island-inject", PAGE_WITH_ISLAND, "dist/index.html");
+    assert.match(html, /window\.__eleventyRehydrate\?\.\(\)/);
   });
 
-  it("preactVersion 指定時は指定値が優先され、警告は出ない", (t) => {
-    const warn = t.mock.method(console, "warn");
-    const config = makeEleventyConfigStub({ pathPrefix: undefined });
-    preactIsland(config, { preactVersion: "10.20.0" });
+  it("build では dev フックを入れない", async () => {
+    const source = await writeUnbundledSetup({ runMode: "build" });
+    assert.doesNotMatch(source, /__eleventyRehydrate/);
 
-    const html = config._transform(
-      "preact-island-inject",
-      "<html><head></head><body></body></html>",
-      "dist/index.html",
-    );
-    assert.ok(html.includes(`https://esm.sh/preact@10.20.0"`));
+    const config = makeEleventyConfigStub();
+    preactIsland(config);
+    await config._emit("eleventy.before", { runMode: "build" });
+    const html = config._transform("preact-island-inject", PAGE_WITH_ISLAND, "dist/index.html");
+    assert.doesNotMatch(html, /__eleventyRehydrate/);
+  });
+});
+
+describe("Island plugin 非推奨オプション", () => {
+  for (const name of ["preactVersion", "devalueVersion"]) {
+    it(`${name} を指定すると非推奨警告を 1 回出す`, (t) => {
+      const warn = t.mock.method(console, "warn", () => {});
+      preactIsland(makeEleventyConfigStub(), { [name]: "1.0.0" });
+      assert.strictEqual(warn.mock.callCount(), 1);
+      assert.match(warn.mock.calls[0].arguments[0], new RegExp(`\`${name}\` is deprecated`));
+    });
+  }
+
+  it("指定しなければ警告は出ない", (t) => {
+    const warn = t.mock.method(console, "warn");
+    preactIsland(makeEleventyConfigStub());
     assert.strictEqual(warn.mock.callCount(), 0);
   });
 });
 
-describe("Island plugin importmap ↔ devalue バージョン自動検出", () => {
-  it("devalueVersion 未指定時は importmap が同梱 devalue のバージョンで pin される", () => {
-    const config = makeEleventyConfigStub({ pathPrefix: undefined });
-    preactIsland(config);
+describe("Island plugin bundle: false", () => {
+  it("setup を未バンドルのまま出力に書き出す (preact / devalue は bare import)", async () => {
+    const source = await writeUnbundledSetup();
 
-    const html = config._transform(
-      "preact-island-inject",
-      "<html><head></head><body></body></html>",
-      "dist/index.html",
-    );
-    // テスト側でもプラグインが依存しているのと同じ devalue を参照するので値は一致する
-    const version = readInstalledDevalueVersion();
-    assert.ok(
-      html.includes(`https://esm.sh/devalue@${version}"`),
-      `expected importmap to pin devalue to @${version}, got: ${html}`,
-    );
-  });
-
-  it("devalueVersion 指定時は指定値が優先され、警告は出ない", (t) => {
-    const warn = t.mock.method(console, "warn");
-    const config = makeEleventyConfigStub({ pathPrefix: undefined });
-    preactIsland(config, { devalueVersion: "5.0.0" });
-
-    const html = config._transform(
-      "preact-island-inject",
-      "<html><head></head><body></body></html>",
-      "dist/index.html",
-    );
-    assert.ok(html.includes(`https://esm.sh/devalue@5.0.0"`));
-    assert.strictEqual(warn.mock.callCount(), 0);
-  });
-
-  // preactVersion と同じく `if (devalueVersion)` の truthy 判定にしてあるので、
-  // 空文字は「未指定と同じ扱い」= 自動検出フォールバックに落ちる。preact 側と
-  // 非対称に「空文字で latest 強制」を追加しないことをここで固定する。
-  it("devalueVersion に空文字を渡すと未指定と同じく自動検出でピン留めされる", (t) => {
-    const warn = t.mock.method(console, "warn");
-    const config = makeEleventyConfigStub({ pathPrefix: undefined });
-    preactIsland(config, { devalueVersion: "" });
-
-    const html = config._transform(
-      "preact-island-inject",
-      "<html><head></head><body></body></html>",
-      "dist/index.html",
-    );
-    const version = readInstalledDevalueVersion();
-    assert.ok(
-      html.includes(`https://esm.sh/devalue@${version}"`),
-      `expected empty string to fall through to auto-detected devalue@${version}, got: ${html}`,
-    );
-    assert.strictEqual(warn.mock.callCount(), 0);
+    assert.match(source, /^import \{ h, hydrate \} from "preact";$/m);
+    assert.match(source, /^import \{ parse \} from "devalue";$/m);
   });
 });
 
-describe("Island plugin bundle オプション", () => {
-  it("デフォルト (bundle 省略) は esbuild 用の eleventy.before ハンドラを登録する", () => {
-    const config = makeEleventyConfigStub();
+// A client entry that pulls in both preact hooks and @preact/signals.
+const clientIsland = (name) => `import { useSignal } from "@preact/signals";
+import { useId } from "preact/hooks";
+import { clientComponent } from "${path.join(import.meta.dirname, "island.js")}";
+
+function ${name}() {
+  const count = useSignal(0);
+  return <button id={useId()} onClick={() => count.value++}>{count}</button>;
+}
+export default clientComponent(${name}, import.meta.url);
+`;
+
+describe("Island plugin esbuild バンドル", () => {
+  let dir;
+
+  before(async () => {
+    dir = await fs.mkdtemp(path.join(import.meta.dirname, ".tmp-bundle-test-"));
+    const src = path.join(dir, "src");
+    await fs.mkdir(path.join(src, "nested"), { recursive: true });
+    await fs.writeFile(path.join(src, "a.client.jsx"), clientIsland("A"));
+    await fs.writeFile(path.join(src, "nested", "b.client.jsx"), clientIsland("B"));
+
+    const config = makeEleventyConfigStub({
+      pathPrefix: "/blog/",
+      input: `${src}/`,
+      output: `${path.join(dir, "dist")}/`,
+    });
     preactIsland(config);
-    assert.ok(config._hasHandler("eleventy.before"));
+    await config._emit("eleventy.before", { runMode: "build" });
   });
 
-  it("bundle: false では eleventy.before ハンドラを登録しない (esbuild を止める)", () => {
-    const config = makeEleventyConfigStub();
-    preactIsland(config, { bundle: false });
-    assert.ok(!config._hasHandler("eleventy.before"));
+  after(async () => {
+    await fs.rm(dir, { recursive: true, force: true });
+  });
+
+  const readOutputs = async () => {
+    const files = await fg("**/*.js", { cwd: path.join(dir, "dist") });
+    return Promise.all(
+      files.map(async (file) => ({
+        file,
+        code: await fs.readFile(path.join(dir, "dist", file), "utf8"),
+      })),
+    );
+  };
+
+  it("client エントリと setup が resolver の規約どおりのパスに出力される", async () => {
+    const files = new Set((await readOutputs()).map(({ file }) => file));
+    assert.ok(files.has("a.client.js"));
+    assert.ok(files.has("nested/b.client.js"));
+    assert.ok(files.has("__island-setup.js"));
+  });
+
+  it("is-land だけは ?nodefine 付き URL の external import として残る", async () => {
+    const setup = await fs.readFile(path.join(dir, "dist", "__island-setup.js"), "utf8");
+    assert.match(setup, /from "\/blog\/is-land\.js\?nodefine"/);
+  });
+
+  it("preact / signals / devalue の bare import が残らない", async () => {
+    for (const { file, code } of await readOutputs()) {
+      assert.doesNotMatch(
+        code,
+        /from\s*"(preact|preact\/hooks|@preact\/signals|@preact\/signals-core|devalue)"/,
+        file,
+      );
+    }
+  });
+
+  // 回帰テスト: preact と signals が複数ファイルに複製されると options の patch と
+  // signal graph が分裂し、hooks の不整合や Cycle detected の誤発火を起こす。
+  it("preact と signals-core の実装はそれぞれ 1 ファイルにだけ含まれる", async () => {
+    const outputs = await readOutputs();
+    const count = (marker) => outputs.filter(({ code }) => code.includes(marker)).length;
+    assert.strictEqual(count("Cycle detected"), 1, "signals-core");
+    assert.strictEqual(count(PREACT_MARKER), 1, "preact");
   });
 });
 

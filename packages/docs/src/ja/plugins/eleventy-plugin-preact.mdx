@@ -18,7 +18,7 @@ title: eleventy-plugin-preact
 
 本ボイラープレートは、SSR と Partial Hydration の両方で同じ UI ランタイムを使う設計を選んでいます。候補として React / Preact / Solid / Svelte がありましたが、次の理由で **Preact** を採用しています。
 
-- 単独の bundle が小さく、esm.sh などの CDN で配布できます。クライアント側は import map で `preact` を解決し、bundle サイズを最小化できます。
+- ランタイムが小さく、すべての Island が共有する 1 つのチャンクに収めても、クライアントに送る JavaScript の量を小さく保てます。
 - React 互換 API を持ち、JSX 記法や `useState` / `useEffect` などのフックがそのまま使えます。
 - SSR は `preact-render-to-string` で完結し、追加のランタイムサーバは要りません。
 - [`@11ty/is-land`](https://github.com/11ty/is-land) の初期化フックに接続しやすく、Partial Hydration の実装が薄く済みます。

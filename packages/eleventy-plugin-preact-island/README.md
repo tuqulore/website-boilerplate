@@ -31,10 +31,12 @@ Author client components as `src/**/*.client.jsx` (or `.tsx` / `.js` / `.ts`) an
 
 For each `*.client.{js,jsx,ts,tsx}` under Eleventy's input directory, the plugin:
 
-1. Bundles it with esbuild (unless `bundle: false`).
+1. Bundles it with esbuild, together with the browser-side setup module `__island-setup.js` (unless `bundle: false`). Dependencies shared across entries, such as Preact and `@preact/signals`, are split into chunks under `__island-chunks/`, so every Island runs on a single instance resolved from your installed packages.
 2. Excludes it from Eleventy's template processing.
-3. Copies [`@11ty/is-land`](https://github.com/11ty/is-land)'s `is-land.js` to the output directory and injects the browser-side setup (import map for is-land and Preact, is-land init hook) before `</head>`.
+3. Copies [`@11ty/is-land`](https://github.com/11ty/is-land)'s `is-land.js` to the output directory and, on each page that contains `<is-land>`, loads the setup module from `</head>`.
 4. Wires the URL resolver so `<Island>` on the SSR side emits the same URL the bundler produced.
+
+No CDN or import map is involved: everything the browser loads comes from the output directory.
 
 The plugin reads Eleventy's input/output directories (`eleventyConfig.directories.input` / `.output`) and its `pathPrefix`. There is no separate `srcDir` / `outDir` / `urlPrefix` option; the Eleventy configuration is the single source of truth.
 
@@ -42,27 +44,18 @@ The plugin reads Eleventy's input/output directories (`eleventyConfig.directorie
 
 ### Plugin options
 
-#### `preactVersion`
-
-- Type: `string`
-- Default: auto-detected from the installed `preact` (falls back to the esm.sh latest with a warning if `preact` cannot be resolved)
-
-Preact version to fetch from the esm.sh CDN. Normally you do not need to set this — the plugin reads the version of `preact` installed in your project (from `preact/package.json`) and pins the CDN URL to it, so the runtime stays in sync with the SSR/bundle side.
-
-Set this only to force the CDN to a different version than the installed one — for example, an emergency rollback of the runtime without touching `package.json`.
-
-```javascript
-eleventyConfig.addPlugin(preactIsland, {
-  preactVersion: "10.26.4",
-});
-```
+`preactVersion` and `devalueVersion` are deprecated and ignored; they only pinned the CDN URLs the plugin no longer uses.
 
 #### `bundle`
 
 - Type: `boolean`
 - Default: `true`
 
-Whether to bundle `*.client.{js,jsx,ts,tsx}` entries with esbuild. Set to `false` to bring your own bundler; the ignore rule, the SSR URL resolver, the `is-land.js` copy, and the browser-side setup stay active. You then produce the `.client.js` bundles at the URLs the resolver expects (`<pathPrefix><input-relative path>.client.js`).
+Whether to bundle `*.client.{js,jsx,ts,tsx}` entries with esbuild. Set to `false` to bring your own bundler; the ignore rule, the SSR URL resolver, the `is-land.js` copy, and the setup module loading stay active. Your bundler then has to:
+
+- Produce the `.client.js` bundles at the URLs the resolver expects (`<pathPrefix><input-relative path>.client.js`).
+- Bundle `<output>/__island-setup.js`, which the plugin writes unbundled with bare `preact` and `devalue` imports, in place. Resolve `preact` to the same instance as your `.client.*` bundles.
+- Keep the `<pathPrefix>is-land.js?nodefine` import external. The query stops is-land from registering itself before the setup configures it, and bundling is-land would drop it.
 
 ```javascript
 eleventyConfig.addPlugin(preactIsland, { bundle: false });

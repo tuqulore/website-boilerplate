@@ -55,7 +55,7 @@ props のシリアライズには [`devalue`](https://github.com/Rich-Harris/dev
 
 ## `bundle: false` で外部バンドラに渡す
 
-esbuild による bundle は `bundle: true` (デフォルト) で動きます。別のバンドラを使いたい場合は `bundle: false` を渡すと、プラグインは URL 解決と `is-land.js` のコピー、setup スクリプトの注入だけを担うようになります。開発者は、期待される URL (`<pathPrefix><入力相対パス>.client.js`) に bundle を配置する責任を負います。
+esbuild による bundle は `bundle: true` (デフォルト) で動きます。別のバンドラを使いたい場合は `bundle: false` を渡すと、プラグインは URL 解決と `is-land.js` のコピー、未バンドルの setup モジュールの出力と読み込みだけを担うようになります。開発者は、期待される URL (`<pathPrefix><入力相対パス>.client.js`) に bundle を配置し、setup モジュールも同じバンドラで処理する責任を負います。具体的な条件は `@tuqulore-inc/eleventy-plugin-preact-island` の README を参照します。
 
 「zero-config で動くが、必要なら差し替えられる」構成です。バンドル戦略が変わってもプラグイン全体を捨てずに済みます。
 

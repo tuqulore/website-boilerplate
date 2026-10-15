@@ -64,8 +64,8 @@ export function createClientModuleResolver({ inputDir = ".", urlPrefix = "/" } =
 /**
  * Ensure a URL path prefix has both leading and trailing slashes.
  *
- * @internal Shared with the plugin so the injected importmap and the resolved
- *   client module URLs agree on the same prefix.
+ * @internal Shared with the plugin so the setup module, is-land URLs and the
+ *   resolved client module URLs agree on the same prefix.
  * @param {string} prefix
  * @returns {string}
  */

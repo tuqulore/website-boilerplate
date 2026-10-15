@@ -51,6 +51,7 @@
     "fast-glob": "^3.3.3"
   },
   "devDependencies": {
+    "@preact/signals": "^2.11.3",
     "@tuqulore-inc/oxlint-config": "workspace:*",
     "oxlint": "^1.88.0",
     "preact": "^10.26.4",

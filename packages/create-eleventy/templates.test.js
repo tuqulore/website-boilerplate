@@ -153,6 +153,7 @@ describe("create-eleventy templates", { concurrency: true }, () => {
               "clicker.client.js",
               "_includes/partials/header/desktop.client.js",
               "_includes/partials/header/mobile.client.js",
+              "__island-setup.js",
             ];
             for (const rel of expectedBundles) {
               assert.ok(
@@ -174,6 +175,8 @@ describe("create-eleventy templates", { concurrency: true }, () => {
               /<is-land[^>]*\bimport="\/clicker\.client\.js"/,
               'dist/index.html に <is-land import="/clicker.client.js"> が含まれていない (Island の URL 解決経路が壊れている可能性)',
             );
+            assert.match(indexHtml, /<script type="module" src="\/__island-setup\.js"><\/script>/);
+            assert.doesNotMatch(indexHtml, /type="importmap"|esm\.sh/);
           }
         },
       );

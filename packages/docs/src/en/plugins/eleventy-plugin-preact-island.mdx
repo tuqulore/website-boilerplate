@@ -55,7 +55,7 @@ By riding an existing Eleventy concept instead of adding another knob, the devel
 
 ## `bundle: false` for external bundlers
 
-esbuild bundling is on by default (`bundle: true`). Pass `bundle: false` to switch it off — the plugin then only handles URL resolution, copying `is-land.js`, and injecting the setup script. You take responsibility for producing the bundle at the expected URL (`<pathPrefix><input-relative path>.client.js`).
+esbuild bundling is on by default (`bundle: true`). Pass `bundle: false` to switch it off — the plugin then only handles URL resolution, copying `is-land.js`, and writing and loading the unbundled setup module. You take responsibility for producing the bundle at the expected URL (`<pathPrefix><input-relative path>.client.js`) and for processing the setup module with the same bundler. See the `@tuqulore-inc/eleventy-plugin-preact-island` README for the exact requirements.
 
 The point is: "zero-config out of the box, but replaceable when you need it." Changing bundling strategy does not force you to drop the plugin.
 

@@ -2,29 +2,20 @@ import type { UserConfig } from "@11ty/eleventy";
 
 export interface PluginOptions {
   /**
-   * Override the Preact version used in the esm.sh CDN URL (e.g., "10.26.4").
-   *
-   * Defaults to the version of `preact` installed in the host project
-   * (auto-detected from `preact/package.json`), so the CDN runtime stays in
-   * sync with the SSR/bundle side by default. Set this only to force the CDN
-   * side to a different version than the installed one.
+   * @deprecated Ignored. Client dependencies are bundled from the installed
+   * packages instead of being loaded from a CDN.
    */
   preactVersion?: string;
   /**
-   * Override the devalue version used in the esm.sh CDN URL (e.g., "5.8.1").
-   *
-   * Defaults to the version of `devalue` bundled with this plugin
-   * (auto-detected from `devalue/package.json`), so the SSR-side `stringify`
-   * and the client-side `parse` come from the same devalue version by default.
-   * Set this only to force the CDN side to a different version than the
-   * bundled one.
+   * @deprecated Ignored. Client dependencies are bundled from the installed
+   * packages instead of being loaded from a CDN.
    */
   devalueVersion?: string;
   /**
    * Bundle `*.client.{js,jsx,ts,tsx}` entries with esbuild. Set to `false` to
    * bring your own bundler; the plugin still adds the Eleventy ignore rule,
-   * wires the SSR URL resolver, copies `is-land.js`, and injects the browser
-   * setup.
+   * wires the SSR URL resolver, copies `is-land.js`, and writes and loads the
+   * unbundled `__island-setup.js` for your bundler to process.
    * @default true
    */
   bundle?: boolean;

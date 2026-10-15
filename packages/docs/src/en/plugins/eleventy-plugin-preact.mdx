@@ -18,7 +18,7 @@ The plugin stops here. Everything client-side — bundling, is-land wiring, hydr
 
 The boilerplate uses the same UI runtime for SSR and Partial Hydration. React, Preact, Solid, and Svelte were all on the table; **Preact** wins for the following reasons.
 
-- The bundle is small enough to serve from a CDN like esm.sh. Browsers resolve `preact` through an import map, keeping the client bundle minimal.
+- The runtime is small, so a single chunk shared by every Island keeps the JavaScript sent to the client small.
 - Its React-compatible API means JSX and `useState` / `useEffect` work as expected.
 - SSR is handled by `preact-render-to-string` and needs no runtime server — everything runs inside the Eleventy build.
 - [`@11ty/is-land`](https://github.com/11ty/is-land)'s init hook composes cleanly with Preact, so the Partial Hydration layer stays thin.
