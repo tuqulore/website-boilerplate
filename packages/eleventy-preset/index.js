@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import Image from "@11ty/eleventy-img";
+import eleventyImage from "@11ty/eleventy-img";
 import postcss from "@tuqulore-inc/eleventy-plugin-postcss";
 import preact from "@tuqulore-inc/eleventy-plugin-preact";
 import preactIsland from "@tuqulore-inc/eleventy-plugin-preact-island";
@@ -18,16 +18,19 @@ const optimizeImages = async () => {
   const images = await fg([`${SRC_DIR}/**/*.{jpeg,jpg,png,webp,gif,tiff,avif,svg}`], {
     ignore: [OUT_DIR, "**/node_modules", `${SRC_DIR}/public`],
   });
-  for (const image of images) {
-    await Image(image, {
-      filenameFormat: () => path.basename(image),
-      formats: [null],
-      sharpOptions: {
-        animated: true,
-      },
-      outputDir: path.dirname(image).replace(new RegExp(`^${SRC_DIR}`), OUT_DIR),
-    });
-  }
+  // eleventy-img bounds the concurrency with its own processing queue.
+  await Promise.all(
+    images.map((image) =>
+      eleventyImage(image, {
+        filenameFormat: () => path.basename(image),
+        formats: [null],
+        sharpOptions: {
+          animated: true,
+        },
+        outputDir: path.dirname(image).replace(new RegExp(`^${SRC_DIR}`), OUT_DIR),
+      }),
+    ),
+  );
 };
 
 /**

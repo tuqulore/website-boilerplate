@@ -4,7 +4,7 @@ import path from "node:path";
 import url from "node:url";
 
 import fg from "fast-glob";
-import render from "preact-render-to-string";
+import { render } from "preact-render-to-string";
 import { jsx } from "preact/jsx-runtime";
 
 import { _runWithEleventyData } from "./eleventy.js";
