@@ -5,6 +5,7 @@ title: ようこそ
 
 import { Island } from "@tuqulore-inc/eleventy-preset/island";
 import Clicker from "./clicker.client.jsx";
+import Clock from "./clock.client.jsx";
 
 # ようこそ
 
@@ -22,3 +23,14 @@ import Clicker from "./clicker.client.jsx";
 以下のカウンターは Preact コンポーネントで、表示領域に入ったタイミングでクライアント側でハイドレーションされます。
 
 <Island component={Clicker} on="visible" />
+
+## SSR しない Island のサンプル
+
+以下の時計は `clientOnlyComponent()` で宣言した Preact コンポーネントです。現在時刻は SSR とクライアントで値が食い違うため、SSR ではプレースホルダだけを出力し、表示領域に入ったタイミングでクライアント側で初めて描画します。
+
+<Island
+  component={Clock}
+  on="visible"
+  locale="ja-JP"
+  fallback={<span class="text-xl tabular-nums">--:--:--</span>}
+/>

@@ -141,3 +141,63 @@ For parameterized triggers like `on:media("(min-width: 40rem)")`, skip `<Island>
 ## Match SSR and hydration
 
 Do not use non-deterministic values like `new Date()` or `Math.random()` in the initial render of an Island. SSR and the client produce different values, and hydration mismatches. Use deterministic values for the first render and reflect dynamic values inside `useEffect`.
+
+## Islands that skip SSR
+
+The approach in the previous section (a deterministic first render, with dynamic values applied in `useEffect`) leaves some components without a meaningful initial output in the SSR HTML.
+These are components whose values always differ between SSR and the client, such as the current time; components whose initial output depends on browser-only state, such as `localStorage`; and components that need browser-only APIs to render.
+Declare such a component with `clientOnlyComponent()` instead of `clientComponent()`.
+
+```jsx
+import { clientOnlyComponent } from "@tuqulore-inc/eleventy-preset/island";
+import { useEffect, useState } from "preact/hooks";
+
+function Clock() {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+  return <time>{now.toLocaleTimeString()}</time>;
+}
+
+export default clientOnlyComponent(Clock, import.meta.url);
+```
+
+`<Island>` does not render a client-only component during SSR; it outputs only what you pass as `fallback` inside `<is-land>`.
+On the client, once the trigger fires, the fallback is removed and the component is rendered from scratch instead of hydrated.
+Nothing is matched against the SSR HTML, so no mismatch occurs.
+A client-only Island with `on` omitted renders once the page has loaded.
+The default for regular Islands, `interaction`, waits for a click on the Island element, but a client-only Island holds only its fallback, which may be empty, so the click may never come.
+An explicit `on` sets the trigger, so combining it with `on="visible"` gives an Island that skips SSR and renders for the first time when it enters the viewport.
+
+```jsx
+<Island component={Clock} on="visible" fallback={<span>--:--:--</span>} />
+```
+
+Size the fallback like the rendered component.
+If the sizes differ, the layout shifts when one replaces the other.
+
+Even when client-only, the component's module is still evaluated during SSR.
+The SSR-side page imports it to pass it to `<Island>`.
+A function component's body, on the other hand, runs only when it is called.
+Keep browser-only APIs inside the component body or `useEffect`, not at the module's top level.
+
+If a dependency touches browser-only APIs at its module's top level, SSR fails as soon as that package is imported.
+In that case, write a thin client-only wrapper that imports the package dynamically inside `useEffect`.
+`useEffect` runs only on the client, so SSR never evaluates the package.
+
+```jsx
+import { clientOnlyComponent } from "@tuqulore-inc/eleventy-preset/island";
+import { useEffect, useState } from "preact/hooks";
+
+function Chart(props) {
+  const [Impl, setImpl] = useState(null);
+  useEffect(() => {
+    import("browser-only-chart").then((mod) => setImpl(() => mod.default));
+  }, []);
+  return Impl ? <Impl {...props} /> : null;
+}
+
+export default clientOnlyComponent(Chart, import.meta.url);
+```

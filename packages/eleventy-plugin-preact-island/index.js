@@ -103,7 +103,7 @@ window.__eleventyRehydrate = () => {
       : "";
 
     return `import { Island } from "${isLandUrl}";
-import { h, hydrate } from "preact";
+import { h, hydrate, render } from "preact";
 import { parse } from "devalue";
 
 const mount = async (target) => {
@@ -112,7 +112,16 @@ const mount = async (target) => {
     const component = await import(new URL(target.getAttribute("import"), document.baseURI).href);
     const propsAttr = target.getAttribute("props");
     const props = propsAttr ? parse(propsAttr) : {};
-    hydrate(h(component.default, props), target);
+    if (target.hasAttribute("client-only")) {
+      // NOTE: SSR output here is only the fallback, so mount from scratch. Unmount
+      // a tree from an earlier mount (dev rehydrate) to run its effect cleanups,
+      // and clear the fallback: render() leaves unknown children in place.
+      render(null, target);
+      target.replaceChildren();
+      render(h(component.default, props), target);
+    } else {
+      hydrate(h(component.default, props), target);
+    }
   } catch (e) {
     console.error("Failed to mount component:", e);
   }
