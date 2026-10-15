@@ -20,7 +20,7 @@ import postcss from "@tuqulore-inc/eleventy-plugin-postcss";
 
 export default function (eleventyConfig) {
   eleventyConfig.addPlugin(postcss, {
-    contentGlob: ["src/**/*.{md,mdx,jsx}"],
+    contentGlob: ["src/**/*.{md,mdx,jsx,tsx}"],
   });
 }
 ```
@@ -51,7 +51,7 @@ When using `contentGlob`, also configure `setServerOptions` so the dev server re
 
 ```javascript
 eleventyConfig.addPlugin(postcss, {
-  contentGlob: ["src/**/*.{md,mdx,jsx}"],
+  contentGlob: ["src/**/*.{md,mdx,jsx,tsx}"],
 });
 eleventyConfig.setServerOptions({
   watch: ["dist/**/*.css"],

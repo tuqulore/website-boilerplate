@@ -13,20 +13,30 @@ export function clientComponent<P = Record<string, unknown>>(
   moduleUrl: string,
 ): ClientComponent<P>;
 
-export interface IslandProps<P = Record<string, unknown>> {
+/**
+ * is-land initialization trigger. The union offers `"interaction"`, `"visible"`
+ * and `"idle"` for autocompletion; the `(string & {})` branch still accepts the
+ * other is-land triggers such as `"load"` or `"save-data"`. Rendered as the
+ * boolean attribute `land-on:<on>` on the underlying `<is-land>` element.
+ *
+ * NOTE: The runtime rejects values not matching `/^[A-Za-z0-9_-]+$/`, so
+ * parameterized triggers like `media("(min-width: 640px)")` need a raw
+ * `<is-land>` instead of `<Island>`.
+ */
+export type IslandOn = "interaction" | "visible" | "idle" | (string & {});
+
+/**
+ * Props accepted by `<Island>`: `component`, `on`, and the props of the wrapped
+ * client component, checked against that component's declaration.
+ */
+export type IslandProps<P> = Omit<P, "component" | "on"> & {
   component: ClientComponent<P>;
-  /**
-   * is-land initialization trigger. Common values: `"interaction"`, `"visible"`,
-   * `"idle"`. Rendered as the boolean attribute `land-on:<on>` on the underlying
-   * `<is-land>` element.
-   * @default "interaction"
-   */
-  on?: string;
-  [key: string]: unknown;
-}
+  /** @default "interaction" */
+  on?: IslandOn;
+};
 
 /**
  * Wrap a Preact component for Partial Hydration via is-land. The extra props
  * are forwarded both to the SSR render and to the hydrated client render.
  */
-export function Island<P = Record<string, unknown>>(props: IslandProps<P>): VNode;
+export function Island<P>(props: IslandProps<P>): VNode;

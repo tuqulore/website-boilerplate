@@ -47,6 +47,9 @@ import Counter from "./counter.client.jsx";
 
 props のシリアライズには [`devalue`](https://github.com/Rich-Harris/devalue) を使っており、`Date`、`Map`、`Set` のような JSON では失われる型もそのまま JavaScript の値として渡せます。
 
+型定義の上では、`<Island>` に渡す props は、渡したコンポーネントの props の型と照合されます。
+型検査を有効にしたプロジェクト(`default` テンプレートなど)では、props 名の打ち間違いや必須の props の渡し忘れが型エラーになります。
+
 ## Eleventy の `pathPrefix` に乗る
 
 サブディレクトリ配下にデプロイする場合 (例: GitHub Pages で `/repo/` 以下)、`<is-land import="...">` の URL もそのプレフィックスに合わせる必要があります。本プラグインは Eleventy の [`pathPrefix`](https://www.11ty.dev/docs/config/#deploy-to-a-subdirectory-with-a-path-prefix) をそのまま読み取ります。個別のオプションで URL プレフィックスを渡す口は用意していません。
@@ -129,6 +132,10 @@ Island の単位を細かくすると、hydrate 対象の JS が小さくなり�
 </table>
 
 判断基準は「利用者がその Island に触るまでにどれくらい猶予があるか」です。触るまで時間がある要素ほど遅らせ、初期表示直後に必要な要素ほど早めに hydrate します。
+
+`on` の型は、表の 3 つの値をエディタの補完候補に出しつつ、それ以外の文字列も受け付けます。
+is-land が持つ `load` や `save-data` のようなトリガーも、そのまま渡せます。
+ただし実行時には、`/^[A-Za-z0-9_-]+$/` に一致しない値は例外になります。
 
 パラメータ付きトリガー (`on:media("(min-width: 40rem)")` など) が必要な場合は、`<Island>` を使わずに素の `<is-land>` を直接書きます。詳細は `@tuqulore-inc/eleventy-plugin-preact-island` の README を参照してください。
 
