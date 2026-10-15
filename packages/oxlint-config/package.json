@@ -1,6 +1,6 @@
 {
   "name": "@tuqulore-inc/oxlint-config",
-  "version": "5.2.2-alpha.0",
+  "version": "5.2.2",
   "private": true,
   "description": "Shared Oxlint configuration for tuqulore packages",
   "keywords": [
