@@ -260,12 +260,14 @@ ${rehydrateScript}
       : "";
 
   eleventyConfig.addTransform("preact-island-inject", function (content, outputPath) {
-    // NOTE: HTML tag names are case-insensitive, so a hand-written <IS-LAND> counts too.
+    // NOTE: HTML tag names are case-insensitive, so hand-written <IS-LAND> and
+    // </HEAD> count too.
     if (!outputPath?.endsWith?.(".html") || !/<is-land[\s>]/i.test(content)) {
       return content;
     }
 
-    if (!content.includes("</head>")) {
+    const headClose = /<\/head\s*>/i;
+    if (!headClose.test(content)) {
       console.warn(
         `[eleventy-plugin-preact-island] WARN: No </head> tag found in ${outputPath}. Scripts not injected.`,
       );
@@ -279,6 +281,6 @@ ${rehydrateScript}
       .filter(Boolean)
       .join("\n");
 
-    return content.replace("</head>", `${scripts}\n</head>`);
+    return content.replace(headClose, (tag) => `${scripts}\n${tag}`);
   });
 }
