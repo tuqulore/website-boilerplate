@@ -168,7 +168,10 @@ export default clientOnlyComponent(Clock, import.meta.url);
 `<Island>` は、client-only のコンポーネントを SSR で描画せず、`fallback` に渡した内容だけを `<is-land>` の中に出力します。
 クライアント側では、トリガーが発火した時点で fallback を取り除き、hydrate ではなく新規に描画します。
 SSR の HTML と突き合わせないので、mismatch は起きません。
-`on` もそのまま効くため、`on="visible"` と組み合わせれば、SSR せず表示領域に入った時点で初めて描画する Island になります。
+`on` を省略した client-only の Island は、ページの読み込みが終わった時点で描画します。
+通常の Island の既定値である `interaction` は Island の要素へのクリックを待ちますが、client-only の Island の中身は fallback だけで、空のこともあります。
+その場合はクリックできる領域がなく、`interaction` ではいつまでも描画されません。
+`on` を指定すればそのトリガーで描画するので、`on="visible"` と組み合わせれば、SSR せず表示領域に入った時点で初めて描画する Island になります。
 
 ```jsx
 <Island component={Clock} on="visible" fallback={<span>--:--:--</span>} />

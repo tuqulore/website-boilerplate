@@ -167,7 +167,9 @@ export default clientOnlyComponent(Clock, import.meta.url);
 `<Island>` does not render a client-only component during SSR; it outputs only what you pass as `fallback` inside `<is-land>`.
 On the client, once the trigger fires, the fallback is removed and the component is rendered from scratch instead of hydrated.
 Nothing is matched against the SSR HTML, so no mismatch occurs.
-`on` still applies, so combining it with `on="visible"` gives an Island that skips SSR and renders for the first time when it enters the viewport.
+A client-only Island with `on` omitted renders once the page has loaded.
+The default for regular Islands, `interaction`, waits for a click on the Island element, but a client-only Island holds only its fallback, which may be empty, so the click may never come.
+An explicit `on` sets the trigger, so combining it with `on="visible"` gives an Island that skips SSR and renders for the first time when it enters the viewport.
 
 ```jsx
 <Island component={Clock} on="visible" fallback={<span>--:--:--</span>} />

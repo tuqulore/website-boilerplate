@@ -73,10 +73,11 @@ export function clientOnlyComponent(Component, moduleUrl) {
  * @param {import("preact").ComponentType<any>} attrs.component - Component
  *   wrapped with `clientComponent()` or `clientOnlyComponent()` in its
  *   `*.client.jsx` file.
- * @param {string} [attrs.on="interaction"] - is-land initialization trigger
- *   name (e.g. `"interaction"`, `"visible"`, `"idle"`).
+ * @param {string} [attrs.on] - is-land initialization trigger name (e.g.
+ *   `"interaction"`, `"visible"`, `"idle"`). Defaults to `"interaction"`, or
+ *   `"load"` for a client-only component.
  */
-export function Island({ component, on = "interaction", ...props }) {
+export function Island({ component, on: onProp, ...props }) {
   // Drop children explicitly. Preact folds JSX children into props.children,
   // and Island's contract is that SSR content comes from `component`; letting
   // children fall through would leak Preact VNodes into the devalue-serialized
@@ -87,6 +88,10 @@ export function Island({ component, on = "interaction", ...props }) {
       "Island: `component` prop must be a Preact component wrapped with `clientComponent()` or `clientOnlyComponent()`",
     );
   }
+  const clientOnly = component.__clientOnly === true;
+  // NOTE: A client-only island holds only its fallback, often nothing at all,
+  // so the click/touchstart that `interaction` waits for may never come.
+  const on = onProp === undefined ? (clientOnly ? "load" : "interaction") : onProp;
   // Reject values that would produce a broken `land-on:*` attribute (whitespace,
   // quotes, etc). is-land silently fails to fire on unknown trigger names, so
   // catching typos at build time is the only signal the user gets.
@@ -109,7 +114,6 @@ export function Island({ component, on = "interaction", ...props }) {
   const importUrl = currentResolver(moduleUrl);
   // NOTE: `fallback` is reserved only for client-only components, so a regular
   // client component that declares its own `fallback` prop still receives it.
-  const clientOnly = component.__clientOnly === true;
   const fallback = clientOnly ? (props.fallback ?? null) : null;
   if (clientOnly) delete props.fallback;
   let serializedProps;

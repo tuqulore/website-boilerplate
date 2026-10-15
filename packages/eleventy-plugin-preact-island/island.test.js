@@ -336,6 +336,16 @@ describe("Island", () => {
       assert.deepStrictEqual(extractParsedProps(html), { label: "now" });
     });
 
+    it("on を省略すると land-on:load になり、明示した on はそのまま使う", () => {
+      _setClientModuleResolver(() => "/clock.client.js");
+      const Clock = makeThrowingClock();
+      const html = render(h(Island, { component: Clock }));
+      assert.match(html, /land-on:load/);
+      assert.doesNotMatch(html, /land-on:interaction/);
+      const explicit = render(h(Island, { component: Clock, on: "interaction" }));
+      assert.match(explicit, /land-on:interaction/);
+    });
+
     it("fallback を省略すると子は空になる", () => {
       _setClientModuleResolver(() => "/clock.client.js");
       const html = render(h(Island, { component: makeThrowingClock() }));

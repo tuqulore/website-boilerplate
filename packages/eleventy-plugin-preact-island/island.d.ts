@@ -56,7 +56,7 @@ export type IslandProps<P> = Omit<P, "component" | "on"> & {
  */
 export type ClientOnlyIslandProps<P> = Omit<P, "component" | "on" | "fallback"> & {
   component: ClientOnlyComponent<P>;
-  /** @default "interaction" */
+  /** @default "load" */
   on?: IslandOn;
   fallback?: ComponentChildren;
 };

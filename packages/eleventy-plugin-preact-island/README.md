@@ -103,12 +103,12 @@ The component body runs only in the browser, but the module itself is still eval
 
 Wraps a client component in `<is-land>`. Extra props are forwarded to both the SSR render and the client hydration (for a client-only component, to the client render only); serialization uses [`devalue`](https://github.com/Rich-Harris/devalue) so `Date`, `Map`, `Set`, and similar types round-trip.
 
-| Prop        | Type                              | Description                                                                       |
-| ----------- | --------------------------------- | --------------------------------------------------------------------------------- |
-| `component` | `ClientComponent`                 | Component wrapped with `clientComponent()` or `clientOnlyComponent()`.            |
-| `on`        | `string` (default: `interaction`) | is-land initialization trigger. Rendered as the boolean attribute `land-on:<on>`. |
-| `fallback`  | `ComponentChildren`               | Client-only components only. Rendered by SSR in place of the component.           |
-| ...rest     | any                               | Forwarded to `<is-land>`'s `props` and to the component's SSR render as-is.       |
+| Prop        | Type                              | Description                                                                                                                      |
+| ----------- | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `component` | `ClientComponent`                 | Component wrapped with `clientComponent()` or `clientOnlyComponent()`.                                                           |
+| `on`        | `string` (default: `interaction`) | is-land initialization trigger. Rendered as the boolean attribute `land-on:<on>`. Defaults to `load` for client-only components. |
+| `fallback`  | `ComponentChildren`               | Client-only components only. Rendered by SSR in place of the component.                                                          |
+| ...rest     | any                               | Forwarded to `<is-land>`'s `props` and to the component's SSR render as-is.                                                      |
 
 For parameterized triggers such as `on:media("(min-width: ...)")`, use the raw `<is-land>` element directly; the injected setup script keeps working.
 

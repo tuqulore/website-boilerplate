@@ -154,7 +154,7 @@ The `on` prop maps to the `<is-land>` initialization trigger (`interaction` / `v
 
 ### Client-only islands
 
-A component whose output differs between SSR and the browser (the current time, random values, `localStorage`), or that needs browser-only APIs to render, can skip SSR. Mark it with `clientOnlyComponent()` instead of `clientComponent()`. `<Island>` then emits only the `fallback` prop from SSR, and the client renders the component from scratch once the `on` trigger fires.
+A component whose output differs between SSR and the browser (the current time, random values, `localStorage`), or that needs browser-only APIs to render, can skip SSR. Mark it with `clientOnlyComponent()` instead of `clientComponent()`. `<Island>` then emits only the `fallback` prop from SSR, and the client renders the component from scratch once the `on` trigger fires. When `on` is omitted, a client-only island renders on page load instead of waiting for an interaction, since its placeholder may have nothing to click.
 
 ```jsx
 // src/clock.client.jsx
