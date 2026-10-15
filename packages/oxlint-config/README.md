@@ -10,7 +10,7 @@ tuqulore の各パッケージが共通で使う Oxlint 設定。**private パ�
 {
   "devDependencies": {
     "@tuqulore-inc/oxlint-config": "workspace:*",
-    "oxlint": "^1.75.0"
+    "oxlint": "^1.88.0"
   }
 }
 ```
@@ -37,7 +37,7 @@ tuqulore の各パッケージが共通で使う Oxlint 設定。**private パ�
 ## 有効なプラグイン
 
 - `typescript`, `unicorn`, `oxc`（既定・明示）
-- `react`（Preact 用に `react/react-in-jsx-scope` 等は off）
+- `react`（Preact 用に `react/react-in-jsx-scope` 等は off。`react/immutability` は Preact Signals の `.value` への代入を誤検知するため off）
 - `jsx-a11y`
 - `import`
 
