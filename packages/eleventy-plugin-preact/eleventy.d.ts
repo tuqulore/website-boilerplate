@@ -53,7 +53,9 @@ export interface EleventyBuiltinData {
 
 /**
  * Project-specific data (Global Data from `_data/`, front matter). Empty by
- * design — projects extend it via declaration merging:
+ * design — projects extend it via declaration merging on the module they
+ * import `eleventy` from (`@tuqulore-inc/eleventy-preset/eleventy` when using
+ * the preset):
  *
  * ```ts
  * declare module "@tuqulore-inc/eleventy-plugin-preact/eleventy" {
