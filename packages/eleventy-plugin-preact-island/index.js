@@ -260,7 +260,8 @@ ${rehydrateScript}
       : "";
 
   eleventyConfig.addTransform("preact-island-inject", function (content, outputPath) {
-    if (!outputPath?.endsWith?.(".html") || !content.includes("<is-land")) {
+    // NOTE: HTML tag names are case-insensitive, so a hand-written <IS-LAND> counts too.
+    if (!outputPath?.endsWith?.(".html") || !/<is-land[\s>]/i.test(content)) {
       return content;
     }
 

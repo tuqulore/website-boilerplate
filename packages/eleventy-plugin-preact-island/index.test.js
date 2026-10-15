@@ -155,6 +155,23 @@ describe("Island plugin setup 注入 ↔ Eleventy pathPrefix", () => {
     assert.match(html, /<script type="module" src="\/__island-setup\.js"><\/script>/);
   });
 
+  it("大文字混じりの <IS-LAND> を手書きしたページにも注入する", () => {
+    const config = makeEleventyConfigStub();
+    preactIsland(config);
+
+    const page = '<html><head></head><body><IS-LAND type="preact"></IS-LAND></body></html>';
+    const html = config._transform("preact-island-inject", page, "dist/index.html");
+    assert.match(html, /<script type="module" src="\/__island-setup\.js"><\/script>/);
+  });
+
+  it("名前が is-land で始まる別の要素だけでは注入しない", () => {
+    const config = makeEleventyConfigStub();
+    preactIsland(config);
+
+    const page = "<html><head></head><body><is-landing></is-landing></body></html>";
+    assert.strictEqual(config._transform("preact-island-inject", page, "dist/index.html"), page);
+  });
+
   it("<is-land> を含まないページには何も注入しない", () => {
     const config = makeEleventyConfigStub();
     preactIsland(config);
