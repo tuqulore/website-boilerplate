@@ -3,4 +3,6 @@ export {
   type EleventyBuiltinData,
   type EleventyUserData,
   type EleventyData,
+  type EleventyCollectionItem,
+  type EleventyCollections,
 } from "@tuqulore-inc/eleventy-plugin-preact/eleventy";

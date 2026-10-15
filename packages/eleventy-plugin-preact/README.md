@@ -89,7 +89,9 @@ The Eleventy plugin factory. Register with `eleventyConfig.addPlugin(preact)`.
 
 ### `import { eleventy } from "@tuqulore-inc/eleventy-plugin-preact/eleventy"`
 
-The SSR-side singleton. Exposes `content`, `title`, `description`, `site`, `nav`, `page`, and any other data provided by Eleventy. Available only during SSR; not accessible from client-hydrated components. See [Preset Conventions / Data Access](https://website.tuqulore.workers.dev/en/preset/data-access/) for details.
+The SSR-side singleton. Exposes `content`, `title`, `description`, `site`, `nav`, `page`, `collections`, and any other data provided by Eleventy. Available only during SSR; not accessible from client-hydrated components. See [Preset Conventions / Data Access](https://website.tuqulore.workers.dev/en/preset/data-access/) for details.
+
+`eleventy.collections` is typed by the `EleventyCollections` interface, whose entries are `EleventyCollectionItem<T>` (front matter under `.data`). Only `all` is declared; extend it via declaration merging, or let [`@tuqulore-inc/eleventy-collections`](../eleventy-collections) generate it from Zod schemas.
 
 ## Requirements
 
