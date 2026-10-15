@@ -5,7 +5,12 @@ import { parse } from "devalue";
 import { h } from "preact";
 import { render } from "preact-render-to-string";
 
-import { Island, clientComponent, _setClientModuleResolver } from "./island.js";
+import {
+  Island,
+  clientComponent,
+  clientOnlyComponent,
+  _setClientModuleResolver,
+} from "./island.js";
 
 // SSR HTML から <is-land ... props="..."> の props 属性値を取り出し、HTML エスケープを
 // 戻して devalue.parse に通す。SSR 側の stringify とクライアント側の parse が
@@ -21,6 +26,13 @@ function extractParsedProps(html) {
     // &amp; は最後に戻す (先にやると &amp;quot; が " まで剥がれる)
     .replaceAll("&amp;", "&");
   return parse(decoded);
+}
+
+// SSR で本体が呼ばれたら throw する client-only component。
+function makeThrowingClock() {
+  return clientOnlyComponent(function Clock() {
+    throw new Error("Clock must not be rendered during SSR");
+  }, "file:///proj/src/clock.client.jsx");
 }
 
 describe("_setClientModuleResolver", () => {
@@ -63,6 +75,27 @@ describe("clientComponent", () => {
   it("moduleUrl が文字列でない場合は TypeError", () => {
     assert.throws(() => clientComponent(() => null, undefined), TypeError);
     assert.throws(() => clientComponent(() => null, 123), TypeError);
+  });
+});
+
+describe("clientOnlyComponent", () => {
+  it("Component に __clientModuleUrl と __clientOnly を付与して同じ関数を返す", () => {
+    const Comp = () => null;
+    const returned = clientOnlyComponent(Comp, "file:///proj/src/foo.client.jsx");
+    assert.strictEqual(returned, Comp);
+    assert.strictEqual(Comp.__clientModuleUrl, "file:///proj/src/foo.client.jsx");
+    assert.strictEqual(Comp.__clientOnly, true);
+  });
+
+  it("引数が不正な場合は clientOnlyComponent の名前で TypeError", () => {
+    assert.throws(
+      () => clientOnlyComponent(null, "file:///x"),
+      (err) => err instanceof TypeError && err.message.startsWith("clientOnlyComponent:"),
+    );
+    assert.throws(
+      () => clientOnlyComponent(() => null, undefined),
+      (err) => err instanceof TypeError && err.message.startsWith("clientOnlyComponent:"),
+    );
   });
 });
 
@@ -280,5 +313,42 @@ describe("Island", () => {
     assert.doesNotMatch(html, /<\/script>/);
     const parsed = extractParsedProps(html);
     assert.strictEqual(parsed.s, payload);
+  });
+  describe("client-only component", () => {
+    it("本体を呼ばず、client-only 属性付きの <is-land> に fallback だけを出力する", () => {
+      _setClientModuleResolver(() => "/clock.client.js");
+      const html = render(
+        h(Island, {
+          component: makeThrowingClock(),
+          on: "visible",
+          label: "now",
+          fallback: h("span", null, "--:--"),
+        }),
+      );
+      assert.match(html, /<is-land\b[^>]*\bclient-only(?=[\s/>])/);
+      assert.doesNotMatch(html, /client-only=/);
+      assert.match(html, /land-on:visible/);
+      assert.match(html, /import="\/clock\.client\.js"/);
+      assert.match(html, /<span>--:--<\/span><\/is-land>$/);
+      // fallback は Island の prop なので、クライアントに渡す props には含めない
+      assert.deepStrictEqual(extractParsedProps(html), { label: "now" });
+    });
+
+    it("fallback を省略すると子は空になる", () => {
+      _setClientModuleResolver(() => "/clock.client.js");
+      const html = render(h(Island, { component: makeThrowingClock() }));
+      assert.match(html, /<is-land\b[^>]*><\/is-land>$/);
+    });
+  });
+
+  it("通常の client component では fallback を予約せず、component の prop として渡す", () => {
+    _setClientModuleResolver(() => "/x.client.js");
+    const X = clientComponent(function X(props) {
+      return h("i", null, props.fallback);
+    }, "file:///proj/src/x.client.jsx");
+    const html = render(h(Island, { component: X, fallback: "text" }));
+    assert.doesNotMatch(html, /client-only/);
+    assert.match(html, /<i>text<\/i>/);
+    assert.deepStrictEqual(extractParsedProps(html), { fallback: "text" });
   });
 });
