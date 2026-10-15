@@ -1,3 +1,4 @@
 .env*.local
 dist
+generated
 node_modules

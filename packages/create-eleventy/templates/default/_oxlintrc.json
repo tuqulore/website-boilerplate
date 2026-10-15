@@ -24,5 +24,11 @@
       "env": { "commonjs": true }
     }
   ],
-  "ignorePatterns": ["**/dist/**", "**/node_modules/**", "pnpm-lock.yaml", "**/*.mdx"]
+  "ignorePatterns": [
+    "**/dist/**",
+    "**/generated/**",
+    "**/node_modules/**",
+    "pnpm-lock.yaml",
+    "**/*.mdx"
+  ]
 }

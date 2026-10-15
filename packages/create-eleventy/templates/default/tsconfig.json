@@ -20,6 +20,6 @@
   "mdx": {
     "checkMdx": true
   },
-  "include": ["*.js", "*.d.ts", "src/**/*"],
+  "include": ["*.js", "*.d.ts", "src/**/*", "generated"],
   "exclude": ["dist", "node_modules"]
 }

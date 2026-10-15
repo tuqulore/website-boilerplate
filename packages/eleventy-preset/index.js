@@ -1,6 +1,7 @@
 import path from "node:path";
 
 import eleventyImage from "@11ty/eleventy-img";
+import collections from "@tuqulore-inc/eleventy-collections";
 import postcss from "@tuqulore-inc/eleventy-plugin-postcss";
 import preact from "@tuqulore-inc/eleventy-plugin-preact";
 import preactIsland from "@tuqulore-inc/eleventy-plugin-preact-island";
@@ -53,6 +54,10 @@ export default function preset(extend = () => {}) {
     // input/output directories (set above) and the `.client.{js,jsx,ts,tsx}`
     // convention, owning the client bundle + Eleventy ignore + URL resolver.
     eleventyConfig.addPlugin(preactIsland);
+
+    // Collections validated and typed by `SRC_DIR/<name>/_schema.ts`. A no-op
+    // until a schema exists.
+    eleventyConfig.addPlugin(collections);
 
     // PostCSS processing
     eleventyConfig.addPlugin(postcss, {

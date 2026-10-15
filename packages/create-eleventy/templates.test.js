@@ -18,9 +18,10 @@ const templates = fs
   .map((entry) => entry.name);
 
 // テンプレートが直接/間接に依存する workspace 内パッケージ。
-// eleventy-preset が workspace:* で 3 プラグインを引くため一括で差し込む。
+// eleventy-preset が workspace:* で 4 プラグインを引くため一括で差し込む。
 const workspacePackageNames = [
   "@tuqulore-inc/eleventy-preset",
+  "@tuqulore-inc/eleventy-collections",
   "@tuqulore-inc/eleventy-plugin-preact",
   "@tuqulore-inc/eleventy-plugin-preact-island",
   "@tuqulore-inc/eleventy-plugin-postcss",
@@ -140,6 +141,11 @@ describe("create-eleventy templates", { concurrency: true }, () => {
           assert.ok(
             fs.existsSync(path.join(projectDir, "dist", "index.html")),
             "build 後に dist/index.html が生成されていない",
+          );
+          // _schema.ts を持たないプロジェクトには collection の型ファイルを作らない
+          assert.ok(
+            !fs.existsSync(path.join(projectDir, "generated")),
+            "スキーマが無いのに generated/ が作られた",
           );
 
           // テンプレートの lint は型検査 (--type-check) を含む。公開型定義と
