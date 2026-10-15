@@ -27,7 +27,7 @@ Tailwind CSS reads class names out of your templates before it emits CSS. The ou
 The plugin accepts a `contentGlob` option to declare which files count as CSS dependencies. The preset default is:
 
 ```js
-contentGlob: ["src/**/*.{md,mdx,jsx}"];
+contentGlob: ["src/**/*.{md,mdx,jsx,tsx}"];
 ```
 
 Through Eleventy's `addDependencies` API, changes to any of those files trigger a CSS rebuild. Write a new Tailwind class into a template and it lights up on the dev server the next moment.

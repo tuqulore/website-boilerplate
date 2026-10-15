@@ -53,7 +53,7 @@ export default function preset(extend = () => {}) {
 
     // PostCSS processing
     eleventyConfig.addPlugin(postcss, {
-      contentGlob: [`${SRC_DIR}/**/*.{md,mdx,jsx}`],
+      contentGlob: [`${SRC_DIR}/**/*.{md,mdx,jsx,tsx}`],
     });
 
     // Watch generated CSS for dev server reload

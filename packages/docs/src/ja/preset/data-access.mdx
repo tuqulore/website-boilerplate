@@ -122,6 +122,36 @@ src/_data/nav/en.json
 
 現在のページの `locale` に応じてどちらを引くかは、テンプレート側で `eleventy.nav[eleventy.locale]` の形で分岐します。本ドキュメントの sidebar 実装がその例です。
 
+## データに型を付ける
+
+本プリセットは、`eleventy` シングルトンの型定義を提供しています。
+`page` などの Eleventy 組み込みのデータと、`title` や `description` のようなよく使う frontmatter には、設定なしで型が付きます。
+
+グローバルデータや独自の frontmatter の型は、プロジェクトごとに TypeScript の**宣言マージ**(declaration merging)で追加します。
+型定義ファイルを置き、`EleventyUserData` インターフェースにデータの形を宣言します。
+
+```ts
+import type nav from "./src/_data/nav.json";
+import type site from "./src/_data/site.js";
+
+declare module "@tuqulore-inc/eleventy-preset/eleventy" {
+  interface EleventyUserData {
+    site: typeof site;
+    nav: typeof nav;
+    ogp?: string;
+  }
+}
+```
+
+これで `eleventy.site.name` は `string` に解決され、`eleventy.site.nmae` のような打ち間違いは型エラーになります。
+`site` と `nav` の型はデータファイルから導いているので、データファイルを書き換えると型も追随します。
+
+宣言マージの対象には、テンプレートが `eleventy` を import しているモジュール(プリセット経由なら `@tuqulore-inc/eleventy-preset/eleventy`)を指定します。
+プリセットが内部で使うプラグインのモジュール名を指定するわけにはいきません。pnpm で依存を入れたプロジェクトからはそのモジュールを解決できず、`declare module` は型の追加ではなく新しいモジュールの宣言として扱われ、`eleventy` の型が失われるためです。
+同じ理由で、型定義ファイルには少なくとも一つのトップレベルの `import` を置きます。`import` も `export` もないファイルはモジュールとして扱われません。
+
+`default` テンプレートには、この型定義ファイルが最初から含まれています。
+
 ## SSR 中のみ有効
 
 `eleventy` シングルトンは SSR 中にだけ有効です。クライアント側で hydrate される Island からは参照できません。SSR 側で解決した値を Island に渡したいときは、`<Island>` の props として明示的に渡します。

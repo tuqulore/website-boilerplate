@@ -142,6 +142,39 @@ describe("create-eleventy templates", { concurrency: true }, () => {
             "build 後に dist/index.html が生成されていない",
           );
 
+          // テンプレートの lint は型検査 (--type-check) を含む。公開型定義と
+          // テンプレート側の宣言マージ・props 型の整合をここで検証する。
+          // 誤った使い方が型エラーになることは @ts-expect-error で表明する。
+          // エラーにならなければ未使用の directive (TS2578) として lint が失敗する。
+          if (template === "default") {
+            fs.writeFileSync(
+              path.join(projectDir, "src", "type-probe.ts"),
+              `import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
+import { Island } from "@tuqulore-inc/eleventy-preset/island";
+import Desktop from "./_includes/partials/header/desktop.client.jsx";
+
+export const probes = [
+  Island({ component: Desktop, nav: eleventy.nav, class: "x", on: "load" }),
+  // @ts-expect-error -- typo on a Global Data field
+  eleventy.site.nmae,
+  // @ts-expect-error -- typo on an Island prop
+  Island({ component: Desktop, navv: eleventy.nav }),
+  // @ts-expect-error -- type mismatch on an Island prop
+  Island({ component: Desktop, nav: "x" }),
+  // @ts-expect-error -- missing required Island prop
+  Island({ component: Desktop }),
+];
+`,
+            );
+          }
+          const lint = spawnSync("pnpm", ["run", "lint"], {
+            cwd: projectDir,
+            encoding: "utf8",
+            timeout: TIMEOUT_BUILD,
+            maxBuffer: MAX_BUFFER,
+          });
+          assert.strictEqual(lint.status, 0, describeChild("pnpm lint", lint));
+
           // default テンプレートは 3 つの *.client.jsx を持ち、Island プラグイン
           // によって esbuild で bundle され、index.mdx から <Island component={Clicker}>
           // として参照される。responsibility split と命名変更で URL 経路が壊れて

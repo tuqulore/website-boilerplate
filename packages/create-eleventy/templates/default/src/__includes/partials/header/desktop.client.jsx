@@ -3,6 +3,10 @@ import { clientComponent } from "@tuqulore-inc/eleventy-preset/island";
 import { useId, useRef } from "preact/hooks";
 import { twMerge } from "tailwind-merge";
 
+/** @import { ComponentChildren, RefObject } from "preact" */
+/** @import { EleventyData } from "@tuqulore-inc/eleventy-preset/eleventy" */
+
+/** @param {{ item: { name: string }; children: ComponentChildren }} props */
 function MenuList(props) {
   const open = useSignal(false);
   const visible = useSignal(open.value);
@@ -12,18 +16,22 @@ function MenuList(props) {
   const handleTransitionEnd = () => {
     if (!open.value) visible.value = false;
   };
+  /** @type {RefObject<HTMLDivElement>} */
   const ref = useRef(null);
+  /** @type {RefObject<HTMLButtonElement>} */
   const buttonRef = useRef(null);
   const baseId = useId();
   useSignalEffect(() => {
-    if (!open.value) return;
+    if (!open.value) return undefined;
+    /** @param {MouseEvent} e */
     const clickHandler = (e) => {
-      if (ref.current?.contains(e.target)) return;
+      if (e.target instanceof Node && ref.current?.contains(e.target)) return;
       open.value = false;
     };
+    /** @param {KeyboardEvent} e */
     const keyHandler = (e) => {
       if (e.key !== "Escape") return;
-      if (!ref.current?.contains(e.target)) return;
+      if (!(e.target instanceof Node) || !ref.current?.contains(e.target)) return;
       open.value = false;
       buttonRef.current?.focus();
     };
@@ -38,7 +46,7 @@ function MenuList(props) {
     <div
       ref={ref}
       onFocusOut={(e) => {
-        if (ref.current?.contains(e.relatedTarget)) return;
+        if (e.relatedTarget instanceof Node && ref.current?.contains(e.relatedTarget)) return;
         open.value = false;
       }}
     >
@@ -71,12 +79,13 @@ function MenuList(props) {
   );
 }
 
+/** @param {{ nav: EleventyData["nav"]; class?: string }} props */
 function Desktop(props) {
   return (
     <nav class={props.class}>
       <ul class="flex items-center">
         {props.nav.map((item) =>
-          "children" in item ? (
+          item.children ? (
             <li key={item.name} class="relative">
               <MenuList item={item}>
                 {item.children.map((child) => (

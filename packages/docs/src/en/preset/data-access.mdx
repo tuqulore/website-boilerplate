@@ -122,6 +122,36 @@ src/_data/nav/en.json
 
 Templates typically pick which side to read based on the current page's `locale`: `eleventy.nav[eleventy.locale]`. This is exactly what this documentation's sidebar does.
 
+## Typing the data
+
+The preset ships type definitions for the `eleventy` singleton.
+Eleventy's built-in data such as `page`, and common front matter fields such as `title` and `description`, are typed without any setup.
+
+Types for global data and project-specific front matter are added per project through TypeScript **declaration merging**.
+Add a type definition file and declare the shape of your data on the `EleventyUserData` interface.
+
+```ts
+import type nav from "./src/_data/nav.json";
+import type site from "./src/_data/site.js";
+
+declare module "@tuqulore-inc/eleventy-preset/eleventy" {
+  interface EleventyUserData {
+    site: typeof site;
+    nav: typeof nav;
+    ogp?: string;
+  }
+}
+```
+
+With this, `eleventy.site.name` resolves to `string`, and a typo such as `eleventy.site.nmae` becomes a type error.
+The types of `site` and `nav` are derived from the data files, so they follow edits to those files.
+
+Target the module your templates import `eleventy` from (`@tuqulore-inc/eleventy-preset/eleventy` when going through the preset).
+Do not target the plugin module the preset uses internally: a project installed with pnpm cannot resolve it, so `declare module` declares a new module instead of extending the types, and `eleventy` loses its type.
+For the same reason, keep at least one top-level `import` in the type definition file. A file with neither `import` nor `export` is not treated as a module.
+
+The `default` template ships this type definition file out of the box.
+
 ## Only valid during SSR
 
 The `eleventy` singleton is only valid during SSR. Islands hydrated on the client cannot see it. To pass SSR-side values into an Island, hand them in as props on `<Island>`.
