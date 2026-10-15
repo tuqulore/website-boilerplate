@@ -77,14 +77,37 @@ function Counter() {
 export default clientComponent(Counter, import.meta.url);
 ```
 
+### `clientOnlyComponent(Component, moduleUrl)`
+
+Marks a Preact component as a client-only component: `<Island>` skips its SSR render and emits the `fallback` prop instead, and the client mounts it with `render` rather than `hydrate`. Use it in place of `clientComponent` for components whose output differs between SSR and the browser, or that need browser-only APIs to render:
+
+```jsx
+import { clientOnlyComponent } from "@tuqulore-inc/eleventy-plugin-preact-island/island";
+import { useEffect, useState } from "preact/hooks";
+
+function Clock() {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+  return <time>{now.toLocaleTimeString()}</time>;
+}
+
+export default clientOnlyComponent(Clock, import.meta.url);
+```
+
+The component body runs only in the browser, but the module itself is still evaluated during SSR, so keep browser APIs out of its top level. See [Plugins / eleventy-plugin-preact-island](https://website.tuqulore.workers.dev/en/plugins/eleventy-plugin-preact-island/) for wrapping a dependency that touches browser APIs at import time.
+
 ### `<Island>`
 
-Wraps a client component in `<is-land>`. Extra props are forwarded to both the SSR render and the client hydration; serialization uses [`devalue`](https://github.com/Rich-Harris/devalue) so `Date`, `Map`, `Set`, and similar types round-trip.
+Wraps a client component in `<is-land>`. Extra props are forwarded to both the SSR render and the client hydration (for a client-only component, to the client render only); serialization uses [`devalue`](https://github.com/Rich-Harris/devalue) so `Date`, `Map`, `Set`, and similar types round-trip.
 
 | Prop        | Type                              | Description                                                                       |
 | ----------- | --------------------------------- | --------------------------------------------------------------------------------- |
-| `component` | `ClientComponent`                 | Component wrapped with `clientComponent()`.                                       |
+| `component` | `ClientComponent`                 | Component wrapped with `clientComponent()` or `clientOnlyComponent()`.            |
 | `on`        | `string` (default: `interaction`) | is-land initialization trigger. Rendered as the boolean attribute `land-on:<on>`. |
+| `fallback`  | `ComponentChildren`               | Client-only components only. Rendered by SSR in place of the component.           |
 | ...rest     | any                               | Forwarded to `<is-land>`'s `props` and to the component's SSR render as-is.       |
 
 For parameterized triggers such as `on:media("(min-width: ...)")`, use the raw `<is-land>` element directly; the injected setup script keeps working.

@@ -142,3 +142,61 @@ is-land が持つ `load` や `save-data` のようなトリガーも、そのま
 ## SSR と一致させる
 
 Island の中で `new Date()` や `Math.random()` のような不確定な値を初回描画に使わないでください。SSR とクライアントで異なる値が生成され、hydrate 時に mismatch が起きます。初回描画は決定的な値だけを使い、動的な値は `useEffect` の中で反映するようにします。
+
+## SSR しない Island
+
+前節の方法(初回描画を決定的にし、動的な値を `useEffect` で反映する方法)では、SSR の HTML に意味のある初期表示を出せないコンポーネントがあります。
+現在時刻のように SSR とクライアントで必ず値が食い違うものや、`localStorage` のようにブラウザにしかない状態を初期表示に使うもの、描画にブラウザ専用 API を必要とするものです。
+このようなコンポーネントは、`clientComponent()` の代わりに `clientOnlyComponent()` で宣言します。
+
+```jsx
+import { clientOnlyComponent } from "@tuqulore-inc/eleventy-preset/island";
+import { useEffect, useState } from "preact/hooks";
+
+function Clock() {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+  return <time>{now.toLocaleTimeString()}</time>;
+}
+
+export default clientOnlyComponent(Clock, import.meta.url);
+```
+
+`<Island>` は、client-only のコンポーネントを SSR で描画せず、`fallback` に渡した内容だけを `<is-land>` の中に出力します。
+クライアント側では、トリガーが発火した時点で fallback を取り除き、hydrate ではなく新規に描画します。
+SSR の HTML と突き合わせないので、mismatch は起きません。
+`on` もそのまま効くため、`on="visible"` と組み合わせれば、SSR せず表示領域に入った時点で初めて描画する Island になります。
+
+```jsx
+<Island component={Clock} on="visible" fallback={<span>--:--:--</span>} />
+```
+
+fallback は、描画後のコンポーネントと同じ大きさに揃えます。
+大きさが異なると、差し替えた時点でレイアウトがずれます。
+
+client-only にしても、コンポーネントのモジュール自体は SSR 時に評価されます。
+`<Island>` に渡すために、SSR 側のページがそのモジュールを import するためです。
+一方で、関数コンポーネントの本体は呼ばれたときにしか実行されません。
+ブラウザ専用 API はコンポーネントの本体か `useEffect` の中に置き、モジュールのトップレベルには置かないでください。
+
+依存パッケージがモジュールのトップレベルでブラウザ専用 API に触れる場合は、そのパッケージを import した時点で SSR が失敗します。
+この場合は、そのパッケージを `useEffect` の中で動的 import する薄いラッパを、client-only のコンポーネントとして書きます。
+`useEffect` はクライアントでしか実行されないので、SSR はそのパッケージを評価しません。
+
+```jsx
+import { clientOnlyComponent } from "@tuqulore-inc/eleventy-preset/island";
+import { useEffect, useState } from "preact/hooks";
+
+function Chart(props) {
+  const [Impl, setImpl] = useState(null);
+  useEffect(() => {
+    import("browser-only-chart").then((mod) => setImpl(() => mod.default));
+  }, []);
+  return Impl ? <Impl {...props} /> : null;
+}
+
+export default clientOnlyComponent(Chart, import.meta.url);
+```
