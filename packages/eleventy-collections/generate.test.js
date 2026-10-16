@@ -5,7 +5,7 @@ import path from "node:path";
 import { describe, it, before, after } from "node:test";
 
 import { discoverCollections } from "./discover.js";
-import { generateTypes } from "./generate.js";
+import { generateTypes, renderTypes } from "./generate.js";
 
 // Same compiler options as the create-eleventy default template, except that
 // declaration files are checked too so errors in the generated file surface.
@@ -98,6 +98,20 @@ export const schema = z.object({ name: z.string() });
     const tsc = path.join(import.meta.dirname, "node_modules/.bin/tsc");
     const result = spawnSync(tsc, ["-p", dir], { encoding: "utf8", timeout: 60_000 });
     assert.strictEqual(result.status, 0, result.stdout + result.stderr);
+  });
+
+  it("ドットで始まるディレクトリ配下のスキーマも相対パスで参照する", () => {
+    const content = renderTypes(
+      [
+        {
+          name: "posts",
+          dir: ".content/posts",
+          schemaPath: path.resolve(".content/posts/_schema.ts"),
+        },
+      ],
+      { outFile: "collections.d.ts", typesModule: "x" },
+    );
+    assert.match(content, /typeof import\("\.\/\.content\/posts\/_schema\.ts"\)/);
   });
 
   it("スキーマが無くなったら既存の型ファイルを空のモジュールで上書きする", async () => {

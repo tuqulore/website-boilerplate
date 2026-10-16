@@ -17,12 +17,16 @@ import { generateTypes } from "./generate.js";
  * @typedef {{ value: unknown, issues?: undefined } | { issues: ReadonlyArray<import("./format-error.js").ValidationIssue> }} StandardResult
  */
 
+// Bumped on every registration and watch rebuild to version schema imports.
+// NOTE: Module scope, so a plugin registered again in the same process (a
+// config reload, another Eleventy instance) never reuses an import URL.
+let generation = 0;
+
 /**
  * @param {import("./discover.js").CollectionSource} source
- * @param {number} generation - Changes on every watch rebuild
  * @returns {Promise<{ type: "content" | "data", schema: StandardSchema }>}
  */
-async function loadSchemaModule(source, generation) {
+async function loadSchemaModule(source) {
   // NOTE: The query re-imports the schema on every watch rebuild; Node's ESM
   // cache would otherwise keep serving the first version. Modules the schema
   // imports are refreshed by Eleventy's own ESM resolver, which cache-busts
@@ -126,7 +130,7 @@ async function buildDataCollection(source, schema) {
  */
 export default function collectionsPlugin(eleventyConfig, { outFile, typesModule } = {}) {
   const collections = discoverCollections(eleventyConfig.directories.input);
-  let generation = 0;
+  generation += 1;
   eleventyConfig.on("eleventy.beforeWatch", () => {
     generation += 1;
   });
@@ -140,7 +144,7 @@ export default function collectionsPlugin(eleventyConfig, { outFile, typesModule
   for (const source of collections) {
     eleventyConfig.addWatchTarget(`${source.dir}/*.json`);
     eleventyConfig.addCollection(source.name, async (collectionApi) => {
-      const { type, schema } = await loadSchemaModule(source, generation);
+      const { type, schema } = await loadSchemaModule(source);
       const { entries, failures } =
         type === "data"
           ? await buildDataCollection(source, schema)

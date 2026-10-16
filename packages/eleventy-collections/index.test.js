@@ -108,6 +108,23 @@ describe("eleventy-collections plugin", () => {
       assert.match(a.content, /draft=false/);
     });
 
+    it("同じプロセスで作り直した Eleventy は、編集後のスキーマで検証する", async () => {
+      const dir = await fixture("rebuild", {
+        "src/posts/_schema.ts": POSTS_SCHEMA,
+        "src/posts/a.md": "---\ntitle: A\n---\n",
+      });
+      await build(dir);
+
+      await fs.writeFile(
+        path.join(dir, "src/posts/_schema.ts"),
+        POSTS_SCHEMA.replace("title: z.string(),", "title: z.string(), author: z.string(),"),
+      );
+      await assert.rejects(build(dir), (error) => {
+        assert.match(messagesOf(error), /- author: /);
+        return true;
+      });
+    });
+
     it("不正な front matter はファイルパスとフィールドを添えてビルドを止める", async () => {
       const dir = await fixture("invalid", {
         "src/posts/_schema.ts": POSTS_SCHEMA,

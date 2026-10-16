@@ -23,7 +23,7 @@ export function renderTypes(collections, { outFile, typesModule }) {
   const outDir = path.dirname(path.resolve(outFile));
   const entries = collections.map(({ name, schemaPath }) => {
     let specifier = path.relative(outDir, schemaPath).split(path.sep).join("/");
-    if (!specifier.startsWith(".")) specifier = `./${specifier}`;
+    if (!specifier.startsWith("./") && !specifier.startsWith("../")) specifier = `./${specifier}`;
     return `    ${JSON.stringify(name)}: CollectionOf<typeof import(${JSON.stringify(specifier)})>;`;
   });
 
