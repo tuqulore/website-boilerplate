@@ -1,6 +1,6 @@
 {
   "name": "@tuqulore-inc/eleventy-collections",
-  "version": "5.3.1-alpha.0",
+  "version": "5.3.1-alpha.1",
   "description": "Eleventy collections validated and typed by colocated Zod schemas",
   "keywords": [
     "collections",
