@@ -1,11 +1,12 @@
 {
   "name": "@tuqulore-inc/eleventy-collections",
   "version": "5.3.1-alpha.1",
-  "description": "Eleventy collections validated and typed by colocated Zod schemas",
+  "description": "Eleventy collections validated and typed by colocated Standard Schema-compliant schemas",
   "keywords": [
     "collections",
     "eleventy",
     "eleventy-plugin",
+    "standard-schema",
     "zod"
   ],
   "license": "MIT",
@@ -53,16 +54,11 @@
     "oxlint": "^1.88.0",
     "preact": "^10.26.4",
     "typescript": "^7.0.2",
+    "valibot": "^1.5.0",
     "zod": "^4.6.0"
   },
   "peerDependencies": {
-    "@11ty/eleventy": ">=3.0.0",
-    "zod": "^4.0.0"
-  },
-  "peerDependenciesMeta": {
-    "zod": {
-      "optional": true
-    }
+    "@11ty/eleventy": ">=3.0.0"
   },
   "engines": {
     "node": "^20.19.0 || >=22.12.0"

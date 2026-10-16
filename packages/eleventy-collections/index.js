@@ -37,9 +37,8 @@ async function loadSchemaModule(source) {
   if (type !== "content" && type !== "data") {
     throw new Error(`${label}: "type" must be "content" or "data", got ${JSON.stringify(type)}`);
   }
-  // Zod schemas implement Standard Schema, whose `validate` is all we need.
   if (typeof mod.schema?.["~standard"]?.validate !== "function") {
-    throw new Error(`${label}: must export a Zod schema as "schema"`);
+    throw new Error(`${label}: must export a Standard Schema (e.g. a Zod schema) as "schema"`);
   }
   return { type, schema: mod.schema };
 }

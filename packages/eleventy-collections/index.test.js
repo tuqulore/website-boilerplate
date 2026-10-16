@@ -23,6 +23,13 @@ export const schema = z.object({
 });
 `;
 
+const VALIBOT_POSTS_SCHEMA = `import * as v from "valibot";
+export const schema = v.object({
+  title: v.string(),
+  draft: v.optional(v.boolean(), false),
+});
+`;
+
 // Renders every entry of every collection, to observe what templates receive.
 const LIST_TEMPLATE = `export default function (data) {
   const posts = (data.collections.posts ?? []).map((p) => \`\${p.url}|\${p.data.title}|\${p.data.draft}\`);
@@ -74,7 +81,7 @@ async function build(root, options = {}) {
 }
 
 describe("eleventy-collections plugin", () => {
-  // zod / preact を解決できるよう一時ファイルはこのパッケージ配下に作る
+  // zod / valibot / preact を解決できるよう一時ファイルはこのパッケージ配下に作る
   let root;
 
   before(async () => {
@@ -106,6 +113,25 @@ describe("eleventy-collections plugin", () => {
       assert.deepStrictEqual(list.posts.toSorted(), ["/posts/a/|A|false", "/posts/b/|B|true"]);
       const a = pages.find((page) => page.url === "/posts/a/");
       assert.match(a.content, /draft=false/);
+    });
+
+    it("Zod 以外の Standard Schema 実装でも検証し、default の値を書き戻す", async () => {
+      const files = {
+        "src/posts/_schema.ts": VALIBOT_POSTS_SCHEMA,
+        "src/posts/a.md": "---\ntitle: A\n---\n",
+        "src/list.11ty.js": LIST_TEMPLATE,
+      };
+      const { list } = await build(await fixture("valibot", files));
+      assert.deepStrictEqual(list.posts, ["/posts/a/|A|false"]);
+
+      const invalid = await fixture("valibot-invalid", {
+        ...files,
+        "src/posts/no-title.md": "---\ndraft: true\n---\n",
+      });
+      await assert.rejects(build(invalid), (error) => {
+        assert.match(messagesOf(error), /no-title\.md\n {2}- title: /);
+        return true;
+      });
     });
 
     it("同じプロセスで作り直した Eleventy は、編集後のスキーマで検証する", async () => {

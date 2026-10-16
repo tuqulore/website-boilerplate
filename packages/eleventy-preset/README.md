@@ -45,7 +45,7 @@ export default preset((eleventyConfig) => {
 - **[@tuqulore-inc/eleventy-plugin-preact](../eleventy-plugin-preact)** — JSX/MDX server-side rendering.
 - **[@tuqulore-inc/eleventy-plugin-preact-island](../eleventy-plugin-preact-island)** — Partial Hydration with is-land.
 - **[@tuqulore-inc/eleventy-plugin-postcss](../eleventy-plugin-postcss)** — CSS processing with PostCSS.
-- **[@tuqulore-inc/eleventy-collections](../eleventy-collections)** — Collections validated and typed by colocated Zod schemas.
+- **[@tuqulore-inc/eleventy-collections](../eleventy-collections)** — Collections validated and typed by colocated schemas.
 
 ### Default behavior
 

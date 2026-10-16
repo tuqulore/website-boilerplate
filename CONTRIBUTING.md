@@ -22,7 +22,7 @@ pnpm install
 | `packages/eleventy-plugin-preact`        | Preact による JSX テンプレート対応                                 |
 | `packages/eleventy-plugin-preact-island` | Partial Hydration                                                  |
 | `packages/eleventy-plugin-postcss`       | PostCSS 対応                                                       |
-| `packages/eleventy-collections`          | Zod スキーマによる collection の検証と型付け                       |
+| `packages/eleventy-collections`          | スキーマによる collection の検証と型付け                           |
 | `packages/oxlint-config`                 | 共有 Oxlint 設定                                                   |
 
 ## 開発ワークフロー
