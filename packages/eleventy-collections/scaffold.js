@@ -5,9 +5,13 @@ import { SCHEMA_FILE } from "./discover.js";
 
 const NAME_RE = /^[A-Za-z0-9][\w-]*$/;
 
+const LIBRARY_NOTE = `// Any schema library that implements Standard Schema v1 works here,
+// such as Zod, Valibot, or ArkType: https://standardschema.dev/
+`;
+
 const TEMPLATES = {
   content: {
-    schema: `import { z } from "zod";
+    schema: `${LIBRARY_NOTE}import { z } from "zod";
 
 export const schema = z.object({
   title: z.string(),
@@ -24,7 +28,7 @@ Write the content here.
 `,
   },
   data: {
-    schema: `import { z } from "zod";
+    schema: `${LIBRARY_NOTE}import { z } from "zod";
 
 export const type = "data";
 
