@@ -45,6 +45,7 @@ export default preset((eleventyConfig) => {
 - **[@tuqulore-inc/eleventy-plugin-preact](../eleventy-plugin-preact)** — JSX/MDX server-side rendering.
 - **[@tuqulore-inc/eleventy-plugin-preact-island](../eleventy-plugin-preact-island)** — Partial Hydration with is-land.
 - **[@tuqulore-inc/eleventy-plugin-postcss](../eleventy-plugin-postcss)** — CSS processing with PostCSS.
+- **[@tuqulore-inc/eleventy-collections](../eleventy-collections)** — Collections validated and typed by colocated Zod schemas.
 
 ### Default behavior
 
@@ -72,7 +73,7 @@ The input/output directories (`src` / `dist`) are fixed and cannot be overridden
 
 ### `preset(extend?)`
 
-Returns an Eleventy configuration function that registers the three plugins above and the default behavior.
+Returns an Eleventy configuration function that registers the four plugins above and the default behavior.
 
 - `extend` — Optional `(eleventyConfig: UserConfig) => void` callback. Called at the end of the preset's own registration so you can add filters, plugins, or shortcodes on top.
 

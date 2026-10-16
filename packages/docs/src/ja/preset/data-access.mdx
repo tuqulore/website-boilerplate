@@ -80,6 +80,14 @@ import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
         frontmatter の <code>locale</code> フィールドに書いた値
       </td>
     </tr>
+    <tr>
+      <td>
+        <code>eleventy.collections</code>
+      </td>
+      <td>
+        Eleventy の collection。要素の frontmatter は <code>data</code> の下にあります
+      </td>
+    </tr>
   </tbody>
 </table>
 
@@ -151,6 +159,11 @@ declare module "@tuqulore-inc/eleventy-preset/eleventy" {
 同じ理由で、型定義ファイルには少なくとも一つのトップレベルの `import` を置きます。`import` も `export` もないファイルはモジュールとして扱われません。
 
 `default` テンプレートには、この型定義ファイルが最初から含まれています。
+
+collection の要素の型は、宣言マージを手で書かずに Zod スキーマから導けます。
+collection のディレクトリに `_schema.ts` を置くと、本プリセットに同梱した `@tuqulore-inc/eleventy-collections` が、そのスキーマからビルド時の検証と `eleventy.collections.<name>` の型の両方を導きます。
+`_schema.ts` というファイル名はこの用途に予約されています。
+詳しくは [eleventy-collections](/ja/plugins/eleventy-collections/) を参照してください。
 
 ## SSR 中のみ有効
 

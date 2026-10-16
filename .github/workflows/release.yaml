@@ -58,10 +58,10 @@ jobs:
             Release v${VERSION}
 
             **Full Changelog**: ${{ steps.changelog.outputs.url }}
-          # テンプレート内の@tuqulore-inc/eleventy-presetのバージョンを更新
+          # テンプレート内の@tuqulore-inc/eleventy-preset と @tuqulore-inc/eleventy-collections のバージョンを更新
           pre-commit-command: |
             VERSION=$(jq -r .version lerna.json)
-            jq --arg version "^$VERSION" '.devDependencies["@tuqulore-inc/eleventy-preset"] = $version' \
+            jq --arg version "^$VERSION" '.devDependencies["@tuqulore-inc/eleventy-preset"] = $version | .devDependencies["@tuqulore-inc/eleventy-collections"] = $version' \
               packages/create-eleventy/templates/default/package.json > tmp.json
             mv tmp.json packages/create-eleventy/templates/default/package.json
           pr-labels: release

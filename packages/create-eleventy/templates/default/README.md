@@ -191,6 +191,18 @@ The `eleventy` singleton is typed. Built-in fields such as `eleventy.page` are t
 >
 > Keep at least one top-level `import` in `eleventy.env.d.ts`. Without one the file is not a module, and `declare module` replaces the package's types instead of extending them.
 
+### Collections
+
+A directory under `src/` with a `_schema.ts` becomes a collection named after the directory. The build fails when an entry does not match the [Zod](https://zod.dev/) schema, and `eleventy.collections.<name>` is typed from it.
+
+```sh
+pnpm add -D zod
+pnpm exec eleventy-collections create posts # src/posts/_schema.ts and a sample .md
+pnpm exec eleventy-collections create authors --type data # one entry per .json file
+```
+
+Front matter is read as `post.data.title`. The types are written to `collections.d.ts` (git-ignored) by `pnpm build`, `pnpm dev`, and `pnpm lint`. See [@tuqulore-inc/eleventy-collections](https://github.com/tuqulore/website-boilerplate/tree/main/packages/eleventy-collections) for details.
+
 ### Island props
 
 `<Island>` checks its props against the props type of the wrapped client component. A misspelled or missing prop is a type error.

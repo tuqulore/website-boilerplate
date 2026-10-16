@@ -1,0 +1,154 @@
+---
+layout: post
+locale: en
+title: eleventy-collections
+---
+
+# `@tuqulore-inc/eleventy-collections`
+
+This page covers the internal design of `@tuqulore-inc/eleventy-collections`, which derives both validation and types for collections from Zod schemas.
+It explains why validation is needed on top of type checking, why the scope stops at collections, and where schemas live and how they are read.
+For the API reference and installation, see the package README.
+
+## What type checking and validation each protect
+
+An Eleventy **collection** is a group of pages that share the same data shape, such as blog posts.
+Templates reference it by name, as in `eleventy.collections.posts`.
+Keeping the shape of its entries intact takes two separate checks.
+
+- **Type checking**: the TypeScript compiler reads `.ts` and `.tsx` code and checks that the code uses the data correctly. It catches typos such as `post.data.titel`.
+- **Validation**: at build time, the Markdown front matter or JSON content is checked against a schema. It catches a post that lacks a `title`.
+
+Neither is enough on its own.
+The TypeScript compiler never reads YAML front matter, so a post with `title: 123` passes type checking.
+Validation alone, in turn, misses code that reads correct data with the wrong type.
+
+This plugin derives both from a single [Zod](https://zod.dev/) schema.
+Validation uses the schema itself, and the types use the schema's output type.
+Editing the schema changes validation and types together, so the two cannot drift apart.
+
+Validation also helps developers who write no types at all.
+A site written only in `.md` still has its build stopped by broken front matter.
+
+## Why the scope stops at collections
+
+This plugin only handles collections that have a schema.
+Global data, front matter of pages outside a collection, `eleventyComputed`, and the merging of directory data are out of scope.
+
+Widening the scope would mean reproducing Eleventy's data cascade (the mechanism that merges values from several sources) in types.
+The type of a value returned by a `.js` data file is unknown until it runs, and the merge priorities are hard to express in types, so that reproduction tends to break down.
+A collection is a group of entries with a single shape, so one schema can describe it and the problem does not arise.
+
+To type global data, use the declaration merging described in [Data Access](/en/preset/data-access/).
+
+## Where schemas live and how they are found
+
+A schema lives in the collection's directory as `_schema.ts`.
+The directory name becomes the collection name.
+
+```
+src/posts/_schema.ts
+src/posts/hello.md
+src/posts/world.mdx
+```
+
+`src/posts/_schema.ts` looks like this:
+
+```ts
+import { z } from "zod";
+
+export const schema = z.object({
+  title: z.string(),
+  date: z.coerce.date(),
+  draft: z.boolean().default(false),
+});
+```
+
+When the configuration loads, this plugin looks for `*/_schema.ts` directly under the input directory and registers a collection for each directory it finds.
+Type generation uses the same result.
+Collections are not listed in the configuration file because a forgotten registration would leave a collection that exists in the types but not at runtime.
+
+Schemas are written in `.ts` rather than `.js` so that types can be derived from them.
+Unless `checkJs` is enabled, values exported from `.js` get no inferred type, and the entry type collapses to `any`.
+`.ts` files are loaded by the loader of the JSX plugin that the preset includes.
+
+Discovery runs once, when the configuration loads, so restart the dev server after creating a new collection directory.
+Edits to an existing schema, and to `.ts` modules under the input directory that it imports, are picked up during watch.
+
+## Content and data collections
+
+There are two kinds of collection, which gather their entries differently.
+
+- **Content collection**: the `.md` and `.mdx` files under the directory are the entries. The schema applies to each page's data, front matter included. This is the default.
+- **Data collection**: each `.json` file directly under the directory is one entry. The schema applies to the whole JSON content.
+
+To make a data collection, export `type` from `_schema.ts`.
+
+```ts
+export const type = "data";
+```
+
+The kind is declared in `_schema.ts` rather than in the configuration file so that validation and type generation read it from the same place.
+Type generation reads the value of `type` as a type through `typeof import("./_schema.ts")`, so it switches the entry type without running the schema.
+
+Entries of a content collection are Eleventy's own collection entries, and front matter sits under `data`, as in `post.data.title`.
+A listing page (such as `index.tsx`) can share the directory, since only `.md` and `.mdx` files become entries.
+
+Entries of a data collection have the shape `{ id, inputPath, data }`, where `id` is the file name without the extension.
+Files starting with `_` and the JSON named after the directory (`authors/authors.json`) are not entries.
+The latter is a file Eleventy reads as directory data.
+
+## Writing validated values back to the page
+
+Values that pass validation are written back to the page's data.
+A `draft` field with `.default(false)` reaches the page as `false` even when the front matter omits it.
+The same applies to conversions such as `z.coerce.date()`.
+
+The write-back updates each entry's `data` in place instead of rebuilding the entry.
+Reading an entry's body (`templateContent`) before rendering throws, so copying entries would stop the build while the collection is being assembled.
+
+Entries that fail validation are gathered per collection, and the build stops with the file paths and field paths.
+
+```
+Collection "posts": validation failed
+src/posts/hello.md
+  - title: Invalid input: expected string, received number
+```
+
+The schema only knows which field is wrong and how, not which file the value came from.
+The file path is added by this plugin, which gathered the entries.
+
+## Generating the types
+
+Before each build, this plugin writes `collections.d.ts` to the project root.
+It contains declaration merging that points each collection at its schema.
+
+```ts
+declare module "@tuqulore-inc/eleventy-preset/eleventy" {
+  interface EleventyCollections {
+    posts: CollectionOf<typeof import("./src/posts/_schema.ts")>;
+  }
+}
+```
+
+Only references to the schemas are generated; the TypeScript compiler derives the entry types from them.
+This plugin needs no machinery of its own to compute types.
+
+The generated file is not committed and is rewritten on every build and lint.
+The `default` template starts with `collections.d.ts` excluded from Git, Oxlint, and Oxfmt. Its `tsconfig.json` already includes `*.d.ts` at the root, so the types apply without further setup.
+Its lint runs `eleventy-collections sync` before type checking, so the types are in place even before a build.
+Projects without any schema get no file.
+
+The merge target is the module templates import `eleventy` from.
+It defaults to the preset's module; without the preset, change it with the `typesModule` option.
+
+## Relationship to the preset
+
+The preset bundles this plugin.
+It does nothing until a `_schema.ts` exists, so projects that use no collections behave as before.
+
+This plugin can also be installed on its own and brought into other Eleventy projects without the preset.
+What carries over on its own is validation, though.
+The generated types extend the `eleventy` singleton of the JSX plugin, and Eleventy itself passes no typed data to templates, so a project without the JSX plugin has nothing to attach the types to.
+In that case, turn type generation off with `outFile: false`.
+For the setup, see the `@tuqulore-inc/eleventy-collections` README.

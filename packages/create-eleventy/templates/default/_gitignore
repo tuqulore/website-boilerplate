@@ -1,3 +1,4 @@
 .env*.local
+/collections.d.ts
 dist
 node_modules

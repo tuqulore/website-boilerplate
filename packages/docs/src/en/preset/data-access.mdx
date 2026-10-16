@@ -80,6 +80,14 @@ import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy";
         The <code>locale</code> field from the page&apos;s frontmatter
       </td>
     </tr>
+    <tr>
+      <td>
+        <code>eleventy.collections</code>
+      </td>
+      <td>
+        Eleventy collections. Front matter of an entry sits under <code>data</code>
+      </td>
+    </tr>
   </tbody>
 </table>
 
@@ -151,6 +159,11 @@ Do not target the plugin module the preset uses internally: a project installed 
 For the same reason, keep at least one top-level `import` in the type definition file. A file with neither `import` nor `export` is not treated as a module.
 
 The `default` template ships this type definition file out of the box.
+
+Collection entry types can be derived from Zod schemas instead of hand-written declaration merging.
+Placing a `_schema.ts` in a collection directory lets `@tuqulore-inc/eleventy-collections`, which the preset bundles, derive both build-time validation and the type of `eleventy.collections.<name>` from that schema.
+The file name `_schema.ts` is reserved for this purpose.
+See [eleventy-collections](/en/plugins/eleventy-collections/) for details.
 
 ## Only valid during SSR
 

@@ -40,6 +40,8 @@ export interface EleventyBuiltinData {
   };
   /** Host project's `package.json`, exposed by Eleventy. */
   pkg?: Record<string, unknown>;
+  /** Eleventy `collections` variable (typed via `EleventyCollections`). */
+  collections: EleventyCollections;
   layout?: string;
   permalink?: string | false;
   tags?: string | readonly string[];
@@ -68,6 +70,36 @@ export interface EleventyBuiltinData {
 export interface EleventyUserData {}
 
 export type EleventyData = EleventyBuiltinData & EleventyUserData;
+
+/**
+ * An entry of an Eleventy collection. Template data such as front matter lives
+ * under `data`, not on the entry itself.
+ *
+ * @see https://www.11ty.dev/docs/collections/#collection-item-data-structure
+ */
+export interface EleventyCollectionItem<T = Record<string, unknown>> {
+  url: string;
+  date: Date;
+  inputPath: string;
+  fileSlug: string;
+  filePathStem: string;
+  outputPath: string | false;
+  page: EleventyBuiltinData["page"];
+  rawInput: string;
+  /** NOTE: Reading this before the entry is rendered throws. */
+  templateContent: string;
+  /** Alias of `templateContent`. */
+  content: string;
+  data: EleventyData & T;
+}
+
+/**
+ * Collections by name. Only `all` is built in — projects extend it via
+ * declaration merging, the same way as `EleventyUserData`.
+ */
+export interface EleventyCollections {
+  all: EleventyCollectionItem[];
+}
 
 /**
  * Eleventy data singleton accessible from any template/component during SSR.

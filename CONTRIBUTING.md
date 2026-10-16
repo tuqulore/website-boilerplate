@@ -22,6 +22,7 @@ pnpm install
 | `packages/eleventy-plugin-preact`        | Preact による JSX テンプレート対応                                 |
 | `packages/eleventy-plugin-preact-island` | Partial Hydration                                                  |
 | `packages/eleventy-plugin-postcss`       | PostCSS 対応                                                       |
+| `packages/eleventy-collections`          | Zod スキーマによる collection の検証と型付け                       |
 | `packages/oxlint-config`                 | 共有 Oxlint 設定                                                   |
 
 ## 開発ワークフロー
@@ -74,13 +75,14 @@ PACK=$(mktemp -d)
 
 # 対象の workspace パッケージを tarball 化する。
 # workspace:* は pnpm pack の時点で実バージョンへ解決される。
-# eleventy-preset は 3 プラグインを workspace:* で参照しているため、それらもまとめて pack する。
+# eleventy-preset は 4 プラグインを workspace:* で参照しているため、それらもまとめて pack する。
 # eleventy-preset の依存を追加/変更した場合はこの配列も更新する必要がある。
 PKGS=(
   @tuqulore-inc/eleventy-preset
   @tuqulore-inc/eleventy-plugin-preact
   @tuqulore-inc/eleventy-plugin-preact-island
   @tuqulore-inc/eleventy-plugin-postcss
+  @tuqulore-inc/eleventy-collections
 )
 for NAME in "${PKGS[@]}"; do
   pnpm --filter "$NAME" pack --pack-destination "$PACK"
