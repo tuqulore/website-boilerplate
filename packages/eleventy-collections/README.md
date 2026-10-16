@@ -1,6 +1,6 @@
 # @tuqulore-inc/eleventy-collections
 
-Eleventy plugin that turns every `<input>/<name>/_schema.ts` into a collection, validates its entries against the [Zod](https://zod.dev/) schema exported there, and types `eleventy.collections.<name>` from the same schema.
+Eleventy plugin that turns every `<input>/<name>/_schema.ts` into a collection, validates its entries against the schema exported there, and types `eleventy.collections.<name>` from the same schema.
 
 - **Validation** — the build fails when a front matter (or JSON entry) does not match the schema, with the file and field paths in the message.
 - **Types** — a declaration-merging `.d.ts` is written before each build, so `eleventy.collections.posts[0].data.title` is typed.
@@ -9,13 +9,15 @@ Only collections are covered. Global Data, other front matter, and the rest of t
 
 [@tuqulore-inc/eleventy-preset](../eleventy-preset) bundles this plugin. See [Plugins / eleventy-collections](https://website.tuqulore.workers.dev/en/plugins/eleventy-collections/) for the design.
 
+Schemas can be written with any library that implements [Standard Schema](https://standardschema.dev/), such as Zod, Valibot, or ArkType. The plugin imports none of them.
+
 ## Install
 
 ```sh
 pnpm add -D @tuqulore-inc/eleventy-collections zod
 ```
 
-Projects using the preset already have the plugin; add this package only for the CLI.
+Projects using the preset already have the plugin; add this package only for the CLI. Replace `zod` with the schema library you use; `eleventy-collections create` writes Zod schemas.
 
 ## Usage
 
@@ -107,7 +109,7 @@ Creates `<input>/<name>/_schema.ts` and a sample entry.
 
 - Node.js 20.19+ or 22.12+ with [@tuqulore-inc/eleventy-plugin-preact](../eleventy-plugin-preact) registered (it loads `_schema.ts`); Node.js 22.18+ without it
 - Eleventy 3.0 or higher
-- Zod 4
+- A schema library implementing [Standard Schema](https://standardschema.dev/) v1, installed in the project
 
 ## License
 

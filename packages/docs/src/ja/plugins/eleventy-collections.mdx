@@ -6,7 +6,7 @@ title: eleventy-collections
 
 # `@tuqulore-inc/eleventy-collections`
 
-本ページでは、Zod スキーマから collection の検証と型を導く `@tuqulore-inc/eleventy-collections` について、その内部設計を扱います。
+本ページでは、スキーマから collection の検証と型を導く `@tuqulore-inc/eleventy-collections` について、その内部設計を扱います。
 なぜ型検査とは別に検証が要るのか、なぜ対象を collection に絞るのか、スキーマをどこに置きどう読むのかを説明します。
 API リファレンスとインストール手順は、パッケージの README を参照してください。
 
@@ -23,8 +23,10 @@ collection の要素の形を保つには、次の二つの検査が必要です
 TypeScript のコンパイラは YAML の frontmatter を読まないので、`title: 123` と書かれた記事があっても型検査は通ります。
 逆に検証だけでは、正しいデータを誤った型で読むコードを見逃します。
 
-本プラグインは、一つの [Zod](https://zod.dev/) スキーマから両方を導きます。
-検証にはスキーマそのものを使い、型にはスキーマの出力型を使います。
+本プラグインは、一つのスキーマから両方を導きます。
+スキーマは、[Standard Schema](https://standardschema.dev/) を実装したライブラリ(Zod、Valibot、ArkType など)で書きます。
+検証には Standard Schema の検証関数を使い、型には Standard Schema が宣言する出力型を使います。
+本プラグイン自身はどのライブラリも読み込まないので、ライブラリは開発者が選べます。
 スキーマを書き換えると検証と型が同時に変わるので、両者がずれることはありません。
 
 検証は、型を書かない開発者にも効きます。
@@ -52,7 +54,7 @@ src/posts/hello.md
 src/posts/world.mdx
 ```
 
-`src/posts/_schema.ts` は次の形です。
+`src/posts/_schema.ts` は次の形です(Zod で書いた例です)。
 
 ```ts
 import { z } from "zod";

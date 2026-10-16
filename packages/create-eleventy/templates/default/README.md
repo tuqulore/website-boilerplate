@@ -193,10 +193,10 @@ The `eleventy` singleton is typed. Built-in fields such as `eleventy.page` are t
 
 ### Collections
 
-A directory under `src/` with a `_schema.ts` becomes a collection named after the directory. The build fails when an entry does not match the [Zod](https://zod.dev/) schema, and `eleventy.collections.<name>` is typed from it.
+A directory under `src/` with a `_schema.ts` becomes a collection named after the directory. The build fails when an entry does not match the schema, and `eleventy.collections.<name>` is typed from it.
 
 ```sh
-pnpm add -D zod
+pnpm add -D zod # or another Standard Schema library; `create` writes Zod schemas
 pnpm exec eleventy-collections create posts # src/posts/_schema.ts and a sample .md
 pnpm exec eleventy-collections create authors --type data # one entry per .json file
 ```

@@ -39,6 +39,7 @@ describe("eleventy-collections CLI", () => {
 
     const schema = await fs.readFile(path.join(workDir, "src/posts/_schema.ts"), "utf8");
     assert.match(schema, /export const schema = z\.object/);
+    assert.match(schema, /Standard Schema v1/);
     assert.doesNotMatch(schema, /export const type/);
     await fs.access(path.join(workDir, "src/posts/example.md"));
   });

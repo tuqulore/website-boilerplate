@@ -51,7 +51,7 @@ export const undeclared = eleventy.collections.tags;
 `;
 
 describe("generateTypes", () => {
-  // zod / plugin-preact を解決できるよう一時ファイルはこのパッケージ配下に作る
+  // zod / valibot / plugin-preact を解決できるよう一時ファイルはこのパッケージ配下に作る
   let root;
   let cwd;
 
@@ -76,9 +76,10 @@ export const schema = z.object({
   draft: z.boolean().default(false),
 });
 `,
-      "src/authors/_schema.ts": `import { z } from "zod";
+      // Zod 以外の Standard Schema 実装からも型を導けることを確かめる
+      "src/authors/_schema.ts": `import * as v from "valibot";
 export const type = "data";
-export const schema = z.object({ name: z.string() });
+export const schema = v.object({ name: v.string() });
 `,
       "src/usage.ts": USAGE,
     };

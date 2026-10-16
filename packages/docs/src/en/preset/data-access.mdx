@@ -160,7 +160,7 @@ For the same reason, keep at least one top-level `import` in the type definition
 
 The `default` template ships this type definition file out of the box.
 
-Collection entry types can be derived from Zod schemas instead of hand-written declaration merging.
+Collection entry types can be derived from schemas instead of hand-written declaration merging.
 Placing a `_schema.ts` in a collection directory lets `@tuqulore-inc/eleventy-collections`, which the preset bundles, derive both build-time validation and the type of `eleventy.collections.<name>` from that schema.
 The file name `_schema.ts` is reserved for this purpose.
 See [eleventy-collections](/en/plugins/eleventy-collections/) for details.

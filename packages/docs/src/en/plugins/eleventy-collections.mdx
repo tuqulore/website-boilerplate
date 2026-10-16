@@ -6,7 +6,7 @@ title: eleventy-collections
 
 # `@tuqulore-inc/eleventy-collections`
 
-This page covers the internal design of `@tuqulore-inc/eleventy-collections`, which derives both validation and types for collections from Zod schemas.
+This page covers the internal design of `@tuqulore-inc/eleventy-collections`, which derives both validation and types for collections from schemas.
 It explains why validation is needed on top of type checking, why the scope stops at collections, and where schemas live and how they are read.
 For the API reference and installation, see the package README.
 
@@ -23,8 +23,10 @@ Neither is enough on its own.
 The TypeScript compiler never reads YAML front matter, so a post with `title: 123` passes type checking.
 Validation alone, in turn, misses code that reads correct data with the wrong type.
 
-This plugin derives both from a single [Zod](https://zod.dev/) schema.
-Validation uses the schema itself, and the types use the schema's output type.
+This plugin derives both from a single schema.
+The schema is written with a library that implements [Standard Schema](https://standardschema.dev/), such as Zod, Valibot, or ArkType.
+Validation uses the Standard Schema validate function, and the types use the output type that Standard Schema declares.
+The plugin itself imports no schema library, so the choice of library is the developer's.
 Editing the schema changes validation and types together, so the two cannot drift apart.
 
 Validation also helps developers who write no types at all.
