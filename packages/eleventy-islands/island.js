@@ -47,8 +47,8 @@ export function clientComponent(Component, moduleUrl) {
 
 /**
  * Mark a client component as client-only: `<Island>` skips its SSR render and
- * outputs the `fallback` prop instead, and the client mounts it with `render`
- * rather than `hydrate`. Call this once in the `*.client.jsx` file's default
+ * outputs the `fallback` prop instead, and the client mounts it from scratch
+ * rather than hydrating. Call this once in the `*.client.jsx` file's default
  * export, in place of `clientComponent`.
  *
  * @template {Function} C
@@ -65,8 +65,9 @@ export function clientOnlyComponent(Component, moduleUrl) {
 /**
  * Build the `<is-land>` element an adapter's `<Island>` renders: validate the
  * component and trigger, resolve the client module URL, and serialize the
- * props for the browser. The adapter renders `children` as the element's
- * content: the component itself, or for a client-only component its fallback.
+ * props for the browser. The adapter renders the element's content: the
+ * component with the returned `props`, or for a client-only component the
+ * returned `fallback`.
  *
  * @param {Function} component - Component wrapped with `clientComponent()` or
  *   `clientOnlyComponent()` in its `*.client.*` file.

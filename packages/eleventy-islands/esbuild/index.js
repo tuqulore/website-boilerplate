@@ -35,8 +35,7 @@ export function esbuildBundler({ esbuildOptions = {} } = {}) {
   return async ({ runMode, inputDir, outputDir, clientGlob, clientEntryOut, setup, adapter }) => {
     // watch context 生成後は entries を固定 (esbuild 側の watcher が再ビルドを担う)。
     // NOTE: そのため watch 開始後に追加された .client ファイルは Eleventy 再起動まで
-    // 拾われない。旧来の glob 文字列方式でも esbuild は context 生成時に一度だけ glob を
-    // 解決するためパリティであり許容。
+    // 拾われない。
     if (watchCtx) return;
 
     // Serves the setup module as an esbuild entry. Bare imports of the setup
