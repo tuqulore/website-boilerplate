@@ -49,6 +49,7 @@
   },
   "devDependencies": {
     "@11ty/eleventy": "^3.1.2",
+    "@tuqulore-inc/eleventy-data": "workspace:*",
     "@tuqulore-inc/eleventy-plugin-preact": "workspace:*",
     "@tuqulore-inc/oxlint-config": "workspace:*",
     "oxlint": "^1.88.0",

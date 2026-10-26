@@ -3,11 +3,10 @@ import module from "node:module";
 import path from "node:path";
 import url from "node:url";
 
+import { runWithEleventyData } from "@tuqulore-inc/eleventy-data";
 import fg from "fast-glob";
 import { render } from "preact-render-to-string";
 import { jsx } from "preact/jsx-runtime";
-
-import { _runWithEleventyData } from "./eleventy.js";
 
 // Register Node.js loaders for JSX/TSX/MDX support
 module.register(import.meta.resolve("./loaders/mdx.js"), url.pathToFileURL("./"));
@@ -128,7 +127,7 @@ export const _computeInvalidationSet = (changedTemplates, reverseDeps) => {
  * SSR only: registers `.jsx` / `.tsx` / `.mdx` template formats and renders
  * Preact components to HTML using preact-render-to-string. Client-side
  * bundling and partial hydration are handled by
- * `@tuqulore-inc/eleventy-plugin-preact-island`.
+ * `@tuqulore-inc/eleventy-islands`.
  *
  * @param {import("@11ty/eleventy").UserConfig} eleventyConfig
  */
@@ -180,7 +179,7 @@ export default function (eleventyConfig) {
     key: "11ty.js",
     compile: () => {
       return async function (data) {
-        return _runWithEleventyData(data, async () => {
+        return runWithEleventyData(data, async () => {
           const content = await this.defaultRenderer(data);
           const html = render(jsx(content.type, content.props, content.key)).trimStart();
           // NOTE: preact-render-to-string does not emit a DOCTYPE, so full-page

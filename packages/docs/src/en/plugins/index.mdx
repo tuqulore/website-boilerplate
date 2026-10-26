@@ -11,11 +11,13 @@ This section covers the internal design and applied recipes for the four Elevent
 ## The four plugins
 
 - [`@tuqulore-inc/eleventy-plugin-preact`](/en/plugins/eleventy-plugin-preact/): registers `.jsx` and `.mdx` as Eleventy template formats and renders them with Preact on the server.
-- [`@tuqulore-inc/eleventy-plugin-preact-island`](/en/plugins/eleventy-plugin-preact-island/): drives Partial Hydration, bundling `.client.*` with esbuild and hydrating with `<is-land>`.
+- [`@tuqulore-inc/eleventy-islands`](/en/plugins/eleventy-islands/): drives Partial Hydration, bundling `.client.*` and hydrating with `<is-land>`. It ships a Preact adapter and an esbuild bundler as subpaths.
 - [`@tuqulore-inc/eleventy-plugin-postcss`](/en/plugins/eleventy-plugin-postcss/): registers CSS as an Eleventy template format so PostCSS plugins (Tailwind CSS and friends) run inside the same pipeline.
 - [`@tuqulore-inc/eleventy-collections`](/en/plugins/eleventy-collections/): derives build-time validation and the types of `eleventy.collections` from schemas placed in collection directories.
 
 Each of these is installable on its own; the preset just composes them.
+
+The `eleventy` singleton and its types live in [`@tuqulore-inc/eleventy-data`](/en/plugins/eleventy-data/). It is not an Eleventy plugin but a package shared by renderers and templates.
 
 ## API reference and extending
 

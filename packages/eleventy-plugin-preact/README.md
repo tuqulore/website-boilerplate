@@ -31,7 +31,7 @@ export default function (eleventyConfig) {
 2. Renders Preact components to HTML with `preact-render-to-string`.
 3. Registers Node.js loaders for JSX/TSX/TS and MDX at module load time.
 
-Client-side bundling and Partial Hydration are handled by [@tuqulore-inc/eleventy-plugin-preact-island](../eleventy-plugin-preact-island). Register the two side by side, or use [@tuqulore-inc/eleventy-preset](../eleventy-preset), which composes both.
+Client-side bundling and Partial Hydration are handled by [@tuqulore-inc/eleventy-islands](../eleventy-islands) with its Preact adapter. Register the two side by side, or use [@tuqulore-inc/eleventy-preset](../eleventy-preset), which composes both.
 
 ## TypeScript
 
@@ -87,17 +87,18 @@ export const data = { title: "Getting Started", layout: "post" };
 
 The Eleventy plugin factory. Register with `eleventyConfig.addPlugin(preact)`.
 
-### `import { eleventy } from "@tuqulore-inc/eleventy-plugin-preact/eleventy"`
+### `import { eleventy } from "@tuqulore-inc/eleventy-data"`
 
-The SSR-side singleton. Exposes `content`, `title`, `description`, `site`, `nav`, `page`, `collections`, and any other data provided by Eleventy. Available only during SSR; not accessible from client-hydrated components. See [Preset Conventions / Data Access](https://website.tuqulore.workers.dev/en/preset/data-access/) for details.
+The SSR-side singleton lives in [@tuqulore-inc/eleventy-data](../eleventy-data), a peer dependency of this plugin; the plugin makes Eleventy's data available to it while rendering. Available only during SSR; not accessible from client-hydrated components. See [Preset Conventions / Data Access](https://website.tuqulore.workers.dev/en/preset/data-access/) for details.
 
-`eleventy.collections` is typed by the `EleventyCollections` interface, whose entries are `EleventyCollectionItem<T>` (front matter under `.data`). Only `all` is declared; extend it via declaration merging, or let [`@tuqulore-inc/eleventy-collections`](../eleventy-collections) generate it from schemas.
+`@tuqulore-inc/eleventy-plugin-preact/eleventy` still re-exports it, but is deprecated and will be removed in the next major version.
 
 ## Requirements
 
 - Node.js 20.19+ or 22.12+ (matches `oxc-transform`'s engines requirement)
 - Eleventy 3.0 or higher
 - Preact 10 or higher
+- @tuqulore-inc/eleventy-data (peer dependency, installed automatically by npm 7+ and pnpm)
 
 ## License
 

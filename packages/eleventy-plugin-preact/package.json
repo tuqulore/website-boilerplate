@@ -59,11 +59,13 @@
     "yaml": "^2.9.0"
   },
   "devDependencies": {
+    "@tuqulore-inc/eleventy-data": "workspace:^",
     "@tuqulore-inc/oxlint-config": "workspace:*",
     "oxlint": "^1.88.0"
   },
   "peerDependencies": {
     "@11ty/eleventy": ">=3.0.0",
+    "@tuqulore-inc/eleventy-data": "workspace:^",
     "preact": ">=10.0.0"
   },
   "engines": {

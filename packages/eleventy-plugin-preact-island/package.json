@@ -1,7 +1,7 @@
 {
   "name": "@tuqulore-inc/eleventy-plugin-preact-island",
   "version": "5.3.1-alpha.2",
-  "description": "Eleventy plugin for Preact partial hydration with is-land",
+  "description": "Deprecated: use @tuqulore-inc/eleventy-islands. Eleventy plugin for Preact partial hydration with is-land",
   "keywords": [
     "eleventy",
     "eleventy-plugin",
@@ -21,9 +21,7 @@
     "index.d.ts",
     "index.js",
     "island.d.ts",
-    "island.js",
-    "resolver.d.ts",
-    "resolver.js"
+    "island.js"
   ],
   "type": "module",
   "main": "./index.js",
@@ -45,13 +43,10 @@
     "test": "node --test"
   },
   "dependencies": {
-    "@11ty/is-land": "^5.0.0",
-    "devalue": "^5.8.1",
-    "esbuild": "^0.28.0",
-    "fast-glob": "^3.3.3"
+    "@tuqulore-inc/eleventy-islands": "workspace:*",
+    "esbuild": "^0.28.0"
   },
   "devDependencies": {
-    "@preact/signals": "^2.11.3",
     "@tuqulore-inc/oxlint-config": "workspace:*",
     "oxlint": "^1.88.0",
     "preact": "^10.26.4",

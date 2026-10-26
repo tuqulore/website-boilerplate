@@ -43,7 +43,7 @@ export default preset((eleventyConfig) => {
 ### Plugins
 
 - **[@tuqulore-inc/eleventy-plugin-preact](../eleventy-plugin-preact)** — JSX/MDX server-side rendering.
-- **[@tuqulore-inc/eleventy-plugin-preact-island](../eleventy-plugin-preact-island)** — Partial Hydration with is-land.
+- **[@tuqulore-inc/eleventy-islands](../eleventy-islands)** — Partial Hydration with is-land, registered with its Preact adapter and esbuild bundler.
 - **[@tuqulore-inc/eleventy-plugin-postcss](../eleventy-plugin-postcss)** — CSS processing with PostCSS.
 - **[@tuqulore-inc/eleventy-collections](../eleventy-collections)** — Collections validated and typed by colocated schemas.
 
@@ -79,11 +79,11 @@ Returns an Eleventy configuration function that registers the four plugins above
 
 ### `import { eleventy } from "@tuqulore-inc/eleventy-preset/eleventy"`
 
-Re-exports the SSR-side singleton from [@tuqulore-inc/eleventy-plugin-preact](../eleventy-plugin-preact) for reading page data and global data without prop drilling. See [Preset Conventions / Data Access](https://website.tuqulore.workers.dev/en/preset/data-access/) for the shape and usage.
+Re-exports the SSR-side singleton from [@tuqulore-inc/eleventy-data](../eleventy-data) for reading page data and global data without prop drilling. See [Preset Conventions / Data Access](https://website.tuqulore.workers.dev/en/preset/data-access/) for the shape and usage.
 
 ### `import { Island, clientComponent, clientOnlyComponent } from "@tuqulore-inc/eleventy-preset/island"`
 
-Re-exports from [@tuqulore-inc/eleventy-plugin-preact-island](../eleventy-plugin-preact-island) for authoring Partial Hydration. See [Plugins / eleventy-plugin-preact-island](https://website.tuqulore.workers.dev/en/plugins/eleventy-plugin-preact-island/) for the design and that package's README for the full API.
+Re-exports from `@tuqulore-inc/eleventy-islands/preact` ([@tuqulore-inc/eleventy-islands](../eleventy-islands)) for authoring Partial Hydration. See [Plugins / eleventy-islands](https://website.tuqulore.workers.dev/en/plugins/eleventy-islands/) for the design and that package's README for the full API.
 
 ## Requirements
 

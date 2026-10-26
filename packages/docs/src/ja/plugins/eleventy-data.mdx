@@ -1,0 +1,47 @@
+---
+layout: post
+locale: ja
+title: eleventy-data
+---
+
+# `@tuqulore-inc/eleventy-data`
+
+本ページでは、`eleventy` シングルトンとその型を持つ `@tuqulore-inc/eleventy-data` について、なぜ独立したパッケージにしているのか、どのように一つの文脈を保っているのかを説明します。
+シングルトンの日常の使い方は [Preset の規約 / Data Access](/ja/preset/data-access/) を、API リファレンスはパッケージの README を参照してください。
+
+## Preact のプラグインから分けている理由
+
+`eleventy` シングルトンは、SSR 中のテンプレートやコンポーネントから Eleventy のデータを読むための入口です。
+シングルトン自体は Node.js の `AsyncLocalStorage` に置いたデータを返すだけで、Preact には依存しません。
+それでも以前は、Preact でテンプレートを描画する `@tuqulore-inc/eleventy-plugin-preact` の中に置かれていました。
+
+この同居には実害がありました。
+collection の型を導く [eleventy-collections](/ja/plugins/eleventy-collections/) は、Preact を一切使わないのに、型を参照するためだけに Preact のプラグインに依存していました。
+シングルトンを本パッケージに切り出したことで、型だけが要るパッケージは本パッケージだけに依存すれば済むようになりました。
+
+## 書き込む側と読む側
+
+本パッケージの API は、データを書き込む側と読む側に分かれています。
+
+- **`runWithEleventyData`**:テンプレートを描画する**レンダラ**(本ボイラープレートでは `@tuqulore-inc/eleventy-plugin-preact`)が使います。描画のあいだだけ、そのページのデータを現在の非同期の文脈に置きます。
+- **`eleventy`**:テンプレートとコンポーネントが使います。現在の文脈に置かれたデータを読みます。
+
+`AsyncLocalStorage` を使うのは、Eleventy が複数のページを並行して描画するためです。
+文脈は非同期処理をまたいで引き継がれるので、あるページの描画中に別のページのデータが見えることはありません。
+SSR の外 (モジュールのトップレベルなど) で `eleventy` を読むと、文脈が無いので例外になります。
+
+## 重複してインストールされても文脈を共有する
+
+依存関係の解決によっては、本パッケージが一つのプロジェクトに二つインストールされることがあります。
+モジュールのインスタンスが二つになると、レンダラが書き込む文脈とテンプレートが読む文脈が別物になり、SSR 中でも `eleventy` が例外を投げてしまいます。
+
+これを防ぐため、本パッケージは `AsyncLocalStorage` を `Symbol.for` で登録したグローバルな場所に置きます。
+二つ目のインスタンスは新しい `AsyncLocalStorage` を作らず、一つ目が登録したものを使います。
+あわせて、`@tuqulore-inc/eleventy-plugin-preact` は本パッケージを peerDependency に指定しており、プロジェクト内で一つのインストールにまとまりやすくしています。
+
+## 型の拡張
+
+`eleventy` の型は、Eleventy が組み込みで渡すフィールドと、プロジェクト固有のデータ (`_data/` のグローバルデータなど) の合成です。
+プロジェクト固有の部分は空のインターフェイスとして宣言してあり、開発者が宣言マージで広げます。
+宣言マージは、開発者が `eleventy` を import しているモジュールに対して書きます。
+プリセットを使う場合は、プリセットが再 export している `@tuqulore-inc/eleventy-preset/eleventy` に対して書けば、本パッケージの型に合流します。
