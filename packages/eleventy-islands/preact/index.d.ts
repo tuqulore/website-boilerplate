@@ -1,5 +1,7 @@
 import type { ComponentChildren, ComponentType, VNode } from "preact";
 
+import type { IslandAdapter } from "../index.js";
+
 export type ClientComponent<P = Record<string, unknown>> = ComponentType<P> & {
   __clientModuleUrl: string;
 };
@@ -68,3 +70,9 @@ export type ClientOnlyIslandProps<P> = Omit<P, "component" | "on" | "fallback"> 
  */
 export function Island<P>(props: ClientOnlyIslandProps<P>): VNode;
 export function Island<P>(props: IslandProps<P>): VNode;
+
+/**
+ * The Preact adapter for `@tuqulore-inc/eleventy-islands`:
+ * `eleventyConfig.addPlugin(islands, { adapter: preactAdapter })`.
+ */
+export const preactAdapter: IslandAdapter;

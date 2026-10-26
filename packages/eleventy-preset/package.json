@@ -50,9 +50,10 @@
     "@11ty/eleventy-img": "^7.0.0",
     "@tuqulore-inc/eleventy-collections": "workspace:*",
     "@tuqulore-inc/eleventy-data": "workspace:*",
+    "@tuqulore-inc/eleventy-islands": "workspace:*",
     "@tuqulore-inc/eleventy-plugin-postcss": "workspace:*",
     "@tuqulore-inc/eleventy-plugin-preact": "workspace:*",
-    "@tuqulore-inc/eleventy-plugin-preact-island": "workspace:*",
+    "esbuild": "^0.28.0",
     "fast-glob": "^3.3.3"
   },
   "devDependencies": {

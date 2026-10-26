@@ -1,5 +1,4 @@
 import { stringify } from "devalue";
-import { h } from "preact";
 
 let currentResolver = null;
 
@@ -36,7 +35,7 @@ function markClientModule(apiName, Component, moduleUrl) {
  * Attach the SSR-side module URL as metadata to a client component.
  * Call this once in each `*.client.jsx` file's default export.
  *
- * @template {import("preact").ComponentType<any>} C
+ * @template {Function} C
  * @param {C} Component
  * @param {string} moduleUrl Usually `import.meta.url` from the client file.
  * @returns {C}
@@ -52,7 +51,7 @@ export function clientComponent(Component, moduleUrl) {
  * rather than `hydrate`. Call this once in the `*.client.jsx` file's default
  * export, in place of `clientComponent`.
  *
- * @template {import("preact").ComponentType<any>} C
+ * @template {Function} C
  * @param {C} Component
  * @param {string} moduleUrl Usually `import.meta.url` from the client file.
  * @returns {C}
@@ -64,34 +63,33 @@ export function clientOnlyComponent(Component, moduleUrl) {
 }
 
 /**
- * Wrap a Preact component for Partial Hydration via is-land. The SSR output is
- * the component rendered with the same `props`, wrapped in `<is-land>` with the
- * client module import URL derived from the injected resolver. A client-only
- * component is not rendered; its `fallback` prop is output instead.
+ * Build the `<is-land>` element an adapter's `<Island>` renders: validate the
+ * component and trigger, resolve the client module URL, and serialize the
+ * props for the browser. The adapter renders `children` as the element's
+ * content: the component itself, or for a client-only component its fallback.
  *
- * @param {Object} attrs
- * @param {import("preact").ComponentType<any>} attrs.component - Component
- *   wrapped with `clientComponent()` or `clientOnlyComponent()` in its
- *   `*.client.jsx` file.
- * @param {string} [attrs.on] - is-land initialization trigger name (e.g.
+ * @param {Function} component - Component wrapped with `clientComponent()` or
+ *   `clientOnlyComponent()` in its `*.client.*` file.
+ * @param {Record<string, unknown>} props - Props for the component. Not mutated.
+ * @param {Object} options
+ * @param {string} options.type - The adapter's `type`, matching the init type
+ *   the setup module registers.
+ * @param {string} [options.on] - is-land initialization trigger name (e.g.
  *   `"interaction"`, `"visible"`, `"idle"`). Defaults to `"interaction"`, or
  *   `"load"` for a client-only component.
+ * @returns {{ attrs: Record<string, string>, clientOnly: boolean, props: Record<string, unknown>, fallback: unknown }}
+ *   `props` are what the component receives; `fallback` is `null` unless client-only.
  */
-export function Island({ component, on: onProp, ...props }) {
-  // Drop children explicitly. Preact folds JSX children into props.children,
-  // and Island's contract is that SSR content comes from `component`; letting
-  // children fall through would leak Preact VNodes into the devalue-serialized
-  // `props` attribute on <is-land> and into the client hydration payload.
-  delete props.children;
+export function islandAttributes(component, props, { type, on: onOption }) {
   if (typeof component !== "function") {
     throw new TypeError(
-      "Island: `component` prop must be a Preact component wrapped with `clientComponent()` or `clientOnlyComponent()`",
+      "Island: `component` prop must be a component wrapped with `clientComponent()` or `clientOnlyComponent()`",
     );
   }
   const clientOnly = component.__clientOnly === true;
   // NOTE: A client-only island holds only its fallback, often nothing at all,
   // so the click/touchstart that `interaction` waits for may never come.
-  const on = onProp === undefined ? (clientOnly ? "load" : "interaction") : onProp;
+  const on = onOption === undefined ? (clientOnly ? "load" : "interaction") : onOption;
   // Reject values that would produce a broken `land-on:*` attribute (whitespace,
   // quotes, etc). is-land silently fails to fire on unknown trigger names, so
   // catching typos at build time is the only signal the user gets.
@@ -108,17 +106,22 @@ export function Island({ component, on: onProp, ...props }) {
   }
   if (typeof currentResolver !== "function") {
     throw new Error(
-      "Island: no client module URL resolver is configured. Register `@tuqulore-inc/eleventy-plugin-preact-island` via `eleventyConfig.addPlugin`.",
+      "Island: no client module URL resolver is configured. Register `@tuqulore-inc/eleventy-islands` via `eleventyConfig.addPlugin`.",
     );
   }
   const importUrl = currentResolver(moduleUrl);
+  // Drop children explicitly. JSX folds children into props.children, and
+  // Island's contract is that SSR content comes from `component`; letting
+  // children fall through would leak VNodes into the devalue-serialized
+  // `props` attribute on <is-land> and into the client hydration payload.
   // NOTE: `fallback` is reserved only for client-only components, so a regular
   // client component that declares its own `fallback` prop still receives it.
-  const fallback = clientOnly ? (props.fallback ?? null) : null;
-  if (clientOnly) delete props.fallback;
+  const { children: _children, ...componentProps } = props;
+  const fallback = clientOnly ? (componentProps.fallback ?? null) : null;
+  if (clientOnly) delete componentProps.fallback;
   let serializedProps;
   try {
-    serializedProps = stringify(props);
+    serializedProps = stringify(componentProps);
   } catch (cause) {
     const path = typeof cause?.path === "string" ? cause.path : "";
     const location = path ? ` at \`${path}\`` : "";
@@ -135,12 +138,10 @@ export function Island({ component, on: onProp, ...props }) {
   // 相当の空文字を出して is-land のデフォルト挙動に乗せる。
   const attrs = {
     [`land-on:${on}`]: "",
-    type: "preact",
+    type,
     import: importUrl,
     props: serializedProps,
   };
-  if (clientOnly) {
-    return h("is-land", { ...attrs, "client-only": "" }, fallback);
-  }
-  return h("is-land", attrs, h(component, props));
+  if (clientOnly) attrs["client-only"] = "";
+  return { attrs, clientOnly, props: componentProps, fallback };
 }

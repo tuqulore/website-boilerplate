@@ -127,7 +127,7 @@ export const _computeInvalidationSet = (changedTemplates, reverseDeps) => {
  * SSR only: registers `.jsx` / `.tsx` / `.mdx` template formats and renders
  * Preact components to HTML using preact-render-to-string. Client-side
  * bundling and partial hydration are handled by
- * `@tuqulore-inc/eleventy-plugin-preact-island`.
+ * `@tuqulore-inc/eleventy-islands`.
  *
  * @param {import("@11ty/eleventy").UserConfig} eleventyConfig
  */

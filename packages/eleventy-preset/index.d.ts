@@ -5,7 +5,7 @@ import type { UserConfig } from "@11ty/eleventy";
  *
  * Includes:
  * - @tuqulore-inc/eleventy-plugin-preact (JSX/MDX SSR)
- * - @tuqulore-inc/eleventy-plugin-preact-island (Partial hydration)
+ * - @tuqulore-inc/eleventy-islands (Partial hydration, with Preact and esbuild)
  * - @tuqulore-inc/eleventy-plugin-postcss (CSS processing)
  * - Markdown settings (breaks, linkify)
  * - Server options for CSS watching

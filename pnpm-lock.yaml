@@ -133,6 +133,40 @@ importers:
         specifier: ^1.88.0
         version: 1.88.0
 
+  packages/eleventy-islands:
+    dependencies:
+      '@11ty/eleventy':
+        specifier: '>=3.0.0'
+        version: 3.1.6
+      '@11ty/is-land':
+        specifier: ^5.0.0
+        version: 5.0.1
+      devalue:
+        specifier: ^5.8.1
+        version: 5.9.3
+      fast-glob:
+        specifier: ^3.3.3
+        version: 3.3.3
+    devDependencies:
+      '@preact/signals':
+        specifier: ^2.11.3
+        version: 2.11.3(preact@10.29.8)
+      '@tuqulore-inc/oxlint-config':
+        specifier: workspace:*
+        version: link:../oxlint-config
+      esbuild:
+        specifier: ^0.28.0
+        version: 0.28.2
+      oxlint:
+        specifier: ^1.88.0
+        version: 1.88.0
+      preact:
+        specifier: ^10.26.4
+        version: 10.29.8(preact-render-to-string@6.7.0)
+      preact-render-to-string:
+        specifier: ^6.5.13
+        version: 6.7.0(preact@10.29.8)
+
   packages/eleventy-plugin-postcss:
     dependencies:
       '@11ty/eleventy':
@@ -192,40 +226,6 @@ importers:
         specifier: ^1.88.0
         version: 1.88.0
 
-  packages/eleventy-plugin-preact-island:
-    dependencies:
-      '@11ty/eleventy':
-        specifier: '>=3.0.0'
-        version: 3.1.6
-      '@11ty/is-land':
-        specifier: ^5.0.0
-        version: 5.0.1
-      devalue:
-        specifier: ^5.8.1
-        version: 5.9.3
-      esbuild:
-        specifier: ^0.28.0
-        version: 0.28.2
-      fast-glob:
-        specifier: ^3.3.3
-        version: 3.3.3
-    devDependencies:
-      '@preact/signals':
-        specifier: ^2.11.3
-        version: 2.11.3(preact@10.29.8)
-      '@tuqulore-inc/oxlint-config':
-        specifier: workspace:*
-        version: link:../oxlint-config
-      oxlint:
-        specifier: ^1.88.0
-        version: 1.88.0
-      preact:
-        specifier: ^10.26.4
-        version: 10.29.8(preact-render-to-string@6.7.0)
-      preact-render-to-string:
-        specifier: ^6.5.13
-        version: 6.7.0(preact@10.29.8)
-
   packages/eleventy-preset:
     dependencies:
       '@11ty/eleventy':
@@ -240,15 +240,18 @@ importers:
       '@tuqulore-inc/eleventy-data':
         specifier: workspace:*
         version: link:../eleventy-data
+      '@tuqulore-inc/eleventy-islands':
+        specifier: workspace:*
+        version: link:../eleventy-islands
       '@tuqulore-inc/eleventy-plugin-postcss':
         specifier: workspace:*
         version: link:../eleventy-plugin-postcss
       '@tuqulore-inc/eleventy-plugin-preact':
         specifier: workspace:*
         version: link:../eleventy-plugin-preact
-      '@tuqulore-inc/eleventy-plugin-preact-island':
-        specifier: workspace:*
-        version: link:../eleventy-plugin-preact-island
+      esbuild:
+        specifier: ^0.28.0
+        version: 0.28.2
       fast-glob:
         specifier: ^3.3.3
         version: 3.3.3

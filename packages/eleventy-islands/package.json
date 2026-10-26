@@ -1,10 +1,11 @@
 {
-  "name": "@tuqulore-inc/eleventy-plugin-preact-island",
+  "name": "@tuqulore-inc/eleventy-islands",
   "version": "5.3.1-alpha.2",
-  "description": "Eleventy plugin for Preact partial hydration with is-land",
+  "description": "Eleventy plugin for Partial Hydration with is-land, with a Preact adapter and an esbuild bundler",
   "keywords": [
     "eleventy",
     "eleventy-plugin",
+    "esbuild",
     "is-land",
     "partial-hydration",
     "preact"
@@ -14,7 +15,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tuqulore/website-boilerplate.git",
-    "directory": "packages/eleventy-plugin-preact-island"
+    "directory": "packages/eleventy-islands"
   },
   "files": [
     "README.md",
@@ -23,7 +24,13 @@
     "island.d.ts",
     "island.js",
     "resolver.d.ts",
-    "resolver.js"
+    "resolver.js",
+    "preact/index.d.ts",
+    "preact/index.js",
+    "preact/mount.d.ts",
+    "preact/mount.js",
+    "esbuild/index.d.ts",
+    "esbuild/index.js"
   ],
   "type": "module",
   "main": "./index.js",
@@ -35,6 +42,18 @@
     "./island": {
       "types": "./island.d.ts",
       "default": "./island.js"
+    },
+    "./preact": {
+      "types": "./preact/index.d.ts",
+      "default": "./preact/index.js"
+    },
+    "./preact/mount": {
+      "types": "./preact/mount.d.ts",
+      "default": "./preact/mount.js"
+    },
+    "./esbuild": {
+      "types": "./esbuild/index.d.ts",
+      "default": "./esbuild/index.js"
     }
   },
   "publishConfig": {
@@ -47,19 +66,28 @@
   "dependencies": {
     "@11ty/is-land": "^5.0.0",
     "devalue": "^5.8.1",
-    "esbuild": "^0.28.0",
     "fast-glob": "^3.3.3"
   },
   "devDependencies": {
     "@preact/signals": "^2.11.3",
     "@tuqulore-inc/oxlint-config": "workspace:*",
+    "esbuild": "^0.28.0",
     "oxlint": "^1.88.0",
     "preact": "^10.26.4",
     "preact-render-to-string": "^6.5.13"
   },
   "peerDependencies": {
     "@11ty/eleventy": ">=3.0.0",
+    "esbuild": ">=0.28.0",
     "preact": ">=10.0.0"
+  },
+  "peerDependenciesMeta": {
+    "esbuild": {
+      "optional": true
+    },
+    "preact": {
+      "optional": true
+    }
   },
   "engines": {
     "node": ">=20"

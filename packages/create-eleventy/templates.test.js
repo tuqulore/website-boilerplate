@@ -18,12 +18,13 @@ const templates = fs
   .map((entry) => entry.name);
 
 // テンプレートが直接/間接に依存する workspace 内パッケージ。
-// eleventy-preset が workspace:* で 4 プラグインを引くため一括で差し込む。
+// eleventy-preset が workspace:* で引くパッケージをまとめて差し込む。
 const workspacePackageNames = [
   "@tuqulore-inc/eleventy-preset",
   "@tuqulore-inc/eleventy-collections",
   "@tuqulore-inc/eleventy-plugin-preact",
-  "@tuqulore-inc/eleventy-plugin-preact-island",
+  "@tuqulore-inc/eleventy-data",
+  "@tuqulore-inc/eleventy-islands",
   "@tuqulore-inc/eleventy-plugin-postcss",
 ];
 
