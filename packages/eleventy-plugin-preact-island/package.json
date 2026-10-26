@@ -1,0 +1,62 @@
+{
+  "name": "@tuqulore-inc/eleventy-plugin-preact-island",
+  "version": "5.3.1-alpha.2",
+  "description": "Deprecated: use @tuqulore-inc/eleventy-islands. Eleventy plugin for Preact partial hydration with is-land",
+  "keywords": [
+    "eleventy",
+    "eleventy-plugin",
+    "is-land",
+    "partial-hydration",
+    "preact"
+  ],
+  "license": "MIT",
+  "author": "tuqulore inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tuqulore/website-boilerplate.git",
+    "directory": "packages/eleventy-plugin-preact-island"
+  },
+  "files": [
+    "README.md",
+    "index.d.ts",
+    "index.js",
+    "island.d.ts",
+    "island.js"
+  ],
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    },
+    "./island": {
+      "types": "./island.d.ts",
+      "default": "./island.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "lint": "oxlint --fix",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@tuqulore-inc/eleventy-islands": "workspace:*",
+    "esbuild": "^0.28.0"
+  },
+  "devDependencies": {
+    "@tuqulore-inc/oxlint-config": "workspace:*",
+    "oxlint": "^1.88.0",
+    "preact": "^10.26.4",
+    "preact-render-to-string": "^6.5.13"
+  },
+  "peerDependencies": {
+    "@11ty/eleventy": ">=3.0.0",
+    "preact": ">=10.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

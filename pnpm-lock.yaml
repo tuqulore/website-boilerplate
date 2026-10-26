@@ -226,6 +226,31 @@ importers:
         specifier: ^1.88.0
         version: 1.88.0
 
+  packages/eleventy-plugin-preact-island:
+    dependencies:
+      '@11ty/eleventy':
+        specifier: '>=3.0.0'
+        version: 3.1.6
+      '@tuqulore-inc/eleventy-islands':
+        specifier: workspace:*
+        version: link:../eleventy-islands
+      esbuild:
+        specifier: ^0.28.0
+        version: 0.28.2
+    devDependencies:
+      '@tuqulore-inc/oxlint-config':
+        specifier: workspace:*
+        version: link:../oxlint-config
+      oxlint:
+        specifier: ^1.88.0
+        version: 1.88.0
+      preact:
+        specifier: ^10.26.4
+        version: 10.29.8(preact-render-to-string@6.7.0)
+      preact-render-to-string:
+        specifier: ^6.5.13
+        version: 6.7.0(preact@10.29.8)
+
   packages/eleventy-preset:
     dependencies:
       '@11ty/eleventy':
