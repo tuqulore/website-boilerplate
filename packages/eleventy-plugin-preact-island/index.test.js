@@ -11,9 +11,9 @@ import preactIsland from "./index.js";
 import { Island, clientComponent } from "./island.js";
 
 const PAGE_WITH_ISLAND = '<html><head></head><body><is-land type="preact"></is-land></body></html>';
-// esbuild が非 minify 出力でモジュールごとに付ける由来コメント。preact 本体が
+// preact 本体だけが持つ文字列リテラル。minify 後も残るので、preact 本体が
 // どのファイルに同梱されたかの目印にする。
-const PREACT_MARKER = "/preact/dist/preact.module.js";
+const PREACT_MARKER = "http://www.w3.org/2000/svg";
 
 /**
  * Minimal UserConfig stub carrying only what the plugin actually reads.
@@ -290,7 +290,7 @@ describe("Island plugin .client.* が無いサイト", () => {
       preactIsland(config);
       await config._emit("eleventy.before", { runMode: "build" });
       const setup = await fs.readFile(path.join(dir, "dist", "__island-setup.js"), "utf8");
-      assert.match(setup, /Island\.define\(\)/);
+      assert.match(setup, /\.define\(\)/);
     } finally {
       await fs.rm(dir, { recursive: true, force: true });
     }
@@ -358,9 +358,15 @@ describe("Island plugin esbuild バンドル", () => {
     assert.ok(files.has("__island-setup.js"));
   });
 
+  it("build では minify して出力する", async () => {
+    for (const { file, code } of await readOutputs()) {
+      assert.doesNotMatch(code.trimEnd(), /\n/, file);
+    }
+  });
+
   it("is-land だけは ?nodefine 付き URL の external import として残る", async () => {
     const setup = await fs.readFile(path.join(dir, "dist", "__island-setup.js"), "utf8");
-    assert.match(setup, /from "\/blog\/is-land\.js\?nodefine"/);
+    assert.match(setup, /from\s*"\/blog\/is-land\.js\?nodefine"/);
   });
 
   it("preact / signals / devalue の bare import が残らない", async () => {

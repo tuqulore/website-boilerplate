@@ -206,6 +206,7 @@ ${rehydrateScript}
         format: "esm",
         jsx: "automatic",
         jsxImportSource: "preact",
+        minify: runMode === "build",
         outdir: outputDir,
         plugins: [islandSetupPlugin],
       };
