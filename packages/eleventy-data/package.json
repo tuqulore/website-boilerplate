@@ -1,0 +1,44 @@
+{
+  "name": "@tuqulore-inc/eleventy-data",
+  "version": "5.3.1-alpha.2",
+  "description": "Eleventy data singleton and types shared by template renderers and templates",
+  "keywords": [
+    "eleventy",
+    "ssr",
+    "typescript"
+  ],
+  "license": "MIT",
+  "author": "tuqulore inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tuqulore/website-boilerplate.git",
+    "directory": "packages/eleventy-data"
+  },
+  "files": [
+    "README.md",
+    "index.d.ts",
+    "index.js"
+  ],
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "lint": "oxlint --fix",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "@tuqulore-inc/oxlint-config": "workspace:*",
+    "oxlint": "^1.88.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

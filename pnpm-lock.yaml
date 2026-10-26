@@ -99,6 +99,9 @@ importers:
       '@11ty/eleventy':
         specifier: ^3.1.2
         version: 3.1.6
+      '@tuqulore-inc/eleventy-data':
+        specifier: workspace:*
+        version: link:../eleventy-data
       '@tuqulore-inc/eleventy-plugin-preact':
         specifier: workspace:*
         version: link:../eleventy-plugin-preact
@@ -120,6 +123,15 @@ importers:
       zod:
         specifier: ^4.6.0
         version: 4.6.7
+
+  packages/eleventy-data:
+    devDependencies:
+      '@tuqulore-inc/oxlint-config':
+        specifier: workspace:*
+        version: link:../oxlint-config
+      oxlint:
+        specifier: ^1.88.0
+        version: 1.88.0
 
   packages/eleventy-plugin-postcss:
     dependencies:
@@ -170,6 +182,9 @@ importers:
         specifier: ^2.9.0
         version: 2.9.0
     devDependencies:
+      '@tuqulore-inc/eleventy-data':
+        specifier: workspace:^
+        version: link:../eleventy-data
       '@tuqulore-inc/oxlint-config':
         specifier: workspace:*
         version: link:../oxlint-config
@@ -222,6 +237,9 @@ importers:
       '@tuqulore-inc/eleventy-collections':
         specifier: workspace:*
         version: link:../eleventy-collections
+      '@tuqulore-inc/eleventy-data':
+        specifier: workspace:*
+        version: link:../eleventy-data
       '@tuqulore-inc/eleventy-plugin-postcss':
         specifier: workspace:*
         version: link:../eleventy-plugin-postcss
