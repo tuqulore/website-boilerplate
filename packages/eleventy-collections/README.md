@@ -53,7 +53,7 @@ export const schema = z.object({
 
 ### Register the plugin
 
-Skip this with the preset. Otherwise, register it together with [@tuqulore-inc/eleventy-plugin-preact](../eleventy-plugin-preact), whose `eleventy` singleton the generated types extend:
+Skip this with the preset. Otherwise, register it together with [@tuqulore-inc/eleventy-plugin-preact](../eleventy-plugin-preact), which renders templates with the `eleventy` singleton of [@tuqulore-inc/eleventy-data](../eleventy-data) that the generated types extend:
 
 ```js
 // eleventy.config.js
@@ -63,7 +63,7 @@ import preact from "@tuqulore-inc/eleventy-plugin-preact";
 export default function (eleventyConfig) {
   eleventyConfig.addPlugin(preact);
   eleventyConfig.addPlugin(collections, {
-    typesModule: "@tuqulore-inc/eleventy-plugin-preact/eleventy",
+    typesModule: "@tuqulore-inc/eleventy-data",
   });
 }
 ```

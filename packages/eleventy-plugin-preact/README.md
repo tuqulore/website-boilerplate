@@ -31,7 +31,7 @@ export default function (eleventyConfig) {
 2. Renders Preact components to HTML with `preact-render-to-string`.
 3. Registers Node.js loaders for JSX/TSX/TS and MDX at module load time.
 
-Client-side bundling and Partial Hydration are handled by [@tuqulore-inc/eleventy-plugin-preact-island](../eleventy-plugin-preact-island). Register the two side by side, or use [@tuqulore-inc/eleventy-preset](../eleventy-preset), which composes both.
+Client-side bundling and Partial Hydration are handled by [@tuqulore-inc/eleventy-islands](../eleventy-islands) with its Preact adapter. Register the two side by side, or use [@tuqulore-inc/eleventy-preset](../eleventy-preset), which composes both.
 
 ## TypeScript
 

@@ -1,0 +1,47 @@
+---
+layout: post
+locale: en
+title: eleventy-data
+---
+
+# `@tuqulore-inc/eleventy-data`
+
+This page covers `@tuqulore-inc/eleventy-data`, the package holding the `eleventy` singleton and its types: why it is a separate package, and how it keeps a single context.
+For everyday use of the singleton, see [Preset Conventions / Data Access](/en/preset/data-access/); for the API reference, see the package README.
+
+## Why it is split from the Preact plugin
+
+The `eleventy` singleton is the entry point for reading Eleventy's data from templates and components during SSR.
+It only returns data placed in Node.js's `AsyncLocalStorage` and does not depend on Preact.
+It used to live inside `@tuqulore-inc/eleventy-plugin-preact`, the plugin that renders templates with Preact.
+
+That arrangement had a real cost.
+[eleventy-collections](/en/plugins/eleventy-collections/), which derives collection types and uses no Preact at all, depended on the Preact plugin only to reference the types.
+With the singleton split out into this package, a package that only needs the types now depends on this package alone.
+
+## The writing side and the reading side
+
+The API of this package splits into a side that writes the data and a side that reads it.
+
+- **`runWithEleventyData`**: used by the **renderer** that renders templates (`@tuqulore-inc/eleventy-plugin-preact` in this boilerplate). While rendering, it places the page's data in the current async context.
+- **`eleventy`**: used by templates and components. It reads the data placed in the current context.
+
+`AsyncLocalStorage` is used because Eleventy renders several pages concurrently.
+The context carries across asynchronous work, so one page never sees another page's data while rendering.
+Reading `eleventy` outside SSR (at module top level, for example) throws, since there is no context.
+
+## Sharing the context across duplicate installations
+
+Depending on how dependencies resolve, a project may end up with two installations of this package.
+Two module instances would mean the renderer writes to one context while templates read from another, and `eleventy` would throw even during SSR.
+
+To prevent this, the package keeps its `AsyncLocalStorage` in a global slot registered with `Symbol.for`.
+A second instance does not create a new `AsyncLocalStorage`; it uses the one the first registered.
+`@tuqulore-inc/eleventy-plugin-preact` also declares this package as a peer dependency, which makes the installs more likely to collapse into one.
+
+## Extending the types
+
+The type of `eleventy` combines the fields Eleventy supplies built-in with the project's own data (such as Global Data from `_data/`).
+The project's part is declared as an empty interface, which developers widen via declaration merging.
+Write the declaration merging against the module you import `eleventy` from.
+With the preset, writing it against `@tuqulore-inc/eleventy-preset/eleventy`, which the preset re-exports, merges into this package's types.
