@@ -52,7 +52,7 @@
     "@tuqulore-inc/eleventy-plugin-preact": "workspace:*",
     "@tuqulore-inc/oxlint-config": "workspace:*",
     "oxlint": "^1.88.0",
-    "preact": "^10.26.4",
+    "preact": "^11.0.0",
     "typescript": "^7.0.2",
     "valibot": "^1.5.0",
     "zod": "^4.6.0"
