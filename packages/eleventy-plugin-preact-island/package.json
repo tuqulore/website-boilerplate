@@ -46,7 +46,7 @@
   },
   "dependencies": {
     "@11ty/is-land": "^5.0.0",
-    "devalue": "^5.8.1",
+    "devalue": "^6.0.0",
     "esbuild": "^0.28.0",
     "fast-glob": "^3.3.3"
   },
@@ -54,7 +54,7 @@
     "@preact/signals": "^2.11.3",
     "@tuqulore-inc/oxlint-config": "workspace:*",
     "oxlint": "^1.88.0",
-    "preact": "^10.26.4",
+    "preact": "^11.0.0",
     "preact-render-to-string": "^6.5.13"
   },
   "peerDependencies": {
