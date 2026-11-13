@@ -6,11 +6,11 @@ concurrency:
   cancel-in-progress: true
 jobs:
   ci:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: write
     steps:
-      - uses: tuqulore/.github/setup@862223e87aebb86ee0e7e2db495d65dc441b31df # main
+      - uses: tuqulore/.github/setup@cc8a49114d24092c90de619edef3518534fb074e # main
       - run: pnpm lint
       - run: pnpm -r test
-      - uses: tuqulore/.github/format@862223e87aebb86ee0e7e2db495d65dc441b31df # main
+      - uses: tuqulore/.github/format@cc8a49114d24092c90de619edef3518534fb074e # main
