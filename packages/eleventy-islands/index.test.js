@@ -215,9 +215,10 @@ describe("Island plugin setup の mount 方式", () => {
 });
 
 describe("Island plugin bundler 未指定", () => {
-  it("setup を未バンドルのまま出力に書き出す (devalue は bare import)", async () => {
+  it("setup を未バンドルのまま出力に書き出す (devalue は本パッケージから解決した絶対パス)", async () => {
     const { source } = await runUnbundled();
-    assert.match(source, /^import \{ parse \} from "devalue";$/m);
+    const devalue = url.fileURLToPath(import.meta.resolve("devalue"));
+    assert.ok(source.includes(`import { parse } from ${JSON.stringify(devalue)};`));
   });
 });
 

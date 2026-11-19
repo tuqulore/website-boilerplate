@@ -46,8 +46,6 @@ export interface BundlerContext {
     isLandUrl: string;
     /** Absolute path of `adapter.mountModule`, imported by the setup module. */
     mountModule: string;
-    /** This package's directory, from which the setup module's `devalue` resolves. */
-    packageDir: string;
   };
   adapter: IslandAdapter;
 }

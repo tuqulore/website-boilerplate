@@ -47,13 +47,10 @@ export function esbuildBundler({ esbuildOptions = {} } = {}) {
     // 拾われない。
     if (watchCtx) return;
 
-    // Serves the setup module as an esbuild entry. Bare imports of the setup
-    // and mount modules resolve from the input directory first, the same place
+    // Serves the setup module as an esbuild entry. Bare imports of the mount
+    // module resolve from the input directory first, the same place
     // `*.client.*` entries resolve them from, so both land on one file and
-    // splitting emits a single shared framework instance. `devalue` resolves
-    // from the islands package, since it must match the version that
-    // serialized the props and may not be visible from the host project under
-    // strict installs (pnpm).
+    // splitting emits a single shared framework instance.
     /** @type {import("esbuild").Plugin} */
     const islandSetupPlugin = {
       name: "eleventy-islands-setup",
@@ -71,9 +68,6 @@ export function esbuildBundler({ esbuildOptions = {} } = {}) {
         build.onResolve({ filter: /.*/, namespace: SETUP_NAMESPACE }, (args) => {
           if (args.path === setup.isLandUrl) {
             return { path: args.path, external: true };
-          }
-          if (args.path === "devalue") {
-            return build.resolve(args.path, { kind: args.kind, resolveDir: setup.packageDir });
           }
           return undefined;
         });

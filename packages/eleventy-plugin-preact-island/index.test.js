@@ -63,7 +63,7 @@ describe("eleventy-plugin-preact-island (非推奨の互換パッケージ)", ()
 
   it("bundle: false では setup を未バンドルのまま書き出す", async () => {
     const setup = await runPlugin({ bundle: false });
-    assert.match(setup, /^import \{ parse \} from "devalue";$/m);
+    assert.match(setup, /^import \{ parse \} from "\/.*\/devalue\/index\.js";$/m);
   });
 
   it("preactVersion / devalueVersion には非推奨の警告を出す", async (t) => {

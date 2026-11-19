@@ -5,7 +5,9 @@ import url from "node:url";
 import { _setClientModuleResolver } from "./island.js";
 import { createClientModuleResolver, normalizeUrlPrefix } from "./resolver.js";
 
-const packageDir = path.dirname(url.fileURLToPath(import.meta.url));
+// NOTE: Imported by absolute path so the setup module gets the devalue that
+// serialized the props, even where the host project cannot see it (pnpm).
+const devalueModule = url.fileURLToPath(import.meta.resolve("devalue"));
 
 const SETUP_NAME = "__island-setup";
 
@@ -99,7 +101,7 @@ window.__eleventyRehydrate = () => {
       : "";
 
     return `import { Island } from "${isLandUrl}";
-import { parse } from "devalue";
+import { parse } from ${JSON.stringify(devalueModule)};
 import { mount } from ${JSON.stringify(mountModule)};
 
 const init = async (target) => {
@@ -133,7 +135,6 @@ ${rehydrateScript}
         source: generateIslandSetupSource,
         isLandUrl,
         mountModule,
-        packageDir,
       },
       adapter,
     };
