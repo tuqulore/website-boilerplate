@@ -1,6 +1,6 @@
 {
   "name": "@tuqulore-inc/eleventy-plugin-preact-island",
-  "version": "5.4.0",
+  "version": "5.4.1-alpha.0",
   "description": "Deprecated: use @tuqulore-inc/eleventy-islands. Eleventy plugin for Preact partial hydration with is-land",
   "keywords": [
     "eleventy",

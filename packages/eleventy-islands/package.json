@@ -1,6 +1,6 @@
 {
   "name": "@tuqulore-inc/eleventy-islands",
-  "version": "5.4.0",
+  "version": "5.4.1-alpha.0",
   "description": "Eleventy plugin for Partial Hydration with is-land, with a Preact adapter and an esbuild bundler",
   "keywords": [
     "eleventy",
