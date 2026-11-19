@@ -85,7 +85,7 @@ Bundles with esbuild. Dependencies shared across entries, such as Preact and `@p
 - Type: esbuild `BuildOptions`
 - Default: `{}`
 
-Extra esbuild options. `plugins` run after the built-in setup plugin; the other keys override the defaults (`jsx: "automatic"`, `jsxImportSource` from the adapter, `minify` in `build` run mode). `bundle`, `chunkNames`, `entryPoints`, `format`, `outdir`, and `splitting` define the output layout and are rejected.
+Extra esbuild options. `plugins` run after the built-in setup plugin; the other keys override the defaults (`jsx: "automatic"`, `jsxImportSource` from the adapter, `minify` in `build` run mode). `bundle`, `chunkNames`, `entryNames`, `entryPoints`, `format`, `outdir`, `outExtension`, and `splitting` define the output layout and are rejected.
 
 ```javascript
 esbuildBundler({ esbuildOptions: { target: "es2022", plugins: [myPlugin] } });

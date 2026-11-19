@@ -7,12 +7,19 @@ export interface EsbuildBundlerOptions {
    * Extra esbuild options. `plugins` run after the built-in setup plugin; the
    * other keys override the defaults (`jsx: "automatic"`, `jsxImportSource`
    * from the adapter, `minify` in `build` run mode). `bundle`, `chunkNames`,
-   * `entryPoints`, `format`, `outdir`, and `splitting` define the output
-   * layout and are rejected.
+   * `entryNames`, `entryPoints`, `format`, `outdir`, `outExtension`, and
+   * `splitting` define the output layout and are rejected.
    */
   esbuildOptions?: Omit<
     BuildOptions,
-    "bundle" | "chunkNames" | "entryPoints" | "format" | "outdir" | "splitting"
+    | "bundle"
+    | "chunkNames"
+    | "entryNames"
+    | "entryPoints"
+    | "format"
+    | "outdir"
+    | "outExtension"
+    | "splitting"
   >;
 }
 

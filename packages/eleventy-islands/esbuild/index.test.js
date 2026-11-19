@@ -147,7 +147,16 @@ describe("esbuildBundler esbuildOptions", () => {
     assert.match(setup, /\n./);
   });
 
-  for (const key of ["bundle", "chunkNames", "entryPoints", "format", "outdir", "splitting"]) {
+  for (const key of [
+    "bundle",
+    "chunkNames",
+    "entryNames",
+    "entryPoints",
+    "format",
+    "outdir",
+    "outExtension",
+    "splitting",
+  ]) {
     it(`出力の配置を決める ${key} は上書きできない`, () => {
       assert.throws(
         () => esbuildBundler({ esbuildOptions: { [key]: undefined } }),

@@ -8,7 +8,16 @@ const SETUP_NAMESPACE = "eleventy-islands-setup";
 
 // The client boundary's layout depends on these, so `esbuildOptions` may not
 // override them.
-const RESERVED_OPTIONS = ["bundle", "chunkNames", "entryPoints", "format", "outdir", "splitting"];
+const RESERVED_OPTIONS = [
+  "bundle",
+  "chunkNames",
+  "entryNames",
+  "entryPoints",
+  "format",
+  "outdir",
+  "outExtension",
+  "splitting",
+];
 
 /**
  * Bundle the client entries and the setup module with esbuild. Pass the result
