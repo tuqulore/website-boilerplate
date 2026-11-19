@@ -30,8 +30,8 @@
         "path": "/en/plugins/eleventy-plugin-preact/"
       },
       {
-        "name": "eleventy-plugin-preact-island",
-        "path": "/en/plugins/eleventy-plugin-preact-island/"
+        "name": "eleventy-islands",
+        "path": "/en/plugins/eleventy-islands/"
       },
       {
         "name": "eleventy-plugin-postcss",
@@ -40,6 +40,10 @@
       {
         "name": "eleventy-collections",
         "path": "/en/plugins/eleventy-collections/"
+      },
+      {
+        "name": "eleventy-data",
+        "path": "/en/plugins/eleventy-data/"
       }
     ]
   }

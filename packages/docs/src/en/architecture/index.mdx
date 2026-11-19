@@ -34,7 +34,8 @@ create-eleventy (CLI)
     eleventy-preset (aggregator)
         │
         ├── eleventy-plugin-preact         (SSR, JSX/MDX, layouts)
-        ├── eleventy-plugin-preact-island  (Partial Hydration, client bundle)
+        │     └── eleventy-data            (eleventy singleton and types)
+        ├── eleventy-islands               (Partial Hydration, Preact and esbuild as subpaths)
         └── eleventy-plugin-postcss        (PostCSS pipeline)
 ```
 
@@ -52,7 +53,7 @@ The preset internally calls `setInputDirectory("src")` and `setOutputDirectory("
 
 ### Partial Hydration by default
 
-Preact + `@11ty/is-land` keep the initial paint as static HTML and hydrate only what is wrapped in `<Island>`. See [Plugins / eleventy-plugin-preact-island](/en/plugins/eleventy-plugin-preact-island/) for granularity guidance and the API surface.
+Preact + `@11ty/is-land` keep the initial paint as static HTML and hydrate only what is wrapped in `<Island>`. See [Plugins / eleventy-islands](/en/plugins/eleventy-islands/) for granularity guidance and the API surface.
 
 ### i18n uses directory splits
 

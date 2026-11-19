@@ -12,7 +12,7 @@ This page covers the internal design of `@tuqulore-inc/eleventy-plugin-preact`, 
 
 The plugin registers `.jsx`, `.tsx`, and `.mdx` as Eleventy template formats and renders all of them through Preact's server-side renderer. Templates are loaded via Node.js custom loaders, so the files themselves behave like normal ES modules. `.ts` is not registered as a template format, but the same loader handles it so templates and components can import `.ts` utilities on the SSR side.
 
-The plugin stops here. Everything client-side — bundling, is-land wiring, hydration — is the job of [eleventy-plugin-preact-island](/en/plugins/eleventy-plugin-preact-island/). This plugin only produces HTML.
+The plugin stops here. Everything client-side — bundling, is-land wiring, hydration — is the job of [eleventy-islands](/en/plugins/eleventy-islands/). This plugin only produces HTML.
 
 ## Why Preact
 
@@ -57,4 +57,4 @@ The writing side of layout chaining, page data, and the split between MDX and JS
 
 `@tuqulore-inc/eleventy-plugin-preact` is installable on its own. If you have an existing Eleventy project and only want JSX/MDX SSR, this is a valid path.
 
-Note that Partial Hydration is not included in that setup — using `<Island>` will fail to resolve. To combine both, either register `@tuqulore-inc/eleventy-plugin-preact-island` alongside this one, or use the preset. See the package README for details.
+Note that Partial Hydration is not included in that setup — using `<Island>` will fail to resolve. To combine both, either register `@tuqulore-inc/eleventy-islands` with its Preact adapter alongside this one, or use the preset. See the package README for details.

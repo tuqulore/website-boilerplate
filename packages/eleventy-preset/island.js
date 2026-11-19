@@ -2,4 +2,4 @@ export {
   Island,
   clientComponent,
   clientOnlyComponent,
-} from "@tuqulore-inc/eleventy-plugin-preact-island/island";
+} from "@tuqulore-inc/eleventy-islands/preact";

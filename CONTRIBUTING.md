@@ -15,15 +15,17 @@ pnpm install
 
 ## リポジトリ構成
 
-| ディレクトリ                             | 役割                                                               |
-| :--------------------------------------- | :----------------------------------------------------------------- |
-| `packages/create-eleventy`               | `pnpm create @tuqulore-inc/eleventy` の CLI およびテンプレート     |
-| `packages/eleventy-preset`               | Eleventy 設定のプリセット（他プラグインを `workspace:*` で束ねる） |
-| `packages/eleventy-plugin-preact`        | Preact による JSX テンプレート対応                                 |
-| `packages/eleventy-plugin-preact-island` | Partial Hydration                                                  |
-| `packages/eleventy-plugin-postcss`       | PostCSS 対応                                                       |
-| `packages/eleventy-collections`          | スキーマによる collection の検証と型付け                           |
-| `packages/oxlint-config`                 | 共有 Oxlint 設定                                                   |
+| ディレクトリ                             | 役割                                                                  |
+| :--------------------------------------- | :-------------------------------------------------------------------- |
+| `packages/create-eleventy`               | `pnpm create @tuqulore-inc/eleventy` の CLI およびテンプレート        |
+| `packages/eleventy-preset`               | Eleventy 設定のプリセット（他プラグインを `workspace:*` で束ねる）    |
+| `packages/eleventy-plugin-preact`        | Preact による JSX テンプレート対応                                    |
+| `packages/eleventy-islands`              | Partial Hydration（Preact のアダプタと esbuild のバンドラはサブパス） |
+| `packages/eleventy-data`                 | `eleventy` シングルトンと型                                           |
+| `packages/eleventy-plugin-preact-island` | 非推奨。`eleventy-islands` を組み立てるだけの互換パッケージ           |
+| `packages/eleventy-plugin-postcss`       | PostCSS 対応                                                          |
+| `packages/eleventy-collections`          | スキーマによる collection の検証と型付け                              |
+| `packages/oxlint-config`                 | 共有 Oxlint 設定                                                      |
 
 ## 開発ワークフロー
 
@@ -75,12 +77,13 @@ PACK=$(mktemp -d)
 
 # 対象の workspace パッケージを tarball 化する。
 # workspace:* は pnpm pack の時点で実バージョンへ解決される。
-# eleventy-preset は 4 プラグインを workspace:* で参照しているため、それらもまとめて pack する。
+# eleventy-preset はプラグインなどを workspace:* で参照しているため、それらもまとめて pack する。
 # eleventy-preset の依存を追加/変更した場合はこの配列も更新する必要がある。
 PKGS=(
   @tuqulore-inc/eleventy-preset
   @tuqulore-inc/eleventy-plugin-preact
-  @tuqulore-inc/eleventy-plugin-preact-island
+  @tuqulore-inc/eleventy-data
+  @tuqulore-inc/eleventy-islands
   @tuqulore-inc/eleventy-plugin-postcss
   @tuqulore-inc/eleventy-collections
 )
@@ -95,8 +98,8 @@ done
 # WORK を単独ワークスペース化して pnpm-workspace.yaml に overrides を書き出す。
 # - overrides は transitive にも効くので、テンプレートが直接依存していないプラグイン群も一括で差し替わる。
 # - file: は具体名を渡す必要があり glob (*.tgz) は解決されないため、pack で生成された tarball 名をシェル側で解決する。
-# - glob は SHORT の直後を [0-9] に固定する。preact / preact-island のように片方が
-#   他方の prefix になる名前で `${SHORT}-*` を使うと両 tarball にマッチしてしまうため。
+# - glob は SHORT の直後を [0-9] に固定する。一方のパッケージ名が他方の prefix に
+#   なっていると、`${SHORT}-*` では両方の tarball にマッチしてしまうため。
 # - allowBuilds はリポジトリルート pnpm-workspace.yaml の設定を踏襲する。
 {
   echo "packages:"

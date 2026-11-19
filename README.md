@@ -8,15 +8,17 @@ Full documentation lives at [website.tuqulore.workers.dev](https://website.tuqul
 
 ## Packages
 
-| Package                                                                                 | Description                                                              |
-| :-------------------------------------------------------------------------------------- | :----------------------------------------------------------------------- |
-| [@tuqulore-inc/create-eleventy](./packages/create-eleventy)                             | CLI for creating a new project with `pnpm create @tuqulore-inc/eleventy` |
-| [@tuqulore-inc/eleventy-preset](./packages/eleventy-preset)                             | Eleventy configuration preset                                            |
-| [@tuqulore-inc/eleventy-plugin-preact](./packages/eleventy-plugin-preact)               | Plugin for JSX/MDX templates via Preact SSR                              |
-| [@tuqulore-inc/eleventy-plugin-preact-island](./packages/eleventy-plugin-preact-island) | Plugin for Partial Hydration                                             |
-| [@tuqulore-inc/eleventy-plugin-postcss](./packages/eleventy-plugin-postcss)             | Plugin for PostCSS                                                       |
-| [@tuqulore-inc/eleventy-collections](./packages/eleventy-collections)                   | Plugin for collections validated and typed by schemas                    |
-| [@tuqulore-inc/oxlint-config](./packages/oxlint-config)                                 | Shared Oxlint config                                                     |
+| Package                                                                                 | Description                                                                |
+| :-------------------------------------------------------------------------------------- | :------------------------------------------------------------------------- |
+| [@tuqulore-inc/create-eleventy](./packages/create-eleventy)                             | CLI for creating a new project with `pnpm create @tuqulore-inc/eleventy`   |
+| [@tuqulore-inc/eleventy-preset](./packages/eleventy-preset)                             | Eleventy configuration preset                                              |
+| [@tuqulore-inc/eleventy-plugin-preact](./packages/eleventy-plugin-preact)               | Plugin for JSX/MDX templates via Preact SSR                                |
+| [@tuqulore-inc/eleventy-islands](./packages/eleventy-islands)                           | Plugin for Partial Hydration, with a Preact adapter and an esbuild bundler |
+| [@tuqulore-inc/eleventy-data](./packages/eleventy-data)                                 | `eleventy` data singleton and types                                        |
+| [@tuqulore-inc/eleventy-plugin-preact-island](./packages/eleventy-plugin-preact-island) | Deprecated: composes `eleventy-islands`                                    |
+| [@tuqulore-inc/eleventy-plugin-postcss](./packages/eleventy-plugin-postcss)             | Plugin for PostCSS                                                         |
+| [@tuqulore-inc/eleventy-collections](./packages/eleventy-collections)                   | Plugin for collections validated and typed by schemas                      |
+| [@tuqulore-inc/oxlint-config](./packages/oxlint-config)                                 | Shared Oxlint config                                                       |
 
 ## Quick start
 

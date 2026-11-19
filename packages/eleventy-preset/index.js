@@ -2,9 +2,11 @@ import path from "node:path";
 
 import eleventyImage from "@11ty/eleventy-img";
 import collections from "@tuqulore-inc/eleventy-collections";
+import islands from "@tuqulore-inc/eleventy-islands";
+import { esbuildBundler } from "@tuqulore-inc/eleventy-islands/esbuild";
+import { preactAdapter } from "@tuqulore-inc/eleventy-islands/preact";
 import postcss from "@tuqulore-inc/eleventy-plugin-postcss";
 import preact from "@tuqulore-inc/eleventy-plugin-preact";
-import preactIsland from "@tuqulore-inc/eleventy-plugin-preact-island";
 import fg from "fast-glob";
 
 // This preset's directory convention. The URL prefix follows Eleventy's own
@@ -53,7 +55,7 @@ export default function preset(extend = () => {}) {
     // Preact partial hydration with is-land. Zero-config: it reads Eleventy's
     // input/output directories (set above) and the `.client.{js,jsx,ts,tsx}`
     // convention, owning the client bundle + Eleventy ignore + URL resolver.
-    eleventyConfig.addPlugin(preactIsland);
+    eleventyConfig.addPlugin(islands, { adapter: preactAdapter, bundler: esbuildBundler() });
 
     // Collections validated and typed by `SRC_DIR/<name>/_schema.ts`. A no-op
     // until a schema exists.

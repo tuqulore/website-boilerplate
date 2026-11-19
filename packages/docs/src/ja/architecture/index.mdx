@@ -34,7 +34,8 @@ create-eleventy (CLI)
     eleventy-preset (aggregator)
         │
         ├── eleventy-plugin-preact         (SSR、JSX/MDX、レイアウト)
-        ├── eleventy-plugin-preact-island  (Partial Hydration、クライアントバンドル)
+        │     └── eleventy-data            (eleventy シングルトンと型)
+        ├── eleventy-islands               (Partial Hydration、Preact と esbuild はサブパス)
         └── eleventy-plugin-postcss        (PostCSS 処理)
 ```
 
@@ -46,7 +47,7 @@ create-eleventy (CLI)
 
 プリセット本体には機能を持たせず、3 プラグインを組み合わせる役に徹します。理由は以下です。
 
-- 各プラグインを単体でも導入できる余地を残せます。preset を介さずに既存の Eleventy プロジェクトへ preact-island だけを足す、といった使い方が可能です。
+- 各プラグインを単体でも導入できる余地を残せます。preset を介さずに既存の Eleventy プロジェクトへ islands だけを足す、といった使い方が可能です。
 - プラグインごとに独立してテスト・リリースでき、破壊的変更を切り出せます。
 - Island を使わないサイトへ preset を分岐させたくなった場合も、プラグインが分離していれば影響範囲を絞れます。
 
@@ -60,7 +61,7 @@ create-eleventy (CLI)
 
 Preact + `@11ty/is-land` の組み合わせで、SSR された HTML を初期表示にし、`<Island>` で括った箇所だけをクライアント側で hydrate します。全ページ SPA と、完全な静的サイトの中間として、実務でよく現れる要求に合わせています。
 
-Island の粒度、hydrate のトリガー、規約の詳細は [Plugins / eleventy-plugin-preact-island](/ja/plugins/eleventy-plugin-preact-island/) で扱います。
+Island の粒度、hydrate のトリガー、規約の詳細は [Plugins / eleventy-islands](/ja/plugins/eleventy-islands/) で扱います。
 
 ### i18n はディレクトリ分割方式
 

@@ -7,4 +7,4 @@ export {
   type ClientOnlyIslandProps,
   type IslandOn,
   type IslandProps,
-} from "@tuqulore-inc/eleventy-plugin-preact-island/island";
+} from "@tuqulore-inc/eleventy-islands/preact";

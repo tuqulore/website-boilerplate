@@ -5,4 +5,4 @@ export {
   type EleventyData,
   type EleventyCollectionItem,
   type EleventyCollections,
-} from "@tuqulore-inc/eleventy-plugin-preact/eleventy";
+} from "@tuqulore-inc/eleventy-data";

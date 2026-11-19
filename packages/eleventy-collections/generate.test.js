@@ -25,7 +25,7 @@ const TSCONFIG = {
   include: ["collections.d.ts", "src/**/*"],
 };
 
-const USAGE = `import { eleventy } from "@tuqulore-inc/eleventy-plugin-preact/eleventy";
+const USAGE = `import { eleventy } from "@tuqulore-inc/eleventy-data";
 
 const posts = eleventy.collections.posts;
 export const titles: string[] = posts.map((post) => post.data.title);
@@ -51,7 +51,7 @@ export const undeclared = eleventy.collections.tags;
 `;
 
 describe("generateTypes", () => {
-  // zod / valibot / plugin-preact を解決できるよう一時ファイルはこのパッケージ配下に作る
+  // zod / valibot / eleventy-data を解決できるよう一時ファイルはこのパッケージ配下に作る
   let root;
   let cwd;
 
@@ -92,7 +92,7 @@ export const schema = v.object({ name: v.string() });
 
     process.chdir(dir);
     await generateTypes(discoverCollections("src"), {
-      typesModule: "@tuqulore-inc/eleventy-plugin-preact/eleventy",
+      typesModule: "@tuqulore-inc/eleventy-data",
     });
     process.chdir(cwd);
 

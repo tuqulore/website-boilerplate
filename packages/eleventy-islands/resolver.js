@@ -41,12 +41,12 @@ export function createClientModuleResolver({ inputDir = ".", urlPrefix = "/" } =
     try {
       pathname = new URL(moduleUrl).pathname;
     } catch {
-      throw new Error(`[eleventy-plugin-preact-island] Invalid module URL: ${moduleUrl}`);
+      throw new Error(`[eleventy-islands] Invalid module URL: ${moduleUrl}`);
     }
 
     if (!pathname.startsWith(inputBase)) {
       throw new Error(
-        `[eleventy-plugin-preact-island] Client module must live under the Eleventy input directory (${inputBase}): ${pathname}`,
+        `[eleventy-islands] Client module must live under the Eleventy input directory (${inputBase}): ${pathname}`,
       );
     }
 
@@ -54,7 +54,7 @@ export function createClientModuleResolver({ inputDir = ".", urlPrefix = "/" } =
     const match = rest.match(/^(.+)\.client\.(?:jsx|tsx|js|ts)$/);
     if (!match) {
       throw new Error(
-        `[eleventy-plugin-preact-island] Client module must end with .client.{js,jsx,ts,tsx}: ${pathname}`,
+        `[eleventy-islands] Client module must end with .client.{js,jsx,ts,tsx}: ${pathname}`,
       );
     }
     return `${normalizedPrefix}${match[1]}.client.js`;
