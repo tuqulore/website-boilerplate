@@ -1,6 +1,6 @@
 {
   "name": "@tuqulore-inc/eleventy-data",
-  "version": "5.3.1-alpha.2",
+  "version": "5.4.0",
   "description": "Eleventy data singleton and types shared by template renderers and templates",
   "keywords": [
     "eleventy",
